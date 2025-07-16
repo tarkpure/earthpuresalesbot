@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الأوردرات والعينات</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        h1 {
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .response-message {
+            text-align: center;
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            display: none;
+        }
+        .response-message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .response-message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>إدارة أوردرات وعينات السيلز</h1>
+        <form id="salesForm">
+            <div class="form-group">
+                <label for="type">النوع:</label>
+                <select id="type" name="type" required>
+                    <option value="">اختر النوع</option>
+                    <option value="order">أوردر</option>
+                    <option value="sample">عينة</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="employee">اسم الموظف:</label>
+                <input type="text" id="employee" name="employee" required>
+            </div>
+            <div class="form-group">
+                <label for="clientName">اسم العميل:</label>
+                <input type="text" id="clientName" name="clientName" required>
+            </div>
+            <div class="form-group">
+                <label for="company">اسم الشركة:</label>
+                <input type="text" id="company" name="company">
+            </div>
+            <div class="form-group">
+                <label for="phone">رقم التليفون:</label>
+                <input type="text" id="phone" name="phone" required>
+            </div>
+            <div class="form-group">
+                <label for="address">العنوان:</label>
+                <textarea id="address" name="address"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="items">الأصناف (افصل بفاصلة إذا متعددة):</label>
+                <textarea id="items" name="items" required></textarea>
+            </div>
+            <div class="form-group" id="quantityGroup" style="display: none;">
+                <label for="quantity">الكمية:</label>
+                <input type="number" id="quantity" name="quantity">
+            </div>
+            <div class="form-group" id="priceGroup" style="display: none;">
+                <label for="price">السعر:</label>
+                <input type="number" id="price" name="price" step="0.01">
+            </div>
+            <div class="form-group" id="batchIdGroup" style="display: none;">
+                <label for="batchId">الباتش:</label>
+                <input type="text" id="batchId" name="batchId">
+            </div>
+             <div class="form-group">
+                <label for="notes">ملاحظات:</label>
+                <textarea id="notes" name="notes"></textarea>
+            </div>
+            <button type="submit">إرسال البيانات</button>
+            <div id="responseMessage" class="response-message"></div>
+        </form>
+    </div>
+
+    <script>
+        // هذا هو الرابط الذي حصلت عليه من Google Apps Script (Web App URL)
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxVqdvj_L5R_nScs3HJ33JnOX2Dmx9dG5auwSL4rXszAh15HjT0Ns24slKms9eqX6vk/exec';
+
+        const form = document.getElementById('salesForm');
+        const typeSelect = document.getElementById('type');
+        const quantityGroup = document.getElementById('quantityGroup');
+        const priceGroup = document.getElementById('priceGroup');
+        const batchIdGroup = document.getElementById('batchIdGroup');
+        const responseMessageDiv = document.getElementById('responseMessage');
+
+        // إظهار/إخفاء حقول الكمية والسعر والباتش بناءً على نوع الطلب
+        typeSelect.addEventListener('change', function() {
+            if (typeSelect.value === 'order') {
+                quantityGroup.style.display = 'block';
+                priceGroup.style.display = 'block';
+                batchIdGroup.style.display = 'block';
+            } else {
+                quantityGroup.style.display = 'none';
+                priceGroup.style.display = 'none';
+                batchIdGroup.style.display = 'none';
+                // Clear values if hidden
+                document.getElementById('quantity').value = '';
+                document.getElementById('price').value = '';
+                document.getElementById('batchId').value = '';
+            }
+        });
+
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault(); // منع إرسال النموذج بالطريقة التقليدية
+
+            responseMessageDiv.style.display = 'none'; // إخفاء الرسالة السابقة
+            responseMessageDiv.classList.remove('success', 'error');
+
+            const formData = new FormData(form);
+            const data = {};
+            for (let [key, value] formData.entries()) {
+                data[key] = value;
+            }
+
+            try {
+                const response = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // مهم جداً لتجنب مشاكل CORS
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams(data).toString()
+                });
+
+                // نظرًا لاستخدام 'no-cors', لن نتمكن من قراءة استجابة JSON مباشرة
+                // يمكننا فقط افتراض النجاح أو الفشل من خلال حالة الشبكة
+                // ولتأكيد النجاح، نعتمد على أن Apps Script سيقوم بالكتابة
+
+                // عرض رسالة نجاح مبدئية
+                responseMessageDiv.classList.add('success');
+                responseMessageDiv.textContent = 'تم إرسال البيانات بنجاح. يرجى التحقق من جدول البيانات.';
+                responseMessageDiv.style.display = 'block';
+
+                form.reset(); // مسح النموذج بعد الإرسال
+                typeSelect.dispatchEvent(new Event('change')); // لتحديث حالة الحقول المخفية/الظاهرة
+
+            } catch (error) {
+                console.error('Error submitting form:', error);
+                responseMessageDiv.classList.add('error');
+                responseMessageDiv.textContent = 'حدث خطأ أثناء الإرسال. يرجى المحاولة مرة أخرى.';
+                responseMessageDiv.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
