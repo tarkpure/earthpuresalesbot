@@ -97,6 +97,19 @@
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #007bff;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: none;
+            margin: 10px auto;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -151,7 +164,8 @@
                 <label for="notes">ملاحظات:</label>
                 <textarea id="notes" name="notes"></textarea>
             </div>
-            <button type="submit">إرسال البيانات</button>
+            <button type="submit" id="submitButton">إرسال البيانات</button>
+            <div class="loading-spinner" id="spinner"></div>
             <div id="responseMessage" class="response-message"></div>
         </form>
     </div>
@@ -166,6 +180,8 @@
         const priceGroup = document.getElementById('priceGroup');
         const batchIdGroup = document.getElementById('batchIdGroup');
         const responseMessageDiv = document.getElementById('responseMessage');
+        const submitButton = document.getElementById('submitButton');
+        const spinner = document.getElementById('spinner');
 
         // إظهار/إخفاء حقول الكمية والسعر والباتش بناءً على نوع الطلب
         typeSelect.addEventListener('change', function() {
@@ -183,46 +199,51 @@
                 document.getElementById('batchId').value = '';
             }
         });
+        // لضمان الحالة الصحيحة عند تحميل الصفحة
+        typeSelect.dispatchEvent(new Event('change'));
 
         form.addEventListener('submit', async function(event) {
             event.preventDefault(); // منع إرسال النموذج بالطريقة التقليدية
 
             responseMessageDiv.style.display = 'none'; // إخفاء الرسالة السابقة
             responseMessageDiv.classList.remove('success', 'error');
+            submitButton.disabled = true; // تعطيل زر الإرسال
+            spinner.style.display = 'block'; // إظهار المؤشر
 
             const formData = new FormData(form);
             const data = {};
-            for (let [key, value] formData.entries()) {
+            for (let [key, value] of formData.entries()) { // تم تصحيح for...of syntax
                 data[key] = value;
             }
 
             try {
                 const response = await fetch(WEB_APP_URL, {
                     method: 'POST',
-                    mode: 'no-cors', // مهم جداً لتجنب مشاكل CORS
+                    mode: 'no-cors',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
                     body: new URLSearchParams(data).toString()
                 });
 
-                // نظرًا لاستخدام 'no-cors', لن نتمكن من قراءة استجابة JSON مباشرة
-                // يمكننا فقط افتراض النجاح أو الفشل من خلال حالة الشبكة
-                // ولتأكيد النجاح، نعتمد على أن Apps Script سيقوم بالكتابة
-
-                // عرض رسالة نجاح مبدئية
+                // نظرًا لاستخدام 'no-cors', لن نتمكن من قراءة استجابة JSON مباشرة من هنا
+                // ولكن بما أن Apps Script يعمل على أكمل وجه ويسجل البيانات، سنعرض رسالة نجاح هنا
                 responseMessageDiv.classList.add('success');
-                responseMessageDiv.textContent = 'تم إرسال البيانات بنجاح. يرجى التحقق من جدول البيانات.';
+                responseMessageDiv.textContent = '✅ تم إرسال البيانات بنجاح! يرجى التحقق من جدول البيانات.';
                 responseMessageDiv.style.display = 'block';
 
                 form.reset(); // مسح النموذج بعد الإرسال
                 typeSelect.dispatchEvent(new Event('change')); // لتحديث حالة الحقول المخفية/الظاهرة
-
+                
             } catch (error) {
                 console.error('Error submitting form:', error);
                 responseMessageDiv.classList.add('error');
-                responseMessageDiv.textContent = 'حدث خطأ أثناء الإرسال. يرجى المحاولة مرة أخرى.';
+                responseMessageDiv.textContent = '❌ حدث خطأ أثناء الإرسال. يرجى المحاولة مرة أخرى.';
                 responseMessageDiv.style.display = 'block';
+            } finally {
+                submitButton.disabled = false; // تفعيل زر الإرسال
+                spinner.style.display = 'none'; // إخفاء المؤشر
+                // لا يوجد إعادة توجيه للصفحة مباشرة بعد الإرسال، هذا يتطلب تعاملاً مختلفاً مع Apps Script
             }
         });
     </script>
