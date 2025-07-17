@@ -191,7 +191,7 @@
 
     <script>
         // هذا هو الرابط الذي حصلت عليه من Google Apps Script (Web App URL)
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxVqdvj_L5R_nScs3HJ33JnOX2Dmx9dG5auwSL4rXszAh15HjT0Ns24slKms9eqX6vk/exec';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbymMD6-nBx2Ynsc1R3ry-8xhnDmat_Hym_uv1ikkLdhH50s6yl1K-zxQk9XuCCoTCiS/exec';
 
         const form = document.getElementById('salesForm');
         const typeSelect = document.getElementById('type');
@@ -310,7 +310,6 @@
                 itemsContainer.innerHTML = ''; // مسح الأصناف الديناميكية
                 itemCounter = 0; // إعادة تعيين العداد
                 addItemField(true); // إضافة حقل صنف أول جديد
-                typeSelect.dispatchEvent(new Event('change')); // لتحديث حالة حقول الأوردر/العينة
                 
             } catch (error) {
                 console.error('Error submitting form:', error);
