@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة الأوردرات والعينات - Earth Pure</title>
+    <title>الواجهة الرئيسية - Earth Pure</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -11,352 +11,132 @@
             margin: 0;
             padding: 20px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center; /* توسيط رأسي للمحتوى */
             min-height: 100vh;
             color: #333;
-            direction: rtl; /* الحفاظ على اتجاه النص */
-        }
-        .container {
-            background-color: #ffffff;
-            padding: 30px 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            width: 100%;
-            box-sizing: border-box;
+            direction: rtl;
         }
         .logo-container {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
         .logo {
-            max-width: 180px; /* تحديد أقصى عرض للشعار */
+            max-width: 150px;
             height: auto;
         }
         h1 {
             text-align: center;
             color: #ad8a00; /* لون ذهبي أغمق قليلاً */
-            margin-bottom: 20px;
-            font-size: 2.2em; /* زيادة حجم العنوان قليلاً */
+            margin-bottom: 40px; /* زيادة الهامش السفلي للعنوان */
+            font-size: 2.2em;
         }
-        .form-group {
-            margin-bottom: 18px;
-        }
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: bold;
-            color: #444; /* لون نص أغمق قليلاً */
-        }
-        input[type="text"],
-        input[type="number"],
-        textarea,
-        select {
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
             width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
+            max-width: 600px;
+            padding: 0 20px; /* إضافة padding أفقي */
             box-sizing: border-box;
-            font-size: 1em;
-            transition: border-color 0.3s;
         }
-        input[type="text"]:focus,
-        input[type="number"]:focus,
-        textarea:focus,
-        select:focus {
-            border-color: #ad8a00; /* لون التركيز الذهبي */
-            outline: none;
-        }
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-        button[type="submit"] {
-            background-color: #333; /* لون أسود */
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1.1em;
-            transition: background-color 0.3s;
-            margin-top: 25px;
-            width: 100%; /* جعل زر الإرسال بعرض كامل */
-        }
-        button[type="submit"]:hover {
-            background-color: #555; /* لون رمادي داكن */
-        }
-        .item-group {
-            border: 1px solid #e0e0e0;
-            padding: 15px;
-            margin-top: 15px;
+        .dashboard-card {
+            background-color: #fff;
             border-radius: 8px;
-            background-color: #f9f9f9;
-            position: relative;
-        }
-        .remove-item-btn {
-            position: absolute;
-            top: 5px;
-            left: 5px; /* تعديل الموضع ليتناسب مع الاتجاه RTL */
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 25px;
-            height: 25px;
-            font-size: 1.2em;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* ظل أخف وأكثر نعومة */
+            padding: 25px; /* زيادة التباعد الداخلي */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
             cursor: pointer;
-            line-height: 1;
-            padding: 0;
-            text-align: center;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            text-decoration: none; /* إزالة خط سفلي للروابط */
+            color: inherit; /* وراثة لون النص من الأب */
         }
-        .remove-item-btn:hover {
-            background-color: #c82333;
+        .dashboard-card:hover {
+            transform: translateY(-5px); /* تأثير رفع خفيف */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12); /* ظل أعمق عند التحويم */
         }
-        .add-item-btn {
-            background-color: #ad8a00; /* لون ذهبي */
-            margin-top: 15px;
-            padding: 12px 15px;
-            font-size: 1.1em;
-            width: auto;
-            display: block;
-            border-radius: 6px;
-            border: none;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .add-item-btn:hover {
-            background-color: #967700; /* لون ذهبي أغمق عند التحويم */
-        }
-        h2 {
-            color: #555;
-            margin-top: 25px;
+        .card-icon {
+            font-size: 3em; /* تكبير حجم الأيقونة */
             margin-bottom: 15px;
-            font-size: 1.6em;
-            text-align: center;
+            line-height: 1; /* لضمان توسيط الأيقونات بشكل أفضل */
         }
-        #itemsContainer {
-            margin-bottom: 15px;
-        }
-        .response-message {
-            text-align: center;
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 8px;
+        .card-title {
+            font-size: 1.25em; /* تكبير حجم العنوان قليلاً */
             font-weight: bold;
-            display: none;
+            color: #333; /* لون عنوان الكارت */
         }
-        .response-message.success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+        /* ألوان الكروت وتدرجاتها */
+        .card-orders { background-color: #e3f2fd; } /* أزرق فاتح جداً */
+        .card-orders .card-icon { color: #2196f3; } /* أزرق */
+
+        .card-salaries { background-color: #e8f5e9; } /* أخضر فاتح جداً */
+        .card-salaries .card-icon { color: #4caf50; } /* أخضر */
+
+        .card-accounts { background-color: #fff3e0; } /* برتقالي فاتح جداً */
+        .card-accounts .card-icon { color: #ff9800; } /* برتقالي */
+
+        .card-inventory { background-color: #f3e5f5; } /* بنفسجي فاتح جداً */
+        .card-inventory .card-icon { color: #9c27b0; } /* بنفسجي */
+
+        /* لتحديد أن الكروت الأخرى غير قابلة للنقر مؤقتًا */
+        .disabled-card {
+            cursor: default; /* مؤشر الفأرة الافتراضي */
+            opacity: 0.7; /* تقليل الشفافية قليلاً */
         }
-        .response-message.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+        .disabled-card:hover {
+            transform: none; /* إزالة تأثير التحويم */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* إزالة الظل الأعمق */
         }
-        .loading-spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: #ad8a00; /* لون ذهبي */
-            border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            animation: spin 1s linear infinite;
-            display: none;
-            margin: 20px auto;
+        .disabled-card .card-icon, .disabled-card .card-title {
+            color: #888; /* جعل الأيقونة والنص باهتين */
         }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+
+        /* استجابة الهاتف (Mobile Responsiveness) */
+        @media (max-width: 600px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr; /* عمود واحد على الشاشات الصغيرة */
+                padding: 0 10px;
+            }
+            .dashboard-card {
+                padding: 20px;
+            }
+            .logo {
+                max-width: 120px;
+            }
+            h1 {
+                font-size: 1.8em;
+                margin-bottom: 30px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo-container">
-            <img src="logo.png" alt="شعار Earth Pure" class="logo">
-        </div>
-        <h1>إدارة أوردرات وعينات السيلز</h1>
-        <form id="salesForm">
-            <div class="form-group">
-                <label for="type">النوع:</label>
-                <select id="type" name="type" required>
-                    <option value="">اختر النوع</option>
-                    <option value="order">أوردر</option>
-                    <option value="sample">عينة</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="employee">اسم الموظف:</label>
-                <input type="text" id="employee" name="employee" required>
-            </div>
-            <div class="form-group">
-                <label for="clientName">اسم العميل:</label>
-                <input type="text" id="clientName" name="clientName" required>
-            </div>
-            <div class="form-group">
-                <label for="company">اسم الشركة:</label>
-                <input type="text" id="company" name="company">
-            </div>
-            <div class="form-group">
-                <label for="phone">رقم التليفون:</label>
-                <input type="text" id="phone" name="phone" required>
-            </div>
-            <div class="form-group">
-                <label for="address">العنوان:</label>
-                <textarea id="address" name="address"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="notes">ملاحظات عامة:</label>
-                <textarea id="notes" name="notes"></textarea>
-            </div>
-
-            <h2>الأصناف:</h2>
-            <div id="itemsContainer">
-                </div>
-            <button type="button" id="addItemBtn" class="add-item-btn">+ إضافة صنف آخر</button>
-
-            <button type="submit" id="submitButton">إرسال البيانات</button>
-            <div class="loading-spinner" id="spinner"></div>
-            <div id="responseMessage" class="response-message"></div>
-        </form>
+    <div class="logo-container">
+        <img src="logo.png" alt="شعار Earth Pure" class="logo">
     </div>
-
-    <script>
-        // هذا هو الرابط الذي حصلت عليه من Google Apps Script (Web App URL)
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbymMD6-nBx2Ynsc1R3ry-8xhnDmat_Hym_uv1ikkLdhH50s6yl1K-zxQk9XuCCoTCiS/exec'; // تم التأكد من أنه أحدث رابط
-
-        const form = document.getElementById('salesForm');
-        const typeSelect = document.getElementById('type');
-        const itemsContainer = document.getElementById('itemsContainer');
-        const addItemBtn = document.getElementById('addItemBtn');
-        const responseMessageDiv = document.getElementById('responseMessage');
-        const submitButton = document.getElementById('submitButton');
-        const spinner = document.getElementById('spinner');
-        const generalNotesField = document.getElementById('notes');
-
-        let itemCounter = 0;
-
-        function addItemField(initial = false) {
-            itemCounter++;
-            const itemGroup = document.createElement('div');
-            itemGroup.classList.add('item-group');
-            itemGroup.innerHTML = `
-                ${itemCounter > 1 ? '<button type="button" class="remove-item-btn">X</button>' : ''}
-                <div class="form-group">
-                    <label for="item_name_${itemCounter}">اسم الصنف:</label>
-                    <input type="text" id="item_name_${itemCounter}" name="items[${itemCounter-1}][name]" required>
-                </div>
-                <div class="form-group">
-                    <label for="item_quantity_${itemCounter}">الكمية:</label>
-                    <input type="number" id="item_quantity_${itemCounter}" name="items[${itemCounter-1}][quantity]">
-                </div>
-                <div class="form-group">
-                    <label for="item_price_${itemCounter}">السعر:</label>
-                    <input type="number" id="item_price_${itemCounter}" name="items[${itemCounter-1}][price]" step="0.01">
-                </div>
-                <div class="form-group">
-                    <label for="item_batchId_${itemCounter}">رقم الباتش:</label>
-                    <input type="text" id="item_batchId_${itemCounter}" name="items[${itemCounter-1}][batchId]">
-                </div>
-            `;
-            itemsContainer.appendChild(itemGroup);
-
-            if (itemCounter > 1) {
-                itemGroup.querySelector('.remove-item-btn').addEventListener('click', function() {
-                    itemGroup.remove();
-                });
-            }
-        }
-
-        addItemField(true);
-        addItemBtn.addEventListener('click', addItemField);
-
-        form.addEventListener('submit', async function(event) {
-            event.preventDefault();
-
-            responseMessageDiv.style.display = 'none';
-            responseMessageDiv.classList.remove('success', 'error');
-            submitButton.disabled = true;
-            spinner.style.display = 'block';
-
-            const formData = new FormData(form);
-            const data = {};
-            
-            // جمع البيانات الثابتة
-            data.type = formData.get('type');
-            data.employee = formData.get('employee');
-            data.clientName = formData.get('clientName');
-            data.company = formData.get('company');
-            data.phone = formData.get('phone');
-            data.address = formData.get('address');
-            data.notes = formData.get('notes'); // الملاحظات العامة
-
-            // هذا هو الجزء الذي تم تعديله لضمان عمل جمع بيانات الأصناف
-            const itemsData = [];
-            const itemGroups = itemsContainer.querySelectorAll('.item-group');
-            itemGroups.forEach((group, index) => {
-                const item = {
-                    // نستخدم name attribute مباشرة لجمع البيانات
-                    name: group.querySelector(`input[name="items[${index}][name]"]`) ? group.querySelector(`input[name="items[${index}][name]"]`).value : '',
-                    quantity: group.querySelector(`input[name="items[${index}][quantity]"]`) ? group.querySelector(`input[name="items[${index}][quantity]"]`).value : '',
-                    price: group.querySelector(`input[name="items[${index}][price]"]`) ? group.querySelector(`input[name="items[${index}][price]"]`).value : '',
-                    batchId: group.querySelector(`input[name="items[${index}][batchId]"]`) ? group.querySelector(`input[name="items[${index}][batchId]"]`).value : ''
-                };
-                if (item.name) { // إضافة الصنف فقط إذا كان له اسم
-                    itemsData.push(item);
-                }
-            });
-            
-            // إذا لم يتم إرسال أي أصناف (مثلاً، تم حذف جميع حقول الأصناف)، أضف صفاً فارغاً واحداً لتجنب الخطأ
-            if (itemsData.length === 0) {
-                itemsData.push({name: '', quantity: '', price: '', batchId: ''});
-            }
-            data.itemsData = JSON.stringify(itemsData);
-
-
-            // تحويل الكائن data إلى URLSearchParams
-            const params = new URLSearchParams();
-            params.append('type', data.type);
-            params.append('employee', data.employee);
-            params.append('clientName', data.clientName);
-            params.append('company', data.company);
-            params.append('phone', data.phone);
-            params.append('address', data.address);
-            params.append('notes', data.notes);
-            params.append('itemsData', data.itemsData); // تمرير الأصناف كمصفوفة JSON
-
-            try {
-                const response = await fetch(WEB_APP_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: params.toString()
-                });
-
-                responseMessageDiv.classList.add('success');
-                responseMessageDiv.textContent = '✅ تم إرسال البيانات بنجاح! يرجى التحقق من جدول البيانات.';
-                responseMessageDiv.style.display = 'block';
-
-                form.reset(); // مسح النموذج بعد الإرسال
-                itemsContainer.innerHTML = ''; // مسح الأصناف الديناميكية
-                itemCounter = 0; // إعادة تعيين العداد
-                addItemField(true); // إضافة حقل صنف أول جديد
-                
-            } catch (error) {
-                console.error('Error submitting form:', error);
-                responseMessageDiv.classList.add('error');
-                responseMessageDiv.textContent = '❌ حدث خطأ أثناء الإرسال. يرجى المحاولة مرة أخرى.';
-                responseMessageDiv.style.display = 'block';
-            } finally {
-                submitButton.disabled = false; // تفعيل زر الإرسال
-                spinner.style.display = 'none'; // إخفاء المؤشر
-            }
-        });
-    </script>
+    <h1>لوحة التحكم الرئيسية</h1>
+    <div class="dashboard-grid">
+        <a href="form.html" class="dashboard-card card-orders">
+            <div class="card-icon">🧾</div>
+            <div class="card-title">إدارة الأوردرات والعينات</div>
+        </a>
+        <div class="dashboard-card card-salaries disabled-card">
+            <div class="card-icon">💰</div>
+            <div class="card-title">الرواتب</div>
+        </div>
+        <div class="dashboard-card card-accounts disabled-card">
+            <div class="card-icon">📊</div>
+            <div class="card-title">الحسابات</div>
+        </div>
+        <div class="dashboard-card card-inventory disabled-card">
+            <div class="card-icon">📦</div>
+            <div class="card-title">المخزون</div>
+        </div>
+    </div>
 </body>
 </html>
