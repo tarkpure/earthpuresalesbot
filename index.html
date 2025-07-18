@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة الأوردرات والعينات</title>
+    <title>إدارة الأوردرات والعينات - Earth Pure</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
+            background-color: #f8f8f8; /* لون خلفية أفتح قليلاً */
             margin: 0;
             padding: 20px;
             display: flex;
@@ -15,6 +15,7 @@
             align-items: center;
             min-height: 100vh;
             color: #333;
+            direction: rtl; /* الحفاظ على اتجاه النص */
         }
         .container {
             background-color: #ffffff;
@@ -25,20 +26,28 @@
             width: 100%;
             box-sizing: border-box;
         }
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo {
+            max-width: 180px; /* تحديد أقصى عرض للشعار */
+            height: auto;
+        }
         h1 {
             text-align: center;
-            color: #007bff;
-            margin-bottom: 30px;
-            font-size: 2em;
+            color: #ad8a00; /* لون ذهبي أغمق قليلاً */
+            margin-bottom: 20px;
+            font-size: 2.2em; /* زيادة حجم العنوان قليلاً */
         }
         .form-group {
             margin-bottom: 18px;
         }
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: bold;
-            color: #555;
+            color: #444; /* لون نص أغمق قليلاً */
         }
         input[type="text"],
         input[type="number"],
@@ -56,12 +65,27 @@
         input[type="number"]:focus,
         textarea:focus,
         select:focus {
-            border-color: #007bff;
+            border-color: #ad8a00; /* لون التركيز الذهبي */
             outline: none;
         }
         textarea {
             resize: vertical;
-            min-height: 60px; /* تم تقليل الارتفاع قليلاً */
+            min-height: 80px;
+        }
+        button[type="submit"] {
+            background-color: #333; /* لون أسود */
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s;
+            margin-top: 25px;
+            width: 100%; /* جعل زر الإرسال بعرض كامل */
+        }
+        button[type="submit"]:hover {
+            background-color: #555; /* لون رمادي داكن */
         }
         .item-group {
             border: 1px solid #e0e0e0;
@@ -69,12 +93,12 @@
             margin-top: 15px;
             border-radius: 8px;
             background-color: #f9f9f9;
-            position: relative; /* لإعداد زر الحذف */
+            position: relative;
         }
-        .item-group .remove-item-btn {
+        .remove-item-btn {
             position: absolute;
             top: 5px;
-            right: 5px;
+            left: 5px; /* تعديل الموضع ليتناسب مع الاتجاه RTL */
             background: #dc3545;
             color: white;
             border: none;
@@ -83,36 +107,44 @@
             height: 25px;
             font-size: 1.2em;
             cursor: pointer;
-            line-height: 1; /* لتوسيط علامة X */
+            line-height: 1;
             padding: 0;
             text-align: center;
         }
-        .item-group .remove-item-btn:hover {
-            background: #c82333;
+        .remove-item-btn:hover {
+            background-color: #c82333;
         }
         .add-item-btn {
-            background-color: #17a2b8;
+            background-color: #ad8a00; /* لون ذهبي */
             margin-top: 15px;
-            padding: 10px 15px;
-            font-size: 1em;
+            padding: 12px 15px;
+            font-size: 1.1em;
             width: auto;
-            display: block; /* لجعله في سطر جديد */
+            display: block;
+            border-radius: 6px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
         .add-item-btn:hover {
-            background-color: #138496;
+            background-color: #967700; /* لون ذهبي أغمق عند التحويم */
         }
-        button[type="submit"] {
-            background-color: #28a745;
-            margin-top: 20px;
+        h2 {
+            color: #555;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.6em;
+            text-align: center;
         }
-        button[type="submit"]:hover {
-            background-color: #218838;
+        #itemsContainer {
+            margin-bottom: 15px;
         }
         .response-message {
             text-align: center;
             margin-top: 20px;
-            padding: 12px;
-            border-radius: 6px;
+            padding: 15px;
+            border-radius: 8px;
             font-weight: bold;
             display: none;
         }
@@ -128,13 +160,13 @@
         }
         .loading-spinner {
             border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: #007bff;
+            border-left-color: #ad8a00; /* لون ذهبي */
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
             animation: spin 1s linear infinite;
             display: none;
-            margin: 10px auto;
+            margin: 20px auto;
         }
         @keyframes spin {
             to { transform: rotate(360deg); }
@@ -143,6 +175,9 @@
 </head>
 <body>
     <div class="container">
+        <div class="logo-container">
+            <img src="logo.png" alt="شعار Earth Pure" class="logo">
+        </div>
         <h1>إدارة أوردرات وعينات السيلز</h1>
         <form id="salesForm">
             <div class="form-group">
@@ -191,7 +226,7 @@
 
     <script>
         // هذا هو الرابط الذي حصلت عليه من Google Apps Script (Web App URL)
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbymMD6-nBx2Ynsc1R3ry-8xhnDmat_Hym_uv1ikkLdhH50s6yl1K-zxQk9XuCCoTCiS/exec';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbymMD6-nBx2Ynsc1R3ry-8xhnDmat_Hym_uv1ikkLdhH50s6yl1K-zxQk9XuCCoTCiS/exec'; // تم التأكد من أنه أحدث رابط
 
         const form = document.getElementById('salesForm');
         const typeSelect = document.getElementById('type');
@@ -200,11 +235,10 @@
         const responseMessageDiv = document.getElementById('responseMessage');
         const submitButton = document.getElementById('submitButton');
         const spinner = document.getElementById('spinner');
-        const generalNotesField = document.getElementById('notes'); // حقل الملاحظات العامة
+        const generalNotesField = document.getElementById('notes');
 
-        let itemCounter = 0; // لعد الأصناف وتسمية حقولها بشكل فريد
+        let itemCounter = 0;
 
-        // دالة لإضافة مجموعة حقول صنف جديدة
         function addItemField(initial = false) {
             itemCounter++;
             const itemGroup = document.createElement('div');
@@ -230,29 +264,23 @@
             `;
             itemsContainer.appendChild(itemGroup);
 
-            // إضافة مستمع لزر الحذف إذا كان موجوداً
             if (itemCounter > 1) {
                 itemGroup.querySelector('.remove-item-btn').addEventListener('click', function() {
                     itemGroup.remove();
-                    // لا نحتاج لتعديل itemCounter هنا لأنه يستخدم فقط لتسمية الحقول
-                    // والأسماء تعتمد على index-1 في المصفوفة
                 });
             }
         }
 
-        // إضافة أول صنف عند تحميل الصفحة
         addItemField(true);
-
-        // إضافة صنف جديد عند النقر على الزر
         addItemBtn.addEventListener('click', addItemField);
 
         form.addEventListener('submit', async function(event) {
-            event.preventDefault(); // منع إرسال النموذج بالطريقة التقليدية
+            event.preventDefault();
 
-            responseMessageDiv.style.display = 'none'; // إخفاء الرسالة السابقة
+            responseMessageDiv.style.display = 'none';
             responseMessageDiv.classList.remove('success', 'error');
-            submitButton.disabled = true; // تعطيل زر الإرسال
-            spinner.style.display = 'block'; // إظهار المؤشر
+            submitButton.disabled = true;
+            spinner.style.display = 'block';
 
             const formData = new FormData(form);
             const data = {};
@@ -266,20 +294,28 @@
             data.address = formData.get('address');
             data.notes = formData.get('notes'); // الملاحظات العامة
 
-            // جمع بيانات الأصناف المتعددة
-            data.items = [];
+            // هذا هو الجزء الذي تم تعديله لضمان عمل جمع بيانات الأصناف
+            const itemsData = [];
             const itemGroups = itemsContainer.querySelectorAll('.item-group');
-            itemGroups.forEach(group => {
+            itemGroups.forEach((group, index) => {
                 const item = {
-                    name: group.querySelector('input[name^="items["][name$="[name]"]').value,
-                    quantity: group.querySelector('input[name^="items["][name$="[quantity]"]').value,
-                    price: group.querySelector('input[name^="items["][name$="[price]"]').value,
-                    batchId: group.querySelector('input[name^="items["][name$="[batchId]"]').value
+                    // نستخدم name attribute مباشرة لجمع البيانات
+                    name: group.querySelector(`input[name="items[${index}][name]"]`) ? group.querySelector(`input[name="items[${index}][name]"]`).value : '',
+                    quantity: group.querySelector(`input[name="items[${index}][quantity]"]`) ? group.querySelector(`input[name="items[${index}][quantity]"]`).value : '',
+                    price: group.querySelector(`input[name="items[${index}][price]"]`) ? group.querySelector(`input[name="items[${index}][price]"]`).value : '',
+                    batchId: group.querySelector(`input[name="items[${index}][batchId]"]`) ? group.querySelector(`input[name="items[${index}][batchId]"]`).value : ''
                 };
                 if (item.name) { // إضافة الصنف فقط إذا كان له اسم
-                    data.items.push(item);
+                    itemsData.push(item);
                 }
             });
+            
+            // إذا لم يتم إرسال أي أصناف (مثلاً، تم حذف جميع حقول الأصناف)، أضف صفاً فارغاً واحداً لتجنب الخطأ
+            if (itemsData.length === 0) {
+                itemsData.push({name: '', quantity: '', price: '', batchId: ''});
+            }
+            data.itemsData = JSON.stringify(itemsData);
+
 
             // تحويل الكائن data إلى URLSearchParams
             const params = new URLSearchParams();
@@ -290,7 +326,7 @@
             params.append('phone', data.phone);
             params.append('address', data.address);
             params.append('notes', data.notes);
-            params.append('itemsData', JSON.stringify(data.items)); // تمرير الأصناف كمصفوفة JSON
+            params.append('itemsData', data.itemsData); // تمرير الأصناف كمصفوفة JSON
 
             try {
                 const response = await fetch(WEB_APP_URL, {
