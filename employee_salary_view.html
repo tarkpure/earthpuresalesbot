@@ -163,23 +163,21 @@
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby3mHlW0RuGxR8IZ9mjfByBVGE3Izi-KvcFBWftxt09GgtDHO5UdTk907U6w3QTpHbR/exec'; 
 
         const employeeNameHeader = document.getElementById('employeeNameHeader');
-        const currentMonthSalaryTable = document.getElementById('currentMonthSalary'); // تم تغيير الاسم
-        const salaryHistoryBody = document.getElementById('salaryHistory').getElementsByTagName('tbody')[0]; // تم تغيير الاسم
+        const currentMonthSalaryTable = document.getElementById('currentMonthSalary');
+        const salaryHistoryBody = document.getElementById('salaryHistory').getElementsByTagName('tbody')[0];
         const messageDiv = document.getElementById('messageDiv');
         const loadingSpinner = document.getElementById('loadingSpinner');
 
-        // دالة لعرض رسالة
         function showMessage(msg, type = 'error') {
             messageDiv.textContent = msg;
             messageDiv.classList.add(type);
             messageDiv.style.display = 'block';
         }
 
-        // دالة لجلب بيانات الراتب
         async function fetchSalaryData() {
             loadingSpinner.style.display = 'block';
-            currentMonthSalaryTable.style.display = 'none'; // إخفاء الجدول مؤقتاً
-            salaryHistoryBody.innerHTML = ''; // مسح البيانات القديمة
+            currentMonthSalaryTable.style.display = 'none';
+            salaryHistoryBody.innerHTML = '';
             messageDiv.style.display = 'none';
 
             const employeeId = localStorage.getItem('currentEmployeeId');
@@ -194,13 +192,13 @@
             employeeNameHeader.textContent = `مرحباً، ${employeeName || employeeId}`;
 
             const params = new URLSearchParams();
-            params.append('action', 'getEmployeeSalary'); // تحديد الإجراء في Apps Script
+            params.append('action', 'getEmployeeSalary');
             params.append('employeeId', employeeId);
 
             try {
                 const response = await fetch(WEB_APP_URL, {
                     method: 'POST',
-                    mode: 'cors', // مهم جداً: يجب أن تكون 'cors' لتلقي استجابة JSON
+                    mode: 'cors',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
@@ -208,12 +206,11 @@
                 });
 
                 const result = await response.json();
-                console.log('Apps Script salary response:', result); // لسجلات المتصفح
+                console.log('Apps Script salary response:', result);
 
                 if (result.status === 'success' && result.data && Array.isArray(result.data)) {
-                    currentMonthSalaryTable.style.display = 'table'; // إظهار الجدول
-                    // عرض بيانات الشهر الحالي (أحدث سجل)
-                    const latestRecord = result.data[result.data.length - 1]; // أحدث سجل هو الأخير
+                    currentMonthSalaryTable.style.display = 'table';
+                    const latestRecord = result.data[result.data.length - 1];
 
                     if (latestRecord) {
                         document.getElementById('currentMonth').textContent = latestRecord['الشهر'] || '';
@@ -225,7 +222,6 @@
                         showMessage('لا توجد بيانات راتب للشهر الحالي.', 'info');
                     }
 
-                    // ملء سجل الرواتب السابق
                     if (result.data.length > 0) {
                         result.data.forEach(record => {
                             const row = salaryHistoryBody.insertRow();
@@ -252,8 +248,6 @@
             }
         }
 
-        // يتم استدعاء هذه الدالة عند تحميل الصفحة لجلب البيانات
-        // يجب التأكد من أن الموظف قام بتسجيل الدخول قبل تحميل هذه الصفحة
         window.onload = fetchSalaryData;
     </script>
 </body>
