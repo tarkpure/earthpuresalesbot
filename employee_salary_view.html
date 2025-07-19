@@ -77,6 +77,10 @@
             background-color: #f8d7da;
             color: #721c24;
         }
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
         .loading-spinner {
             border: 4px solid rgba(0, 0, 0, 0.1);
             border-left-color: #4caf50;
@@ -155,16 +159,16 @@
     </div>
 
     <script>
-        // هذا هو الرابط الذي حصلت عليه من Google Apps Script (Web App URL)
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbymMD6-nBx2Ynsc1R3ry-8xhnDmat_Hym_uv1ikkLdhH50s6yl1K-zxQk9XuCCoTCiS/exec';
+        // هذا هو الرابط الجديد الذي حصلت عليه من Google Apps Script (Web App URL)
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby3mHlW0RuGxR8IZ9mjfByBVGE3Izi-KvcFBWftxt09GgtDHO5UdTk907U6w3QTpHbR/exec'; 
 
         const employeeNameHeader = document.getElementById('employeeNameHeader');
-        const currentMonthSalary = document.getElementById('currentMonthSalary');
-        const salaryHistory = document.getElementById('salaryHistory').getElementsByTagName('tbody')[0];
+        const currentMonthSalaryTable = document.getElementById('currentMonthSalary'); // تم تغيير الاسم
+        const salaryHistoryBody = document.getElementById('salaryHistory').getElementsByTagName('tbody')[0]; // تم تغيير الاسم
         const messageDiv = document.getElementById('messageDiv');
         const loadingSpinner = document.getElementById('loadingSpinner');
 
-        // دالة لعرض رسالة خطأ
+        // دالة لعرض رسالة
         function showMessage(msg, type = 'error') {
             messageDiv.textContent = msg;
             messageDiv.classList.add(type);
@@ -174,11 +178,10 @@
         // دالة لجلب بيانات الراتب
         async function fetchSalaryData() {
             loadingSpinner.style.display = 'block';
-            currentMonthSalary.style.display = 'none';
-            salaryHistory.innerHTML = ''; // مسح البيانات القديمة
+            currentMonthSalaryTable.style.display = 'none'; // إخفاء الجدول مؤقتاً
+            salaryHistoryBody.innerHTML = ''; // مسح البيانات القديمة
             messageDiv.style.display = 'none';
 
-            // جلب رقم الموظف من localStorage (بعد تسجيل الدخول)
             const employeeId = localStorage.getItem('currentEmployeeId');
             const employeeName = localStorage.getItem('currentEmployeeName');
 
@@ -191,26 +194,55 @@
             employeeNameHeader.textContent = `مرحباً، ${employeeName || employeeId}`;
 
             const params = new URLSearchParams();
-            params.append('action', 'getEmployeeSalary'); // إجراء جديد لـ Apps Script
+            params.append('action', 'getEmployeeSalary'); // تحديد الإجراء في Apps Script
             params.append('employeeId', employeeId);
 
             try {
                 const response = await fetch(WEB_APP_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
+                    mode: 'cors', // مهم جداً: يجب أن تكون 'cors' لتلقي استجابة JSON
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
                     body: params.toString()
                 });
 
-                // بما أننا نستخدم no-cors، لا يمكننا قراءة الاستجابة مباشرة
-                // ولكن إذا وصل الكود إلى هنا، يمكننا افتراض أن الطلب تم إرساله
-                // الاستجابة الفعلية (البيانات) ستأتي عبر إعادة التوجيه أو لن تظهر في الشبكة
-                // لذا سنعتمد على تخزين البيانات في localStorage بواسطة Apps Script وإعادة التوجيه
+                const result = await response.json();
+                console.log('Apps Script salary response:', result); // لسجلات المتصفح
 
-                // رسالة افتراضية، قد يتم تجاوزها إذا نجح Apps Script في التوجيه
-                showMessage('يتم جلب بيانات الراتب...', 'info');
+                if (result.status === 'success' && result.data && Array.isArray(result.data)) {
+                    currentMonthSalaryTable.style.display = 'table'; // إظهار الجدول
+                    // عرض بيانات الشهر الحالي (أحدث سجل)
+                    const latestRecord = result.data[result.data.length - 1]; // أحدث سجل هو الأخير
+
+                    if (latestRecord) {
+                        document.getElementById('currentMonth').textContent = latestRecord['الشهر'] || '';
+                        document.getElementById('baseSalary').textContent = latestRecord['الراتب الأساسي'] || '';
+                        document.getElementById('bonuses').textContent = latestRecord['المكافآت'] || '';
+                        document.getElementById('deductions').textContent = latestRecord['الخصومات'] || '';
+                        document.getElementById('netSalary').textContent = latestRecord['الصافي'] || '';
+                    } else {
+                        showMessage('لا توجد بيانات راتب للشهر الحالي.', 'info');
+                    }
+
+                    // ملء سجل الرواتب السابق
+                    if (result.data.length > 0) {
+                        result.data.forEach(record => {
+                            const row = salaryHistoryBody.insertRow();
+                            row.insertCell().textContent = record['الشهر'] || '';
+                            row.insertCell().textContent = record['الراتب الأساسي'] || '';
+                            row.insertCell().textContent = record['المكافآت'] || '';
+                            row.insertCell().textContent = record['الخصومات'] || '';
+                            row.insertCell().textContent = record['الصافي'] || '';
+                        });
+                    } else {
+                        showMessage('لا توجد سجلات رواتب سابقة.', 'info');
+                    }
+
+                } else {
+                    console.error('Unexpected Apps Script salary response:', result);
+                    showMessage('❌ حدث خطأ في جلب بيانات الراتب أو لا توجد بيانات.', 'error');
+                }
 
             } catch (error) {
                 console.error('Error fetching salary data:', error);
@@ -221,15 +253,8 @@
         }
 
         // يتم استدعاء هذه الدالة عند تحميل الصفحة لجلب البيانات
-        fetchSalaryData();
-
-        // *** ملاحظة هامة: هذا الكود يعتمد على أن Google Apps Script
-        // سيقوم بإعادة توجيه المتصفح إلى هذه الصفحة
-        // مع إضافة بيانات الراتب كمعلمات في URL (مثلاً #data=...)
-        // أو أن Apps Script سيستخدم `window.localStorage.setItem` لتخزين البيانات
-        // قبل إعادة التوجيه إلى هذه الصفحة.
-        // سنضيف هذا المنطق إلى Apps Script في الخطوات القادمة.
-        // حالياً، لن يتم عرض بيانات الراتب الفعلية إلا بعد تعديل Apps Script.
+        // يجب التأكد من أن الموظف قام بتسجيل الدخول قبل تحميل هذه الصفحة
+        window.onload = fetchSalaryData;
     </script>
 </body>
 </html>
