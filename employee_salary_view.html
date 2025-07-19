@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تفاصيل الراتب - Earth Pure</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+            direction: rtl;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            max-width: 800px; /* زيادة العرض لاستيعاب الجداول */
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo {
+            max-width: 120px;
+            height: auto;
+        }
+        h1 {
+            color: #4caf50; /* لون أخضر للرواتب */
+            margin-bottom: 20px;
+            font-size: 2em;
+            text-align: center;
+        }
+        h2 {
+            color: #555;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            text-align: center;
+        }
+        .salary-details, .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .salary-details td, .history-table th, .history-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: right; /* محاذاة لليمين */
+        }
+        .salary-details th, .history-table th {
+            background-color: #e8f5e9; /* لون أخضر فاتح للخلفية */
+            color: #4caf50; /* لون أخضر للخط */
+            font-weight: bold;
+        }
+        .salary-details tr:nth-child(even), .history-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 6px;
+            display: none;
+            text-align: center;
+        }
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #4caf50;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: none;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .back-button {
+            background-color: #555;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        .back-button:hover {
+            background-color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-container">
+            <img src="logo.png" alt="شعار Earth Pure" class="logo">
+        </div>
+        <h1 id="employeeNameHeader"></h1>
+        <div id="loadingSpinner" class="loading-spinner"></div>
+        <div id="messageDiv" class="message"></div>
+
+        <h2>راتب الشهر الحالي</h2>
+        <table class="salary-details" id="currentMonthSalary">
+            <thead>
+                <tr>
+                    <th>الشهر</th>
+                    <th>الراتب الأساسي</th>
+                    <th>المكافآت</th>
+                    <th>الخصومات</th>
+                    <th>الصافي</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="currentMonth"></td>
+                    <td id="baseSalary"></td>
+                    <td id="bonuses"></td>
+                    <td id="deductions"></td>
+                    <td id="netSalary"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>سجل الرواتب السابق</h2>
+        <table class="history-table" id="salaryHistory">
+            <thead>
+                <tr>
+                    <th>الشهر</th>
+                    <th>الراتب الأساسي</th>
+                    <th>المكافآت</th>
+                    <th>الخصومات</th>
+                    <th>الصافي</th>
+                </tr>
+            </thead>
+            <tbody>
+                </tbody>
+        </table>
+        <button class="back-button" onclick="window.location.href='index.html'">العودة للرئيسية</button>
+    </div>
+
+    <script>
+        // هذا هو الرابط الذي حصلت عليه من Google Apps Script (Web App URL)
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbymMD6-nBx2Ynsc1R3ry-8xhnDmat_Hym_uv1ikkLdhH50s6yl1K-zxQk9XuCCoTCiS/exec';
+
+        const employeeNameHeader = document.getElementById('employeeNameHeader');
+        const currentMonthSalary = document.getElementById('currentMonthSalary');
+        const salaryHistory = document.getElementById('salaryHistory').getElementsByTagName('tbody')[0];
+        const messageDiv = document.getElementById('messageDiv');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+
+        // دالة لعرض رسالة خطأ
+        function showMessage(msg, type = 'error') {
+            messageDiv.textContent = msg;
+            messageDiv.classList.add(type);
+            messageDiv.style.display = 'block';
+        }
+
+        // دالة لجلب بيانات الراتب
+        async function fetchSalaryData() {
+            loadingSpinner.style.display = 'block';
+            currentMonthSalary.style.display = 'none';
+            salaryHistory.innerHTML = ''; // مسح البيانات القديمة
+            messageDiv.style.display = 'none';
+
+            // جلب رقم الموظف من localStorage (بعد تسجيل الدخول)
+            const employeeId = localStorage.getItem('currentEmployeeId');
+            const employeeName = localStorage.getItem('currentEmployeeName');
+
+            if (!employeeId) {
+                showMessage('خطأ: لم يتم تسجيل الدخول. يرجى العودة لصفحة الدخول.', 'error');
+                loadingSpinner.style.display = 'none';
+                return;
+            }
+
+            employeeNameHeader.textContent = `مرحباً، ${employeeName || employeeId}`;
+
+            const params = new URLSearchParams();
+            params.append('action', 'getEmployeeSalary'); // إجراء جديد لـ Apps Script
+            params.append('employeeId', employeeId);
+
+            try {
+                const response = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: params.toString()
+                });
+
+                // بما أننا نستخدم no-cors، لا يمكننا قراءة الاستجابة مباشرة
+                // ولكن إذا وصل الكود إلى هنا، يمكننا افتراض أن الطلب تم إرساله
+                // الاستجابة الفعلية (البيانات) ستأتي عبر إعادة التوجيه أو لن تظهر في الشبكة
+                // لذا سنعتمد على تخزين البيانات في localStorage بواسطة Apps Script وإعادة التوجيه
+
+                // رسالة افتراضية، قد يتم تجاوزها إذا نجح Apps Script في التوجيه
+                showMessage('يتم جلب بيانات الراتب...', 'info');
+
+            } catch (error) {
+                console.error('Error fetching salary data:', error);
+                showMessage('حدث خطأ في الاتصال بجلب بيانات الراتب. يرجى المحاولة لاحقاً.', 'error');
+            } finally {
+                loadingSpinner.style.display = 'none';
+            }
+        }
+
+        // يتم استدعاء هذه الدالة عند تحميل الصفحة لجلب البيانات
+        fetchSalaryData();
+
+        // *** ملاحظة هامة: هذا الكود يعتمد على أن Google Apps Script
+        // سيقوم بإعادة توجيه المتصفح إلى هذه الصفحة
+        // مع إضافة بيانات الراتب كمعلمات في URL (مثلاً #data=...)
+        // أو أن Apps Script سيستخدم `window.localStorage.setItem` لتخزين البيانات
+        // قبل إعادة التوجيه إلى هذه الصفحة.
+        // سنضيف هذا المنطق إلى Apps Script في الخطوات القادمة.
+        // حالياً، لن يتم عرض بيانات الراتب الفعلية إلا بعد تعديل Apps Script.
+    </script>
+</body>
+</html>
