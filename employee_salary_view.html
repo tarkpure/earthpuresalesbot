@@ -4,26 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تفاصيل الراتب - Earth Pure</title>
-    <base target="_top"> <style>
-        /* تعريف الألوان المتناسقة مع هوية الشعار (ذهبي، بني، وألوان محايدة) */
+    <base target="_top">
+    <style>
         :root {
-            --primary-dark-brown: #3C2E2A; /* لون بني داكن من اللوجو (earth pure text) */
-            --accent-gold: #B89C5D;     /* لون ذهبي من اللوجو (الشكل العلوي و earth text) */
-            --light-bg: #fdfdfd;        /* خلفية بيضاء ناصعة أو بيضاء مائلة للرمادي الفاتح */
-            --medium-gray: #666;        /* نص رمادي متوسط للفقرات الثانوية */
-            --light-border: #eee;       /* حدود فاتحة جداً */
-            --white: #ffffff;           /* لون أبيض للنص والأساسي */
-            --button-bg: var(--accent-gold); /* لون الزر من لون اللوجو الذهبي */
-            --button-hover: #a18b52;    /* درجة أغمق للذهبي عند التحويم */
-            --header-bg: var(--primary-dark-brown); /* خلفية رؤوس الجدول بني داكن */
-            --header-text-color: var(--white); /* **لون نص رؤوس الجدول أبيض ليظهر** */
-            --table-row-even-bg: #fcfcfc; /* لون خلفية خفيف جداً للصفوف الزوجية */
-            --text-color: var(--primary-dark-brown); /* لون النص العام */
-            --error-bg: #ffe0e0; /* أحمر فاتح جداً للرسائل الخطأ */
+            --primary-dark-brown: #3C2E2A;
+            --accent-gold: #B89C5D;
+            --light-bg: #fdfdfd;
+            --medium-gray: #666;
+            --light-border: #eee;
+            --white: #ffffff;
+            --button-bg: var(--accent-gold);
+            --button-hover: #a18b52;
+            --header-bg: var(--primary-dark-brown);
+            --header-text-color: var(--white);
+            --table-row-even-bg: #fcfcfc;
+            --text-color: var(--primary-dark-brown);
+            --error-bg: #ffe0e0;
             --error-text: #cc0000;
-            --info-bg: #e0f2f7;  /* أزرق فاتح جداً لرسائل المعلومات */
+            --info-bg: #e0f2f7;
             --info-text: #006680;
-            --success-bg: #e0ffe0; /* أخضر فاتح جداً لرسائل النجاح */
+            --success-bg: #e0ffe0;
             --success-text: #008000;
         }
 
@@ -34,115 +34,118 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
             align-items: center;
             min-height: 100vh;
             color: var(--text-color);
             direction: rtl;
         }
+
         .container {
             background-color: var(--white);
-            padding: 30px 40px;
+            padding: 30px 20px;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            max-width: 900px;
             width: 100%;
+            max-width: 1000px;
             box-sizing: border-box;
             text-align: center;
             margin-top: 20px;
         }
+
         .logo-container {
-            width: 100%;
             text-align: center;
             margin-bottom: 30px;
         }
+
         .logo {
             max-width: 200px;
             height: auto;
-            display: inline-block;
         }
+
         h1 {
             color: var(--primary-dark-brown);
+            font-size: 2em;
             margin-bottom: 20px;
-            font-size: 2.4em;
-            text-align: center;
             font-weight: bold;
         }
+
         h2 {
             color: var(--medium-gray);
-            margin-top: 30px;
-            margin-bottom: 15px;
-            font-size: 1.7em;
-            text-align: center;
+            font-size: 1.5em;
+            margin: 30px 0 15px;
             font-weight: 600;
         }
+
+        .table-wrapper {
+            overflow-x: auto;
+            width: 100%;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 700px;
             margin-bottom: 25px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-            /* **تعديل: إزالة display هنا لضمان السلوك الافتراضي الصحيح للجدول** */
         }
+
         th, td {
             border: 1px solid var(--light-border);
-            padding: 12px 15px;
+            padding: 10px 12px;
             text-align: center;
-            box-sizing: border-box;
-            white-space: nowrap; /* لمنع التفاف النص في الخلايا */
-            /* **تعديل جديد: ضمان ظهور الخلايا بشكل قاطع** */
-            display: table-cell; /* فرض سلوك خلية الجدول */
-            vertical-align: middle; /* محاذاة عمودية للمنتصف */
-            overflow: hidden; /* إخفاء أي محتوى يتجاوز حجم الخلية */
-            text-overflow: ellipsis; /* إضافة نقاط إذا كان النص طويلاً جداً */
-            /* **إزالة min-width من th و td هنا لنرى ما إذا كان يسبب مشاكل في المتصفحات المختلفة** */
+            white-space: nowrap;
+            vertical-align: middle;
         }
+
         th {
             background-color: var(--header-bg);
-            color: var(--header-text-color); /* **هذا هو لون النص الأساسي (أبيض)** */
+            color: var(--header-text-color);
             font-weight: bold;
-            /* **تعديل جديد: إضافة width: 16.66% أو قيمة مناسبة لكل عمود** */
-            width: 16.66%; /* 100% / 6 أعمدة = 16.66% لكل عمود */
         }
-        /* محاذاة الأرقام لليمين وتوجيه النص من اليسار لليمين */
+
         .numeric-col {
-            text-align: left !important; /* لليمين في RTL */
+            text-align: left !important;
             direction: ltr !important;
             font-family: 'Consolas', 'Courier New', monospace;
-            font-size: 1.1em;
-            color: var(--text-color);
         }
-        /* محاذاة الشهر والملاحظات لليمين في RTL */
+
         .text-col {
             text-align: right !important;
         }
 
-        .salary-details tr:nth-child(even), .history-table tr:nth-child(even) {
+        .salary-details tr:nth-child(even),
+        .history-table tr:nth-child(even) {
             background-color: var(--table-row-even-bg);
         }
+
         .message {
+            display: none;
             margin-top: 20px;
             padding: 10px;
             border-radius: 6px;
-            display: none;
             text-align: center;
             font-weight: bold;
             border: 1px solid;
         }
+
         .message.error {
             background-color: var(--error-bg);
             color: var(--error-text);
             border-color: var(--error-text);
         }
+
         .message.success {
             background-color: var(--success-bg);
             color: var(--success-text);
             border-color: var(--success-text);
         }
+
         .message.info {
             background-color: var(--info-bg);
             color: var(--info-text);
             border-color: var(--info-text);
         }
+
         .loading-spinner {
             border: 4px solid rgba(0, 0, 0, 0.1);
             border-left-color: var(--accent-gold);
@@ -153,22 +156,39 @@
             display: none;
             margin: 30px auto;
         }
+
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
         .back-button {
             background-color: var(--button-bg);
             color: var(--white);
-            padding: 12px 25px;
+            padding: 10px 20px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 1.1em;
+            font-size: 1em;
             margin-top: 20px;
             transition: background-color 0.3s ease;
         }
+
         .back-button:hover {
             background-color: var(--button-hover);
+        }
+
+        /* ✅ تحسين العرض للموبايل */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.5em; }
+            h2 { font-size: 1.2em; }
+            th, td {
+                padding: 8px 10px;
+                font-size: 0.85em;
+            }
+            .back-button {
+                font-size: 0.95em;
+                padding: 8px 16px;
+            }
         }
     </style>
 </head>
@@ -183,36 +203,39 @@
         <div id="messageDiv" class="message"></div>
 
         <h2>راتب الشهر الحالي</h2>
-        <table class="salary-details" id="currentMonthSalary">
-            <thead>
-                <tr>
-                    <th class="text-col">الشهر</th>
-                    <th class="numeric-col">الراتب الأساسي</th>
-                    <th class="numeric-col">المكافآت</th>
-                    <th class="numeric-col">الخصومات</th>
-                    <th class="numeric-col">الصافي</th>
-                    <th class="text-col">ملاحظات</th>
-                </tr>
-            </thead>
-            <tbody>
-                </tbody>
-        </table>
+        <div class="table-wrapper">
+            <table class="salary-details" id="currentMonthSalary">
+                <thead>
+                    <tr>
+                        <th class="text-col">الشهر</th>
+                        <th class="numeric-col">الراتب الأساسي</th>
+                        <th class="numeric-col">المكافآت</th>
+                        <th class="numeric-col">الخصومات</th>
+                        <th class="numeric-col">الصافي</th>
+                        <th class="text-col">ملاحظات</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
 
         <h2>سجل الرواتب السابق</h2>
-        <table class="history-table" id="salaryHistory">
-            <thead>
-                <tr>
-                    <th class="text-col">الشهر</th>
-                    <th class="numeric-col">الراتب الأساسي</th>
-                    <th class="numeric-col">المكافآت</th>
-                    <th class="numeric-col">الخصومات</th>
-                    <th class="numeric-col">الصافي</th>
-                    <th class="text-col">ملاحظات</th>
-                </tr>
-            </thead>
-            <tbody>
-                </tbody>
-        </table>
+        <div class="table-wrapper">
+            <table class="history-table" id="salaryHistory">
+                <thead>
+                    <tr>
+                        <th class="text-col">الشهر</th>
+                        <th class="numeric-col">الراتب الأساسي</th>
+                        <th class="numeric-col">المكافآت</th>
+                        <th class="numeric-col">الخصومات</th>
+                        <th class="numeric-col">الصافي</th>
+                        <th class="text-col">ملاحظات</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
         <button class="back-button" onclick="google.script.history.back()">العودة للصفحة السابقة</button>
     </div>
 
@@ -220,10 +243,8 @@
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwwrWYuaAJf_x8UTUP-LPkBbC_VVUxhd-MGvW4SbFpmmglwaERDY2KQB7rtbrJNL6M/exec';
 
         const employeeNameHeader = document.getElementById('employeeNameHeader');
-        const currentMonthSalaryTable = document.getElementById('currentMonthSalary');
-        const currentMonthSalaryBody = currentMonthSalaryTable.getElementsByTagName('tbody')[0];
-        const salaryHistoryTable = document.getElementById('salaryHistory');
-        const salaryHistoryBody = salaryHistoryTable.getElementsByTagName('tbody')[0];
+        const currentMonthSalaryBody = document.getElementById('currentMonthSalary').getElementsByTagName('tbody')[0];
+        const salaryHistoryBody = document.getElementById('salaryHistory').getElementsByTagName('tbody')[0];
         const messageDiv = document.getElementById('messageDiv');
         const loadingSpinner = document.getElementById('loadingSpinner');
 
@@ -265,97 +286,41 @@
                 });
 
                 const result = await response.json();
-                console.log('Apps Script salary response:', result);
 
-                if (result.status === 'success' && result.data && Array.isArray(result.data)) {
-                    const allRecords = result.data;
-                    const currentMonthName = new Date().toLocaleString('ar-EG', { month: 'long' });
+                if (result.status === 'success' && Array.isArray(result.data)) {
+                    const currentMonth = new Date().toLocaleString('ar-EG', { month: 'long' });
+                    const current = result.data.find(r => (r['الشهر'] || '').trim() === currentMonth.trim());
+                    const past = result.data.filter(r => (r['الشهر'] || '').trim() !== currentMonth.trim());
 
-                    const currentRecord = allRecords.find(record => 
-                        String(record['الشهر'] || '').trim() === currentMonthName.trim()
-                    );
-                    const pastRecords = allRecords.filter(record => 
-                        String(record['الشهر'] || '').trim() !== currentMonthName.trim()
-                    );
+                    if (current) populateTable(currentMonthSalaryBody, [current]);
+                    else currentMonthSalaryBody.innerHTML = `<tr><td colspan="6">لا توجد بيانات راتب للشهر الحالي.</td></tr>`;
 
-                    if (currentRecord) {
-                        populateTable(currentMonthSalaryBody, [currentRecord]);
-                    } else {
-                        const row = currentMonthSalaryBody.insertRow();
-                        const cell = row.insertCell();
-                        cell.colSpan = 6;
-                        cell.className = 'no-data-message';
-                        cell.textContent = 'لا توجد بيانات راتب للشهر الحالي.';
-                    }
-
-                    if (pastRecords.length > 0) {
-                        populateTable(salaryHistoryBody, pastRecords);
-                    } else {
-                        const row = salaryHistoryBody.insertRow();
-                        const cell = row.insertCell();
-                        cell.colSpan = 6;
-                        cell.className = 'no-data-message';
-                        cell.textContent = 'لا توجد سجلات رواتب سابقة.';
-                    }
+                    if (past.length > 0) populateTable(salaryHistoryBody, past);
+                    else salaryHistoryBody.innerHTML = `<tr><td colspan="6">لا توجد سجلات رواتب سابقة.</td></tr>`;
 
                 } else {
-                    console.error('Unexpected Apps Script salary response:', result);
-                    showMessage('❌ حدث خطأ في جلب بيانات الراتب أو لا توجد بيانات.', 'error');
+                    showMessage('❌ حدث خطأ في جلب البيانات أو لا توجد بيانات.', 'error');
                 }
 
             } catch (error) {
-                console.error('Error fetching salary data:', error);
-                showMessage('حدث خطأ في الاتصال بجلب بيانات الراتب. يرجى المحاولة لاحقاً.', 'error');
+                showMessage('حدث خطأ في الاتصال. يرجى المحاولة لاحقاً.', 'error');
             } finally {
                 loadingSpinner.style.display = 'none';
             }
         }
 
-        // دالة مساعدة لملء الجداول
-        function populateTable(tableBodyElement, records) {
-            tableBodyElement.innerHTML = ''; // مسح أي بيانات سابقة
-
+        function populateTable(body, records) {
+            body.innerHTML = '';
             records.forEach(record => {
-                const row = tableBodyElement.insertRow();
-                
-                // ترتيب الأعمدة مهم جدًا ويتطابق مع رؤوس الجدول
-                // 1. الشهر
-                const monthCell = row.insertCell();
-                monthCell.textContent = record['الشهر'] || '';
-                monthCell.className = 'text-col';
-
-                // 2. الراتب الأساسي
-                const baseSalaryCell = row.insertCell();
-                baseSalaryCell.textContent = typeof record['الراتب الأساسي'] === 'number' 
-                                           ? record['الراتب الأساسي'].toLocaleString('en-US') 
-                                           : (record['الراتب الأساسي'] || '0');
-                baseSalaryCell.className = 'numeric-col';
-
-                // 3. المكافآت
-                const bonusesCell = row.insertCell();
-                bonusesCell.textContent = typeof record['المكافآت'] === 'number' 
-                                          ? record['المكافآت'].toLocaleString('en-US') 
-                                          : (record['المكافآت'] || '0');
-                bonusesCell.className = 'numeric-col';
-
-                // 4. الخصومات
-                const deductionsCell = row.insertCell();
-                deductionsCell.textContent = typeof record['الخصومات'] === 'number' 
-                                            ? record['الخصومات'].toLocaleString('en-US') 
-                                            : (record['الخصومات'] || '0');
-                deductionsCell.className = 'numeric-col';
-
-                // 5. الصافي
-                const netSalaryCell = row.insertCell();
-                netSalaryCell.textContent = typeof record['الصافي'] === 'number' 
-                                          ? record['الصافي'].toLocaleString('en-US') 
-                                          : (record['الصافي'] || '0');
-                netSalaryCell.className = 'numeric-col';
-
-                // 6. الملاحظات
-                const notesCell = row.insertCell();
-                notesCell.textContent = record['ملاحظات'] || '';
-                notesCell.className = 'text-col';
+                const row = body.insertRow();
+                const fields = ['الشهر', 'الراتب الأساسي', 'المكافآت', 'الخصومات', 'الصافي', 'ملاحظات'];
+                fields.forEach((field, i) => {
+                    const cell = row.insertCell();
+                    let value = record[field] || '0';
+                    if (!isNaN(value)) value = Number(value).toLocaleString('en-US');
+                    cell.textContent = value;
+                    cell.className = (i >= 1 && i <= 4) ? 'numeric-col' : 'text-col';
+                });
             });
         }
 
