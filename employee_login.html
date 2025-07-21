@@ -1,13 +1,22 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>تسجيل دخول الموظف</title>
     <style>
+        :root {
+            --primary-dark-brown: #3C2E2A;
+            --accent-gold: #B89C5D;
+            --light-bg: #fdfdfd;
+            --white: #ffffff;
+            --button-bg: var(--accent-gold);
+            --button-hover: #a18b52;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
+            background-color: var(--light-bg);
             margin: 0;
             padding: 20px;
             display: flex;
@@ -15,83 +24,96 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            color: #333;
-            direction: rtl;
+            color: var(--primary-dark-brown);
         }
+
         .container {
-            background-color: #ffffff;
+            background-color: var(--white);
             padding: 30px 40px;
             border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            max-width: 420px;
             width: 100%;
             box-sizing: border-box;
             text-align: center;
         }
+
         .logo-container {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
+
         .logo {
-            max-width: 120px;
+            max-width: 180px;
             height: auto;
         }
+
         h1 {
-            color: #4caf50; /* لون أخضر للرواتب */
-            margin-bottom: 30px;
+            color: var(--primary-dark-brown);
+            margin-bottom: 25px;
             font-size: 2em;
         }
+
         .form-group {
             margin-bottom: 20px;
+            text-align: right;
         }
+
         label {
             display: block;
             margin-bottom: 8px;
-            font-weight: bold;
-            color: #555;
+            font-weight: 600;
+            color: #444;
         }
+
         input[type="text"],
         input[type="password"] {
             width: 100%;
             padding: 12px 15px;
             border: 1px solid #ddd;
             border-radius: 6px;
-            box-sizing: border-box;
             font-size: 1em;
+            box-sizing: border-box;
         }
+
         button {
             width: 100%;
             padding: 12px;
-            background-color: #4caf50; /* لون أخضر */
-            color: white;
+            background-color: var(--button-bg);
+            color: var(--white);
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 1.1em;
             font-weight: bold;
             cursor: pointer;
             transition: background-color 0.3s ease;
-            margin-top: 10px;
         }
+
         button:hover {
-            background-color: #43a047;
+            background-color: var(--button-hover);
         }
+
         .message {
             margin-top: 20px;
             padding: 10px;
             border-radius: 6px;
             display: none;
+            font-weight: bold;
             text-align: center;
         }
+
         .message.error {
-            background-color: #f8d7da;
-            color: #721c24;
+            background-color: #ffe0e0;
+            color: #cc0000;
         }
+
         .message.success {
-            background-color: #d4edda;
-            color: #155724;
+            background-color: #e0ffe0;
+            color: #008000;
         }
+
         .loading-spinner {
             border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: #4caf50;
+            border-left-color: var(--accent-gold);
             border-radius: 50%;
             width: 24px;
             height: 24px;
@@ -99,6 +121,7 @@
             display: none;
             margin: 20px auto;
         }
+
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
@@ -113,11 +136,11 @@
         <form id="loginForm">
             <div class="form-group">
                 <label for="employeeId">رقم الموظف:</label>
-                <input type="text" id="employeeId" name="employeeId" required>
+                <input type="text" id="employeeId" name="employeeId" required />
             </div>
             <div class="form-group">
                 <label for="password">كلمة المرور:</label>
-                <input type="password" id="password" name="password" required>
+                <input type="password" id="password" name="password" required />
             </div>
             <button type="submit" id="submitButton">تسجيل الدخول</button>
             <div id="loadingSpinner" class="loading-spinner"></div>
@@ -126,9 +149,7 @@
     </div>
 
     <script>
-        // هذا هو الرابط الجديد الذي حصلت عليه من Google Apps Script (Web App URL)
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwwrWYuaAJf_x8UTUP-LPkBbC_VVUxhd-MGvW4SbFpmmglwaERDY2KQB7rtbrJNL6M/exec'; 
-
         const loginForm = document.getElementById('loginForm');
         const messageDiv = document.getElementById('message');
         const submitButton = document.getElementById('submitButton');
@@ -138,30 +159,28 @@
             event.preventDefault();
             messageDiv.style.display = 'none';
             messageDiv.classList.remove('error', 'success');
-            submitButton.disabled = true; // تعطيل الزر
-            loadingSpinner.style.display = 'block'; // إظهار المؤشر
+            submitButton.disabled = true;
+            loadingSpinner.style.display = 'block';
 
             const employeeId = document.getElementById('employeeId').value;
             const password = document.getElementById('password').value;
 
             const params = new URLSearchParams();
-            params.append('action', 'employeeLogin'); // تحديد الإجراء في Apps Script
+            params.append('action', 'employeeLogin');
             params.append('employeeId', employeeId);
             params.append('password', password);
 
             try {
                 const response = await fetch(WEB_APP_URL, {
                     method: 'POST',
-                    mode: 'cors', // مهم جداً: يجب أن تكون 'cors' الآن لتلقي استجابة JSON
+                    mode: 'cors',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
                     body: params.toString()
                 });
 
-                // قراءة استجابة JSON
                 const result = await response.json();
-                console.log('Apps Script response:', result); // لسجلات المتصفح
 
                 if (result.status === 'success' && result.action === 'employeeLoginSuccess') {
                     localStorage.setItem('currentEmployeeId', result.employeeId);
@@ -169,48 +188,31 @@
                     messageDiv.classList.add('success');
                     messageDiv.textContent = `✅ تم تسجيل الدخول بنجاح! مرحباً ${result.employeeName}.`;
                     messageDiv.style.display = 'block';
-                    // إعادة التوجيه بعد تأخير بسيط لعرض رسالة النجاح
                     setTimeout(() => {
                         window.location.replace('employee_salary_view.html');
-                    }, 1500); // 1.5 ثانية
-
-                } else if (result.status === 'error' && result.action === 'employeeLoginFailed') {
-                    let errorMessage = 'خطأ في تسجيل الدخول. يرجى التحقق من رقم الموظف وكلمة المرور.';
-                    if (result.message === 'invalid_credentials') {
-                        errorMessage = '❌ رقم الموظف أو كلمة المرور غير صحيحة.';
-                    } else if (result.message === 'missing_credentials') {
-                        errorMessage = '❌ يرجى إدخال رقم الموظف وكلمة المرور.';
-                    } else if (result.message === 'sheet_not_found') {
+                    }, 1500);
+                } else {
+                    let errorMessage = '❌ رقم الموظف أو كلمة المرور غير صحيحة.';
+                    if (result.message === 'sheet_not_found') {
                         errorMessage = '❌ خطأ داخلي: ورقة الرواتب غير موجودة.';
                     } else if (result.message === 'sheet_headers_missing') {
-                        errorMessage = '❌ خطأ داخلي: رؤوس أعمدة الرواتب غير موجودة.';
-                    } else if (result.message) {
-                        errorMessage = `❌ خطأ: ${result.message}`;
+                        errorMessage = '❌ خطأ داخلي: رؤوس الأعمدة غير مكتملة.';
                     }
                     messageDiv.classList.add('error');
                     messageDiv.textContent = errorMessage;
-                    messageDiv.style.display = 'block';
-                } else {
-                    // خطأ غير متوقع من الخادم
-                    console.error('Unexpected Apps Script response:', result);
-                    messageDiv.classList.add('error');
-                    messageDiv.textContent = '❌ حدث خطأ غير متوقع. يرجى المحاولة لاحقاً.';
                     messageDiv.style.display = 'block';
                 }
 
             } catch (error) {
                 console.error('Login form submission error:', error);
                 messageDiv.classList.add('error');
-                messageDiv.textContent = 'حدث خطأ في الاتصال. يرجى المحاولة لاحقاً.';
+                messageDiv.textContent = '❌ حدث خطأ في الاتصال. يرجى المحاولة لاحقاً.';
                 messageDiv.style.display = 'block';
             } finally {
-                submitButton.disabled = false; // تفعيل الزر
-                loadingSpinner.style.display = 'none'; // إخفاء المؤشر
+                submitButton.disabled = false;
+                loadingSpinner.style.display = 'none';
             }
         });
-
-        // تم إزالة معالجة الأخطاء من URL (urlParams) لأننا نعتمد الآن على استجابة JSON من Apps Script
-        // هذا الجزء لم يعد ضرورياً بعد التعديلات في Apps Script و employee_login.html
     </script>
 </body>
 </html>
