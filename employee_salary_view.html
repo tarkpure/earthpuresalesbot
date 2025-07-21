@@ -16,9 +16,15 @@
             --button-bg: var(--accent-gold); /* لون الزر من لون اللوجو الذهبي */
             --button-hover: #a18b52;    /* درجة أغمق للذهبي عند التحويم */
             --header-bg: var(--primary-dark-brown); /* خلفية رؤوس الجدول بني داكن */
-            --header-text-color: var(--white); /* **تعديل: لون نص رؤوس الجدول أبيض** */
+            --header-text-color: var(--white); /* **التعديل: لون نص رؤوس الجدول أبيض ليظهر** */
             --table-row-even-bg: #fcfcfc; /* لون خلفية خفيف جداً للصفوف الزوجية */
             --text-color: var(--primary-dark-brown); /* لون النص العام */
+            --error-bg: #ffe0e0; /* أحمر فاتح جداً للرسائل الخطأ */
+            --error-text: #cc0000;
+            --info-bg: #e0f2f7;  /* أزرق فاتح جداً لرسائل المعلومات */
+            --info-text: #006680;
+            --success-bg: #e0ffe0; /* أخضر فاتح جداً لرسائل النجاح */
+            --success-text: #008000;
         }
 
         body {
@@ -75,31 +81,25 @@
             border-collapse: collapse;
             margin-bottom: 25px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-            display: table; /* تم إعادة هذا إلى table لضمان عمل رؤوس الأعمدة كخلايا جدولية */
-            overflow-x: auto; /* السماح بالتمرير الأفقي إذا كان المحتوى عريضًا */
-        }
-        thead, tbody, tr {
-            display: table-row-group; /* لضمان سلوك الصفوف كمجموعات صفوف جدولية */
-            width: 100%;
-            table-layout: fixed; /* لتوزيع الأعمدة بالتساوي */
+            /* إزالة أنماط display هنا التي قد تعارض سلوك الجدول الافتراضي */
         }
         th, td {
             border: 1px solid var(--light-border);
             padding: 12px 15px;
             text-align: center;
-            min-width: 100px; /* أو أي قيمة مناسبة تجعل الرأس يظهر */
             box-sizing: border-box;
-            display: table-cell; /* **تعديل: فرض display: table-cell لـ th و td لضمان ظهورها** */
+            white-space: nowrap; /* لمنع التفاف النص في الخلايا */
         }
         th {
             background-color: var(--header-bg);
-            color: var(--header-text-color); /* **التعديل الجوهري: لون نص أبيض ليظهر على الخلفية الداكنة** */
+            color: var(--header-text-color); /* **هذا هو التعديل الأساسي لظهور النص** */
             font-weight: bold;
-            white-space: nowrap;
+            display: table-cell; /* التأكيد على أنها خلايا جدول */
+            min-width: 100px; /* ضمان عرض أدنى لرؤوس الأعمدة */
         }
         /* محاذاة الأرقام لليمين وتوجيه النص من اليسار لليمين */
         .numeric-col {
-            text-align: left !important;
+            text-align: left !important; /* لليمين في RTL */
             direction: ltr !important;
             font-family: 'Consolas', 'Courier New', monospace;
             font-size: 1.1em;
@@ -120,21 +120,22 @@
             display: none;
             text-align: center;
             font-weight: bold;
+            border: 1px solid; /* إضافة حدود لرسائل التنبيه */
         }
         .message.error {
-            background-color: #ffe0e0;
-            color: #cc0000;
-            border: 1px solid #ffb3b3;
+            background-color: var(--error-bg);
+            color: var(--error-text);
+            border-color: var(--error-text);
         }
         .message.success {
-            background-color: #e0ffe0;
-            color: #008000;
-            border: 1px solid #b3ffb3;
+            background-color: var(--success-bg);
+            color: var(--success-text);
+            border-color: var(--success-text);
         }
         .message.info {
-            background-color: #e0f2f7;
-            color: #006680;
-            border: 1px solid #b3e6ff;
+            background-color: var(--info-bg);
+            color: var(--info-text);
+            border-color: var(--info-text);
         }
         .loading-spinner {
             border: 4px solid rgba(0, 0, 0, 0.1);
@@ -211,7 +212,7 @@
 
     <script>
         // **مهم جدًا: استبدل هذا بالرابط الفعلي لتطبيق الويب الخاص بك بعد النشر.**
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzJ9qmjsCi439R0WexqKWVVGhimYU5-mMBslBxAvf6xiIwIJu9DnU05WFU2l8ZX96x7/exec';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwwrWYuaAJf_x8UTUP-LPkBbC_VVUxhd-MGvW4SbFpmmglwaERDY2KQB7rtbrJNL6M/exec';
 
         const employeeNameHeader = document.getElementById('employeeNameHeader');
         const currentMonthSalaryTable = document.getElementById('currentMonthSalary');
@@ -312,22 +313,41 @@
             records.forEach(record => {
                 const row = tableBodyElement.insertRow();
                 
-                // الشهر
+                // **ترتيب الأعمدة مهم جدًا ويتطابق مع رؤوس الجدول**
+                // 1. الشهر
                 const monthCell = row.insertCell();
                 monthCell.textContent = record['الشهر'] || '';
                 monthCell.className = 'text-col';
 
-                // الراتب الأساسي، المكافآت، الخصومات، الصافي
-                const numericHeaders = ['الراتب الأساسي', 'المكافآت', 'الخصومات', 'الصافي'];
-                numericHeaders.forEach(header => {
-                    const cell = row.insertCell();
-                    cell.textContent = typeof record[header] === 'number' 
-                                       ? record[header].toLocaleString('en-US') // تنسيق الأرقام الإنجليزية
-                                       : (record[header] || '0');
-                    cell.className = 'numeric-col';
-                });
+                // 2. الراتب الأساسي
+                const baseSalaryCell = row.insertCell();
+                baseSalaryCell.textContent = typeof record['الراتب الأساسي'] === 'number' 
+                                           ? record['الراتب الأساسي'].toLocaleString('en-US') 
+                                           : (record['الراتب الأساسي'] || '0');
+                baseSalaryCell.className = 'numeric-col';
 
-                // الملاحظات
+                // 3. المكافآت
+                const bonusesCell = row.insertCell();
+                bonusesCell.textContent = typeof record['المكافآت'] === 'number' 
+                                          ? record['المكافآت'].toLocaleString('en-US') 
+                                          : (record['المكافآت'] || '0');
+                bonusesCell.className = 'numeric-col';
+
+                // 4. الخصومات
+                const deductionsCell = row.insertCell();
+                deductionsCell.textContent = typeof record['الخصومات'] === 'number' 
+                                            ? record['الخصومات'].toLocaleString('en-US') 
+                                            : (record['الخصومات'] || '0');
+                deductionsCell.className = 'numeric-col';
+
+                // 5. الصافي
+                const netSalaryCell = row.insertCell();
+                netSalaryCell.textContent = typeof record['الصافي'] === 'number' 
+                                          ? record['الصافي'].toLocaleString('en-US') 
+                                          : (record['الصافي'] || '0');
+                netSalaryCell.className = 'numeric-col';
+
+                // 6. الملاحظات
                 const notesCell = row.insertCell();
                 notesCell.textContent = record['ملاحظات'] || '';
                 notesCell.className = 'text-col';
