@@ -75,17 +75,30 @@
             border-collapse: collapse;
             margin-bottom: 25px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            /* **تعديل جديد: جعل الجدول يعمل بالـ flexbox لضمان عرض الأعمدة** */
+            display: block; /* تغيير سلوك العرض ليصبح بلوك */
+            overflow-x: auto; /* السماح بالتمرير الأفقي إذا كان المحتوى عريضًا */
+        }
+        thead, tbody, tr {
+            display: table; /* للحفاظ على سلوك الجدول الداخلي */
+            width: 100%; /* اجعلهم يملأون العرض المتاح */
+            table-layout: fixed; /* لتوزيع الأعمدة بالتساوي */
         }
         th, td {
             border: 1px solid var(--light-border);
             padding: 12px 15px;
             text-align: center;
+            /* **تعديل جديد: ضبط الحد الأدنى للعرض لـ th لضمان ظهورها** */
+            min-width: 100px; /* أو أي قيمة مناسبة تجعل الرأس يظهر */
+            box-sizing: border-box; /* لضمان أن العرض يشمل البادينغ والحدود */
         }
         th {
             background-color: var(--header-bg);
             color: var(--header-text-color);
             font-weight: bold;
             white-space: nowrap;
+            /* **تعديل جديد: فرض العرض display: table-cell لـ th** */
+            display: table-cell; /* لضمان أنها تُعامل كخلايا جدول */
         }
         /* محاذاة الأرقام لليمين وتوجيه النص من اليسار لليمين */
         .numeric-col {
@@ -93,7 +106,7 @@
             direction: ltr !important;
             font-family: 'Consolas', 'Courier New', monospace;
             font-size: 1.1em;
-            color: var(--text-color); /* لون الأرقام */
+            color: var(--text-color);
         }
         /* محاذاة الشهر والملاحظات لليمين في RTL */
         .text-col {
@@ -313,7 +326,7 @@
                     const cell = row.insertCell();
                     cell.textContent = typeof record[header] === 'number' 
                                        ? record[header].toLocaleString('en-US') // تنسيق الأرقام الإنجليزية
-                                       : (record[header] || '0'); // استخدام '0' كقيمة افتراضية للنصوص الفارغة
+                                       : (record[header] || '0');
                     cell.className = 'numeric-col';
                 });
 
