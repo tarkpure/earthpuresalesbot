@@ -16,7 +16,7 @@
             --button-bg: var(--accent-gold); /* لون الزر من لون اللوجو الذهبي */
             --button-hover: #a18b52;    /* درجة أغمق للذهبي عند التحويم */
             --header-bg: var(--primary-dark-brown); /* خلفية رؤوس الجدول بني داكن */
-            --header-text-color: var(--white); /* **لون نص رؤوس الجدول أبيض ليظهر** */
+            --header-text-color: var(--white); /* **التعديل: لون نص رؤوس الجدول أبيض** */
             --table-row-even-bg: #fcfcfc; /* لون خلفية خفيف جداً للصفوف الزوجية */
             --text-color: var(--primary-dark-brown); /* لون النص العام */
             --error-bg: #ffe0e0; /* أحمر فاتح جداً للرسائل الخطأ */
@@ -81,7 +81,12 @@
             border-collapse: collapse;
             margin-bottom: 25px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-            /* **تعديل: إزالة display هنا لضمان السلوك الافتراضي الصحيح للجدول** */
+            /* **تعديل: إزالة display: block; و overflow-x: auto; من هنا** */
+        }
+        /* **تعديل جديد: التأكد من سلوك الجدول العادي** */
+        thead, tbody, tr {
+            display: table-row-group; /* للـ thead, tbody */
+            display: table-row;      /* للـ tr */
         }
         th, td {
             border: 1px solid var(--light-border);
@@ -89,18 +94,16 @@
             text-align: center;
             box-sizing: border-box;
             white-space: nowrap; /* لمنع التفاف النص في الخلايا */
-            /* **تعديل جديد: ضمان ظهور الخلايا بشكل قاطع** */
-            display: table-cell; /* فرض سلوك خلية الجدول */
+            /* **تعديل جديد: فرض display: table-cell; لضمان أنها تُعامل كخلايا جدولية** */
+            display: table-cell;
             vertical-align: middle; /* محاذاة عمودية للمنتصف */
-            overflow: hidden; /* إخفاء أي محتوى يتجاوز حجم الخلية */
-            text-overflow: ellipsis; /* إضافة نقاط إذا كان النص طويلاً جداً */
-            /* **إزالة min-width من th و td هنا لنرى ما إذا كان يسبب مشاكل في المتصفحات المختلفة** */
+            /* **إزالة min-width من th و td إذا كانت تسبب مشاكل** */
         }
         th {
             background-color: var(--header-bg);
-            color: var(--header-text-color); /* **هذا هو لون النص الأساسي (أبيض)** */
+            color: var(--header-text-color); /* **هذا هو لون النص الأبيض الأساسي** */
             font-weight: bold;
-            /* **تعديل جديد: إضافة width: 16.66% أو قيمة مناسبة لكل عمود** */
+            /* **تعديل جديد: تحديد عرض ثابت لكل رأس عمود** */
             width: 16.66%; /* 100% / 6 أعمدة = 16.66% لكل عمود */
         }
         /* محاذاة الأرقام لليمين وتوجيه النص من اليسار لليمين */
