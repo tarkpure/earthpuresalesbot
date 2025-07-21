@@ -12,11 +12,11 @@
             --light-bg: #fdfdfd;        /* خلفية بيضاء ناصعة أو بيضاء مائلة للرمادي الفاتح */
             --medium-gray: #666;        /* نص رمادي متوسط للفقرات الثانوية */
             --light-border: #eee;       /* حدود فاتحة جداً */
-            --white: #ffffff;
+            --white: #ffffff;           /* لون أبيض للنص والأساسي */
             --button-bg: var(--accent-gold); /* لون الزر من لون اللوجو الذهبي */
             --button-hover: #a18b52;    /* درجة أغمق للذهبي عند التحويم */
             --header-bg: var(--primary-dark-brown); /* خلفية رؤوس الجدول بني داكن */
-            --header-text-color: var(--white); /* لون نص رؤوس الجدول أبيض */
+            --header-text-color: var(--white); /* **تعديل: لون نص رؤوس الجدول أبيض** */
             --table-row-even-bg: #fcfcfc; /* لون خلفية خفيف جداً للصفوف الزوجية */
             --text-color: var(--primary-dark-brown); /* لون النص العام */
         }
@@ -75,30 +75,27 @@
             border-collapse: collapse;
             margin-bottom: 25px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-            /* **تعديل جديد: جعل الجدول يعمل بالـ flexbox لضمان عرض الأعمدة** */
-            display: block; /* تغيير سلوك العرض ليصبح بلوك */
+            display: table; /* تم إعادة هذا إلى table لضمان عمل رؤوس الأعمدة كخلايا جدولية */
             overflow-x: auto; /* السماح بالتمرير الأفقي إذا كان المحتوى عريضًا */
         }
         thead, tbody, tr {
-            display: table; /* للحفاظ على سلوك الجدول الداخلي */
-            width: 100%; /* اجعلهم يملأون العرض المتاح */
+            display: table-row-group; /* لضمان سلوك الصفوف كمجموعات صفوف جدولية */
+            width: 100%;
             table-layout: fixed; /* لتوزيع الأعمدة بالتساوي */
         }
         th, td {
             border: 1px solid var(--light-border);
             padding: 12px 15px;
             text-align: center;
-            /* **تعديل جديد: ضبط الحد الأدنى للعرض لـ th لضمان ظهورها** */
             min-width: 100px; /* أو أي قيمة مناسبة تجعل الرأس يظهر */
-            box-sizing: border-box; /* لضمان أن العرض يشمل البادينغ والحدود */
+            box-sizing: border-box;
+            display: table-cell; /* **تعديل: فرض display: table-cell لـ th و td لضمان ظهورها** */
         }
         th {
             background-color: var(--header-bg);
-            color: var(--header-text-color);
+            color: var(--header-text-color); /* **التعديل الجوهري: لون نص أبيض ليظهر على الخلفية الداكنة** */
             font-weight: bold;
             white-space: nowrap;
-            /* **تعديل جديد: فرض العرض display: table-cell لـ th** */
-            display: table-cell; /* لضمان أنها تُعامل كخلايا جدول */
         }
         /* محاذاة الأرقام لليمين وتوجيه النص من اليسار لليمين */
         .numeric-col {
