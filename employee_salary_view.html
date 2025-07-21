@@ -5,75 +5,91 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تفاصيل الراتب - Earth Pure</title>
     <base target="_top"> <style>
+        /* تعريف الألوان من هوية اللوجو */
+        :root {
+            --primary-green: #28a745; /* أخضر الشعار الأساسي */
+            --light-green: #e8f5e9;   /* أخضر فاتح للخلفيات */
+            --dark-gray: #333;        /* نص داكن */
+            --medium-gray: #555;      /* نص رمادي متوسط */
+            --light-gray: #f4f7f6;    /* خلفية عامة */
+            --white: #ffffff;
+            --border-color: #e9ecef;
+            --blue-button: #007bff;
+            --blue-button-hover: #0056b3;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6; /* لون خلفية فاتح ومهدئ */
+            background-color: var(--light-gray); /* خلفية عامة فاتحة */
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start; /* يبدأ المحتوى من الأعلى */
             align-items: center;
             min-height: 100vh;
-            color: #333;
+            color: var(--dark-gray);
             direction: rtl; /* لجعل التخطيط من اليمين لليسار للعربية */
         }
         .container {
-            background-color: #ffffff;
+            background-color: var(--white);
             padding: 30px 40px;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            max-width: 900px; /* زيادة العرض لاستيعاب الجداول بشكل أفضل */
+            max-width: 900px;
             width: 100%;
             box-sizing: border-box;
-            text-align: center; /* محاذاة محتوى الكونتينر للمنتصف */
+            text-align: center;
+            margin-top: 20px; /* مسافة من الأعلى بعد الشعار */
         }
         .logo-container {
+            width: 100%;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 20px; /* مسافة بين الشعار وبداية المحتوى */
         }
         .logo {
-            max-width: 150px; /* حجم أكبر قليلاً للشعار */
+            max-width: 150px; /* حجم معتدل للشعار */
             height: auto;
+            display: inline-block; /* ليتمركز بشكل صحيح */
         }
         h1 {
-            color: #28a745; /* لون أخضر للرواتب */
+            color: var(--primary-green); /* أخضر هوية الشعار */
             margin-bottom: 20px;
-            font-size: 2.2em; /* حجم أكبر للخط */
+            font-size: 2.2em;
             text-align: center;
             font-weight: bold;
         }
         h2 {
-            color: #555;
+            color: var(--medium-gray); /* رمادي متوسط للعناوين الفرعية */
             margin-top: 30px;
             margin-bottom: 15px;
-            font-size: 1.6em; /* حجم أكبر قليلاً للعناوين الفرعية */
+            font-size: 1.6em;
             text-align: center;
-            font-weight: 600; /* خط سميك متوسط */
+            font-weight: 600;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 25px; /* مسافة تحت الجداول */
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05); /* ظل خفيف للجدول */
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
         th, td {
-            border: 1px solid #e9ecef; /* حدود فاتحة بين الخلايا */
-            padding: 12px 15px; /* مساحة داخلية أكبر */
+            border: 1px solid var(--border-color); /* حدود فاتحة */
+            padding: 12px 15px;
             text-align: center; /* محاذاة افتراضية لمنتصف الخلايا */
         }
         th {
-            background-color: #28a745; /* خلفية خضراء لرؤوس الأعمدة */
-            color: white; /* نص أبيض لرؤوس الأعمدة */
+            background-color: var(--primary-green); /* خلفية خضراء لرؤوس الأعمدة من هوية الشعار */
+            color: var(--white);
             font-weight: bold;
-            white-space: nowrap; /* منع رؤوس الأعمدة من الالتفاف */
+            white-space: nowrap;
         }
-        /* **تعديلات أساسية هنا للتنسيق:** */
         /* محاذاة الأرقام لليمين وتوجيه النص من اليسار لليمين */
         .numeric-col {
             text-align: left !important; /* لليمين في RTL */
             direction: ltr !important;
             font-family: 'Consolas', 'Courier New', monospace; /* خط أحادي المسافة للأرقام */
+            font-size: 1.05em; /* حجم أكبر قليلاً للأرقام */
         }
         /* محاذاة الشهر والملاحظات لليمين في RTL */
         .text-col {
@@ -81,7 +97,7 @@
         }
 
         .salary-details tr:nth-child(even), .history-table tr:nth-child(even) {
-            background-color: #f8f9fa; /* لون خلفية خفيف للصفوف الزوجية */
+            background-color: #f8f8f8; /* لون خلفية خفيف للصفوف الزوجية */
         }
         .message {
             margin-top: 20px;
@@ -108,9 +124,9 @@
         }
         .loading-spinner {
             border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: #4caf50;
+            border-left-color: var(--primary-green); /* لون الشعار للسبينر */
             border-radius: 50%;
-            width: 30px; /* حجم أكبر للسبينر */
+            width: 30px;
             height: 30px;
             animation: spin 1s linear infinite;
             display: none;
@@ -120,26 +136,27 @@
             to { transform: rotate(360deg); }
         }
         .back-button {
-            background-color: #007bff; /* زر أزرق للعودة */
-            color: white;
+            background-color: var(--blue-button); /* زر أزرق للعودة */
+            color: var(--white);
             padding: 12px 25px;
             border: none;
-            border-radius: 8px; /* حواف أكثر دائرية */
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 1.1em; /* حجم خط أكبر للزر */
+            font-size: 1.1em;
             margin-top: 20px;
             transition: background-color 0.3s ease;
         }
         .back-button:hover {
-            background-color: #0056b3;
+            background-color: var(--blue-button-hover);
         }
     </style>
 </head>
 <body>
+    <div class="logo-container">
+        <img src="https://i.ibb.co/k2D0Yh4/Whats-App-Image-2024-07-16-at-13-17-09-removebg-preview.png" alt="شعار Earth Pure" class="logo">
+    </div>
+
     <div class="container">
-        <div class="logo-container">
-            <img src="https://i.ibb.co/k2D0Yh4/Whats-App-Image-2024-07-16-at-13-17-09-removebg-preview.png" alt="شعار Earth Pure" class="logo">
-        </div>
         <h1 id="employeeNameHeader"></h1>
         <div id="loadingSpinner" class="loading-spinner"></div>
         <div id="messageDiv" class="message"></div>
@@ -153,7 +170,8 @@
                     <th class="numeric-col">المكافآت</th>
                     <th class="numeric-col">الخصومات</th>
                     <th class="numeric-col">الصافي</th>
-                    <th class="text-col">ملاحظات</th> </tr>
+                    <th class="text-col">ملاحظات</th>
+                </tr>
             </thead>
             <tbody>
                 </tbody>
@@ -168,7 +186,8 @@
                     <th class="numeric-col">المكافآت</th>
                     <th class="numeric-col">الخصومات</th>
                     <th class="numeric-col">الصافي</th>
-                    <th class="text-col">ملاحظات</th> </tr>
+                    <th class="text-col">ملاحظات</th>
+                </tr>
             </thead>
             <tbody>
                 </tbody>
@@ -183,7 +202,7 @@
 
         const employeeNameHeader = document.getElementById('employeeNameHeader');
         const currentMonthSalaryTable = document.getElementById('currentMonthSalary');
-        const currentMonthSalaryBody = currentMonthSalaryTable.getElementsByTagName('tbody')[0]; // الحصول على tbody لراتب الشهر الحالي
+        const currentMonthSalaryBody = currentMonthSalaryTable.getElementsByTagName('tbody')[0];
         const salaryHistoryTable = document.getElementById('salaryHistory');
         const salaryHistoryBody = salaryHistoryTable.getElementsByTagName('tbody')[0];
         const messageDiv = document.getElementById('messageDiv');
@@ -191,14 +210,14 @@
 
         function showMessage(msg, type = 'error') {
             messageDiv.textContent = msg;
-            messageDiv.className = `message ${type}`; // تعيين الفئة الصحيحة
+            messageDiv.className = `message ${type}`;
             messageDiv.style.display = 'block';
         }
 
         async function fetchSalaryData() {
             loadingSpinner.style.display = 'block';
-            currentMonthSalaryBody.innerHTML = ''; // مسح المحتوى الحالي
-            salaryHistoryBody.innerHTML = ''; // مسح المحتوى الحالي
+            currentMonthSalaryBody.innerHTML = '';
+            salaryHistoryBody.innerHTML = '';
             messageDiv.style.display = 'none';
 
             const employeeId = localStorage.getItem('currentEmployeeId');
@@ -219,7 +238,7 @@
             try {
                 const response = await fetch(WEB_APP_URL, {
                     method: 'POST',
-                    mode: 'cors', // ضروري لطلبات Fetch بين النطاقات
+                    mode: 'cors',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
@@ -231,16 +250,15 @@
 
                 if (result.status === 'success' && result.data && Array.isArray(result.data)) {
                     const allRecords = result.data;
-                    const currentMonth = new Date().toLocaleString('ar-EG', { month: 'long' });
+                    const currentMonthName = new Date().toLocaleString('ar-EG', { month: 'long' });
 
                     const currentRecord = allRecords.find(record => 
-                        String(record['الشهر'] || '').trim() === currentMonth.trim()
+                        String(record['الشهر'] || '').trim() === currentMonthName.trim()
                     );
                     const pastRecords = allRecords.filter(record => 
-                        String(record['الشهر'] || '').trim() !== currentMonth.trim()
+                        String(record['الشهر'] || '').trim() !== currentMonthName.trim()
                     );
 
-                    // **تعديل: ملء جدول راتب الشهر الحالي ديناميكيا**
                     if (currentRecord) {
                         populateTable(currentMonthSalaryBody, [currentRecord]);
                     } else {
@@ -251,8 +269,9 @@
                         cell.textContent = 'لا توجد بيانات راتب للشهر الحالي.';
                     }
 
-                    // **تعديل: ملء جدول سجل الرواتب السابق ديناميكيا**
                     if (pastRecords.length > 0) {
+                        // **تعديل: فرز سجلات الرواتب السابقة تنازلياً حسب الشهر إذا أردت**
+                        // pastRecords.sort((a, b) => new Date(b['الشهر'] + ' 1, 2000') - new Date(a['الشهر'] + ' 1, 2000'));
                         populateTable(salaryHistoryBody, pastRecords);
                     } else {
                         const row = salaryHistoryBody.insertRow();
@@ -275,41 +294,33 @@
             }
         }
 
-        // **دالة مساعدة لملء الجداول (تم تحسينها)**
+        // دالة مساعدة لملء الجداول
         function populateTable(tableBodyElement, records) {
             tableBodyElement.innerHTML = ''; // مسح أي بيانات سابقة
 
             records.forEach(record => {
                 const row = tableBodyElement.insertRow();
+                
                 // الشهر
                 const monthCell = row.insertCell();
                 monthCell.textContent = record['الشهر'] || '';
-                monthCell.className = 'text-col'; // تطبيق فئة النص
+                monthCell.className = 'text-col';
 
-                // الراتب الأساسي
-                const baseSalaryCell = row.insertCell();
-                baseSalaryCell.textContent = typeof record['الراتب الأساسي'] === 'number' ? record['الراتب الأساسي'].toLocaleString('ar-EG') : (record['الراتب الأساسي'] || '0');
-                baseSalaryCell.className = 'numeric-col'; // تطبيق فئة الأرقام
-
-                // المكافآت
-                const bonusesCell = row.insertCell();
-                bonusesCell.textContent = typeof record['المكافآت'] === 'number' ? record['المكافآت'].toLocaleString('ar-EG') : (record['المكافآت'] || '0');
-                bonusesCell.className = 'numeric-col';
-
-                // الخصومات
-                const deductionsCell = row.insertCell();
-                deductionsCell.textContent = typeof record['الخصومات'] === 'number' ? record['الخصومات'].toLocaleString('ar-EG') : (record['الخصومات'] || '0');
-                deductionsCell.className = 'numeric-col';
-
-                // الصافي
-                const netSalaryCell = row.insertCell();
-                netSalaryCell.textContent = typeof record['الصافي'] === 'number' ? record['الصافي'].toLocaleString('ar-EG') : (record['الصافي'] || '0');
-                netSalaryCell.className = 'numeric-col';
+                // الراتب الأساسي، المكافآت، الخصومات، الصافي
+                const numericHeaders = ['الراتب الأساسي', 'المكافآت', 'الخصومات', 'الصافي'];
+                numericHeaders.forEach(header => {
+                    const cell = row.insertCell();
+                    // **تعديل: تنسيق الأرقام باللغة الإنجليزية**
+                    cell.textContent = typeof record[header] === 'number' 
+                                       ? record[header].toLocaleString('en-US') // تنسيق الأرقام الإنجليزية
+                                       : (record[header] || '0');
+                    cell.className = 'numeric-col';
+                });
 
                 // الملاحظات
                 const notesCell = row.insertCell();
                 notesCell.textContent = record['ملاحظات'] || '';
-                notesCell.className = 'text-col'; // تطبيق فئة النص
+                notesCell.className = 'text-col';
             });
         }
 
