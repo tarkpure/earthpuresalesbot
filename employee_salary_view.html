@@ -15,54 +15,58 @@
             --white: #ffffff;
             --button-bg: var(--accent-gold); /* لون الزر من لون اللوجو الذهبي */
             --button-hover: #a18b52;    /* درجة أغمق للذهبي عند التحويم */
+            --header-bg: var(--primary-dark-brown); /* خلفية رؤوس الجدول بني داكن */
+            --header-text-color: var(--white); /* لون نص رؤوس الجدول أبيض */
+            --table-row-even-bg: #fcfcfc; /* لون خلفية خفيف جداً للصفوف الزوجية */
+            --text-color: var(--primary-dark-brown); /* لون النص العام */
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--light-bg); /* خلفية عامة فاتحة جداً */
+            background-color: var(--light-bg);
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start; /* يبدأ المحتوى من الأعلى */
+            justify-content: flex-start;
             align-items: center;
             min-height: 100vh;
-            color: var(--primary-dark-brown); /* لون النص الأساسي بني داكن */
-            direction: rtl; /* لجعل التخطيط من اليمين لليسار للعربية */
+            color: var(--text-color);
+            direction: rtl;
         }
         .container {
             background-color: var(--white);
             padding: 30px 40px;
             border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* ظل ناعم وأقل حدة */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             max-width: 900px;
             width: 100%;
             box-sizing: border-box;
             text-align: center;
-            margin-top: 20px; /* مسافة من الأعلى بعد الشعار */
+            margin-top: 20px;
         }
         .logo-container {
             width: 100%;
             text-align: center;
-            margin-bottom: 30px; /* مسافة أكبر بين الشعار والمحتوى */
+            margin-bottom: 30px;
         }
         .logo {
-            max-width: 200px; /* حجم أكبر قليلاً للشعار ليكون واضحاً */
+            max-width: 200px;
             height: auto;
-            display: inline-block; /* ليتمركز بشكل صحيح */
+            display: inline-block;
         }
         h1 {
-            color: var(--primary-dark-brown); /* لون بني داكن لهوية الشعار */
+            color: var(--primary-dark-brown);
             margin-bottom: 20px;
-            font-size: 2.4em; /* حجم أكبر للخط */
+            font-size: 2.4em;
             text-align: center;
             font-weight: bold;
         }
         h2 {
-            color: var(--medium-gray); /* رمادي متوسط للعناوين الفرعية */
+            color: var(--medium-gray);
             margin-top: 30px;
             margin-bottom: 15px;
-            font-size: 1.7em; /* حجم أكبر قليلاً للعناوين الفرعية */
+            font-size: 1.7em;
             text-align: center;
             font-weight: 600;
         }
@@ -70,26 +74,26 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03); /* ظل خفيف جداً للجدول */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
         }
         th, td {
-            border: 1px solid var(--light-border); /* حدود فاتحة جداً بين الخلايا */
+            border: 1px solid var(--light-border);
             padding: 12px 15px;
             text-align: center;
         }
         th {
-            background-color: var(--primary-dark-brown); /* خلفية بني داكن لرؤوس الأعمدة من هوية الشعار */
-            color: var(--white);
+            background-color: var(--header-bg);
+            color: var(--header-text-color);
             font-weight: bold;
             white-space: nowrap;
         }
         /* محاذاة الأرقام لليمين وتوجيه النص من اليسار لليمين */
         .numeric-col {
-            text-align: left !important; /* لليمين في RTL */
+            text-align: left !important;
             direction: ltr !important;
-            font-family: 'Consolas', 'Courier New', monospace; /* خط أحادي المسافة للأرقام */
-            font-size: 1.1em; /* حجم أكبر قليلاً للأرقام */
-            color: var(--primary-dark-brown); /* لون الأرقام من هوية الشعار */
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 1.1em;
+            color: var(--text-color); /* لون الأرقام */
         }
         /* محاذاة الشهر والملاحظات لليمين في RTL */
         .text-col {
@@ -97,7 +101,7 @@
         }
 
         .salary-details tr:nth-child(even), .history-table tr:nth-child(even) {
-            background-color: #fcfcfc; /* لون خلفية خفيف جداً للصفوف الزوجية */
+            background-color: var(--table-row-even-bg);
         }
         .message {
             margin-top: 20px;
@@ -108,23 +112,23 @@
             font-weight: bold;
         }
         .message.error {
-            background-color: #ffe0e0; /* أحمر فاتح جداً */
+            background-color: #ffe0e0;
             color: #cc0000;
             border: 1px solid #ffb3b3;
         }
         .message.success {
-            background-color: #e0ffe0; /* أخضر فاتح جداً */
+            background-color: #e0ffe0;
             color: #008000;
             border: 1px solid #b3ffb3;
         }
         .message.info {
-            background-color: #e0f2f7; /* أزرق فاتح جداً */
+            background-color: #e0f2f7;
             color: #006680;
             border: 1px solid #b3e6ff;
         }
         .loading-spinner {
             border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: var(--accent-gold); /* لون ذهبي للسبينر */
+            border-left-color: var(--accent-gold);
             border-radius: 50%;
             width: 30px;
             height: 30px;
@@ -136,7 +140,7 @@
             to { transform: rotate(360deg); }
         }
         .back-button {
-            background-color: var(--button-bg); /* لون زر من هوية الشعار (ذهبي) */
+            background-color: var(--button-bg);
             color: var(--white);
             padding: 12px 25px;
             border: none;
@@ -147,7 +151,7 @@
             transition: background-color 0.3s ease;
         }
         .back-button:hover {
-            background-color: var(--button-hover); /* لون أغمق عند التحويم */
+            background-color: var(--button-hover);
         }
     </style>
 </head>
@@ -196,7 +200,6 @@
     </div>
 
     <script>
-        // هذا هو الرابط الجديد الذي حصلت عليه من Google Apps Script (Web App URL)
         // **مهم جدًا: استبدل هذا بالرابط الفعلي لتطبيق الويب الخاص بك بعد النشر.**
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzJ9qmjsCi439R0WexqKWVVGhimYU5-mMBslBxAvf6xiIwIJu9DnU05WFU2l8ZX96x7/exec';
 
@@ -310,7 +313,7 @@
                     const cell = row.insertCell();
                     cell.textContent = typeof record[header] === 'number' 
                                        ? record[header].toLocaleString('en-US') // تنسيق الأرقام الإنجليزية
-                                       : (record[header] || '0');
+                                       : (record[header] || '0'); // استخدام '0' كقيمة افتراضية للنصوص الفارغة
                     cell.className = 'numeric-col';
                 });
 
