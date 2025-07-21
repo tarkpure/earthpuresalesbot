@@ -5,22 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تفاصيل الراتب - Earth Pure</title>
     <base target="_top"> <style>
-        /* تعريف الألوان من هوية اللوجو */
+        /* تعريف الألوان المتناسقة مع هوية الشعار (ذهبي، بني، وألوان محايدة) */
         :root {
-            --primary-green: #28a745; /* أخضر الشعار الأساسي */
-            --light-green: #e8f5e9;   /* أخضر فاتح للخلفيات */
-            --dark-gray: #333;        /* نص داكن */
-            --medium-gray: #555;      /* نص رمادي متوسط */
-            --light-gray: #f4f7f6;    /* خلفية عامة */
+            --primary-dark-brown: #3C2E2A; /* لون بني داكن من اللوجو (earth pure text) */
+            --accent-gold: #B89C5D;     /* لون ذهبي من اللوجو (الشكل العلوي و earth text) */
+            --light-bg: #fdfdfd;        /* خلفية بيضاء ناصعة أو بيضاء مائلة للرمادي الفاتح */
+            --medium-gray: #666;        /* نص رمادي متوسط للفقرات الثانوية */
+            --light-border: #eee;       /* حدود فاتحة جداً */
             --white: #ffffff;
-            --border-color: #e9ecef;
-            --blue-button: #007bff;
-            --blue-button-hover: #0056b3;
+            --button-bg: var(--accent-gold); /* لون الزر من لون اللوجو الذهبي */
+            --button-hover: #a18b52;    /* درجة أغمق للذهبي عند التحويم */
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--light-gray); /* خلفية عامة فاتحة */
+            background-color: var(--light-bg); /* خلفية عامة فاتحة جداً */
             margin: 0;
             padding: 20px;
             display: flex;
@@ -28,14 +27,14 @@
             justify-content: flex-start; /* يبدأ المحتوى من الأعلى */
             align-items: center;
             min-height: 100vh;
-            color: var(--dark-gray);
+            color: var(--primary-dark-brown); /* لون النص الأساسي بني داكن */
             direction: rtl; /* لجعل التخطيط من اليمين لليسار للعربية */
         }
         .container {
             background-color: var(--white);
             padding: 30px 40px;
             border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* ظل ناعم وأقل حدة */
             max-width: 900px;
             width: 100%;
             box-sizing: border-box;
@@ -45,17 +44,17 @@
         .logo-container {
             width: 100%;
             text-align: center;
-            margin-bottom: 20px; /* مسافة بين الشعار وبداية المحتوى */
+            margin-bottom: 30px; /* مسافة أكبر بين الشعار والمحتوى */
         }
         .logo {
-            max-width: 150px; /* حجم معتدل للشعار */
+            max-width: 200px; /* حجم أكبر قليلاً للشعار ليكون واضحاً */
             height: auto;
             display: inline-block; /* ليتمركز بشكل صحيح */
         }
         h1 {
-            color: var(--primary-green); /* أخضر هوية الشعار */
+            color: var(--primary-dark-brown); /* لون بني داكن لهوية الشعار */
             margin-bottom: 20px;
-            font-size: 2.2em;
+            font-size: 2.4em; /* حجم أكبر للخط */
             text-align: center;
             font-weight: bold;
         }
@@ -63,7 +62,7 @@
             color: var(--medium-gray); /* رمادي متوسط للعناوين الفرعية */
             margin-top: 30px;
             margin-bottom: 15px;
-            font-size: 1.6em;
+            font-size: 1.7em; /* حجم أكبر قليلاً للعناوين الفرعية */
             text-align: center;
             font-weight: 600;
         }
@@ -71,15 +70,15 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03); /* ظل خفيف جداً للجدول */
         }
         th, td {
-            border: 1px solid var(--border-color); /* حدود فاتحة */
+            border: 1px solid var(--light-border); /* حدود فاتحة جداً بين الخلايا */
             padding: 12px 15px;
-            text-align: center; /* محاذاة افتراضية لمنتصف الخلايا */
+            text-align: center;
         }
         th {
-            background-color: var(--primary-green); /* خلفية خضراء لرؤوس الأعمدة من هوية الشعار */
+            background-color: var(--primary-dark-brown); /* خلفية بني داكن لرؤوس الأعمدة من هوية الشعار */
             color: var(--white);
             font-weight: bold;
             white-space: nowrap;
@@ -89,7 +88,8 @@
             text-align: left !important; /* لليمين في RTL */
             direction: ltr !important;
             font-family: 'Consolas', 'Courier New', monospace; /* خط أحادي المسافة للأرقام */
-            font-size: 1.05em; /* حجم أكبر قليلاً للأرقام */
+            font-size: 1.1em; /* حجم أكبر قليلاً للأرقام */
+            color: var(--primary-dark-brown); /* لون الأرقام من هوية الشعار */
         }
         /* محاذاة الشهر والملاحظات لليمين في RTL */
         .text-col {
@@ -97,7 +97,7 @@
         }
 
         .salary-details tr:nth-child(even), .history-table tr:nth-child(even) {
-            background-color: #f8f8f8; /* لون خلفية خفيف للصفوف الزوجية */
+            background-color: #fcfcfc; /* لون خلفية خفيف جداً للصفوف الزوجية */
         }
         .message {
             margin-top: 20px;
@@ -108,23 +108,23 @@
             font-weight: bold;
         }
         .message.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background-color: #ffe0e0; /* أحمر فاتح جداً */
+            color: #cc0000;
+            border: 1px solid #ffb3b3;
         }
         .message.success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background-color: #e0ffe0; /* أخضر فاتح جداً */
+            color: #008000;
+            border: 1px solid #b3ffb3;
         }
         .message.info {
-            background-color: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
+            background-color: #e0f2f7; /* أزرق فاتح جداً */
+            color: #006680;
+            border: 1px solid #b3e6ff;
         }
         .loading-spinner {
             border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: var(--primary-green); /* لون الشعار للسبينر */
+            border-left-color: var(--accent-gold); /* لون ذهبي للسبينر */
             border-radius: 50%;
             width: 30px;
             height: 30px;
@@ -136,7 +136,7 @@
             to { transform: rotate(360deg); }
         }
         .back-button {
-            background-color: var(--blue-button); /* زر أزرق للعودة */
+            background-color: var(--button-bg); /* لون زر من هوية الشعار (ذهبي) */
             color: var(--white);
             padding: 12px 25px;
             border: none;
@@ -147,13 +147,13 @@
             transition: background-color 0.3s ease;
         }
         .back-button:hover {
-            background-color: var(--blue-button-hover);
+            background-color: var(--button-hover); /* لون أغمق عند التحويم */
         }
     </style>
 </head>
 <body>
     <div class="logo-container">
-        <img src="https://i.ibb.co/k2D0Yh4/Whats-App-Image-2024-07-16-at-13-17-09-removebg-preview.png" alt="شعار Earth Pure" class="logo">
+        <img src="logo.png" alt="شعار Earth Pure" class="logo">
     </div>
 
     <div class="container">
@@ -198,7 +198,7 @@
     <script>
         // هذا هو الرابط الجديد الذي حصلت عليه من Google Apps Script (Web App URL)
         // **مهم جدًا: استبدل هذا بالرابط الفعلي لتطبيق الويب الخاص بك بعد النشر.**
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzPTeQ74aEDyPz07FNArjrRRNs1pdayt1PK1YsYwOIED0w7kyfBhqU7RqWBQKxuXxII/exec';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzJ9qmjsCi439R0WexqKWVVGhimYU5-mMBslBxAvf6xiIwIJu9DnU05WFU2l8ZX96x7/exec';
 
         const employeeNameHeader = document.getElementById('employeeNameHeader');
         const currentMonthSalaryTable = document.getElementById('currentMonthSalary');
@@ -270,8 +270,6 @@
                     }
 
                     if (pastRecords.length > 0) {
-                        // **تعديل: فرز سجلات الرواتب السابقة تنازلياً حسب الشهر إذا أردت**
-                        // pastRecords.sort((a, b) => new Date(b['الشهر'] + ' 1, 2000') - new Date(a['الشهر'] + ' 1, 2000'));
                         populateTable(salaryHistoryBody, pastRecords);
                     } else {
                         const row = salaryHistoryBody.insertRow();
@@ -310,7 +308,6 @@
                 const numericHeaders = ['الراتب الأساسي', 'المكافآت', 'الخصومات', 'الصافي'];
                 numericHeaders.forEach(header => {
                     const cell = row.insertCell();
-                    // **تعديل: تنسيق الأرقام باللغة الإنجليزية**
                     cell.textContent = typeof record[header] === 'number' 
                                        ? record[header].toLocaleString('en-US') // تنسيق الأرقام الإنجليزية
                                        : (record[header] || '0');
