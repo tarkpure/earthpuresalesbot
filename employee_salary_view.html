@@ -16,7 +16,7 @@
             --button-bg: var(--accent-gold); /* لون الزر من لون اللوجو الذهبي */
             --button-hover: #a18b52;    /* درجة أغمق للذهبي عند التحويم */
             --header-bg: var(--primary-dark-brown); /* خلفية رؤوس الجدول بني داكن */
-            --header-text-color: var(--white); /* **التعديل: لون نص رؤوس الجدول أبيض ليظهر** */
+            --header-text-color: var(--white); /* **لون نص رؤوس الجدول أبيض ليظهر** */
             --table-row-even-bg: #fcfcfc; /* لون خلفية خفيف جداً للصفوف الزوجية */
             --text-color: var(--primary-dark-brown); /* لون النص العام */
             --error-bg: #ffe0e0; /* أحمر فاتح جداً للرسائل الخطأ */
@@ -81,7 +81,7 @@
             border-collapse: collapse;
             margin-bottom: 25px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-            /* إزالة أنماط display هنا التي قد تعارض سلوك الجدول الافتراضي */
+            /* **تعديل: إزالة display هنا لضمان السلوك الافتراضي الصحيح للجدول** */
         }
         th, td {
             border: 1px solid var(--light-border);
@@ -89,13 +89,19 @@
             text-align: center;
             box-sizing: border-box;
             white-space: nowrap; /* لمنع التفاف النص في الخلايا */
+            /* **تعديل جديد: ضمان ظهور الخلايا بشكل قاطع** */
+            display: table-cell; /* فرض سلوك خلية الجدول */
+            vertical-align: middle; /* محاذاة عمودية للمنتصف */
+            overflow: hidden; /* إخفاء أي محتوى يتجاوز حجم الخلية */
+            text-overflow: ellipsis; /* إضافة نقاط إذا كان النص طويلاً جداً */
+            /* **إزالة min-width من th و td هنا لنرى ما إذا كان يسبب مشاكل في المتصفحات المختلفة** */
         }
         th {
             background-color: var(--header-bg);
-            color: var(--header-text-color); /* **هذا هو التعديل الأساسي لظهور النص** */
+            color: var(--header-text-color); /* **هذا هو لون النص الأساسي (أبيض)** */
             font-weight: bold;
-            display: table-cell; /* التأكيد على أنها خلايا جدول */
-            min-width: 100px; /* ضمان عرض أدنى لرؤوس الأعمدة */
+            /* **تعديل جديد: إضافة width: 16.66% أو قيمة مناسبة لكل عمود** */
+            width: 16.66%; /* 100% / 6 أعمدة = 16.66% لكل عمود */
         }
         /* محاذاة الأرقام لليمين وتوجيه النص من اليسار لليمين */
         .numeric-col {
@@ -120,7 +126,7 @@
             display: none;
             text-align: center;
             font-weight: bold;
-            border: 1px solid; /* إضافة حدود لرسائل التنبيه */
+            border: 1px solid;
         }
         .message.error {
             background-color: var(--error-bg);
@@ -211,7 +217,6 @@
     </div>
 
     <script>
-        // **مهم جدًا: استبدل هذا بالرابط الفعلي لتطبيق الويب الخاص بك بعد النشر.**
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwwrWYuaAJf_x8UTUP-LPkBbC_VVUxhd-MGvW4SbFpmmglwaERDY2KQB7rtbrJNL6M/exec';
 
         const employeeNameHeader = document.getElementById('employeeNameHeader');
@@ -313,7 +318,7 @@
             records.forEach(record => {
                 const row = tableBodyElement.insertRow();
                 
-                // **ترتيب الأعمدة مهم جدًا ويتطابق مع رؤوس الجدول**
+                // ترتيب الأعمدة مهم جدًا ويتطابق مع رؤوس الجدول
                 // 1. الشهر
                 const monthCell = row.insertCell();
                 monthCell.textContent = record['الشهر'] || '';
