@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تفاصيل الراتب - Earth Pure</title>
-    <style>
+    <base target="_top"> <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
+            background-color: #f4f7f6; /* لون خلفية فاتح ومهدئ */
             margin: 0;
             padding: 20px;
             display: flex;
@@ -16,55 +16,72 @@
             align-items: center;
             min-height: 100vh;
             color: #333;
-            direction: rtl;
+            direction: rtl; /* لجعل التخطيط من اليمين لليسار للعربية */
         }
         .container {
             background-color: #ffffff;
             padding: 30px 40px;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            max-width: 800px; /* زيادة العرض لاستيعاب الجداول */
+            max-width: 900px; /* زيادة العرض لاستيعاب الجداول بشكل أفضل */
             width: 100%;
             box-sizing: border-box;
+            text-align: center; /* محاذاة محتوى الكونتينر للمنتصف */
         }
         .logo-container {
             text-align: center;
             margin-bottom: 20px;
         }
         .logo {
-            max-width: 120px;
+            max-width: 150px; /* حجم أكبر قليلاً للشعار */
             height: auto;
         }
         h1 {
-            color: #4caf50; /* لون أخضر للرواتب */
+            color: #28a745; /* لون أخضر للرواتب */
             margin-bottom: 20px;
-            font-size: 2em;
+            font-size: 2.2em; /* حجم أكبر للخط */
             text-align: center;
+            font-weight: bold;
         }
         h2 {
             color: #555;
             margin-top: 30px;
             margin-bottom: 15px;
-            font-size: 1.5em;
+            font-size: 1.6em; /* حجم أكبر قليلاً للعناوين الفرعية */
             text-align: center;
+            font-weight: 600; /* خط سميك متوسط */
         }
-        .salary-details, .history-table {
+        table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 25px; /* مسافة تحت الجداول */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); /* ظل خفيف للجدول */
         }
-        .salary-details td, .history-table th, .history-table td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: right; /* محاذاة لليمين */
+        th, td {
+            border: 1px solid #e9ecef; /* حدود فاتحة بين الخلايا */
+            padding: 12px 15px; /* مساحة داخلية أكبر */
+            text-align: center; /* محاذاة افتراضية لمنتصف الخلايا */
         }
-        .salary-details th, .history-table th {
-            background-color: #e8f5e9; /* لون أخضر فاتح للخلفية */
-            color: #4caf50; /* لون أخضر للخط */
+        th {
+            background-color: #28a745; /* خلفية خضراء لرؤوس الأعمدة */
+            color: white; /* نص أبيض لرؤوس الأعمدة */
             font-weight: bold;
+            white-space: nowrap; /* منع رؤوس الأعمدة من الالتفاف */
         }
+        /* **تعديلات أساسية هنا للتنسيق:** */
+        /* محاذاة الأرقام لليمين وتوجيه النص من اليسار لليمين */
+        .numeric-col {
+            text-align: left !important; /* لليمين في RTL */
+            direction: ltr !important;
+            font-family: 'Consolas', 'Courier New', monospace; /* خط أحادي المسافة للأرقام */
+        }
+        /* محاذاة الشهر والملاحظات لليمين في RTL */
+        .text-col {
+            text-align: right !important;
+        }
+
         .salary-details tr:nth-child(even), .history-table tr:nth-child(even) {
-            background-color: #f2f2f2;
+            background-color: #f8f9fa; /* لون خلفية خفيف للصفوف الزوجية */
         }
         .message {
             margin-top: 20px;
@@ -72,48 +89,56 @@
             border-radius: 6px;
             display: none;
             text-align: center;
+            font-weight: bold;
         }
         .message.error {
             background-color: #f8d7da;
             color: #721c24;
+            border: 1px solid #f5c6cb;
         }
         .message.success {
             background-color: #d4edda;
             color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .message.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
         }
         .loading-spinner {
             border: 4px solid rgba(0, 0, 0, 0.1);
             border-left-color: #4caf50;
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
+            width: 30px; /* حجم أكبر للسبينر */
+            height: 30px;
             animation: spin 1s linear infinite;
             display: none;
-            margin: 20px auto;
+            margin: 30px auto;
         }
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
         .back-button {
-            background-color: #555;
+            background-color: #007bff; /* زر أزرق للعودة */
             color: white;
-            padding: 10px 15px;
+            padding: 12px 25px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px; /* حواف أكثر دائرية */
             cursor: pointer;
-            font-size: 1em;
+            font-size: 1.1em; /* حجم خط أكبر للزر */
             margin-top: 20px;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s ease;
         }
         .back-button:hover {
-            background-color: #333;
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="logo-container">
-            <img src="logo.png" alt="شعار Earth Pure" class="logo">
+            <img src="https://i.ibb.co/k2D0Yh4/Whats-App-Image-2024-07-16-at-13-17-09-removebg-preview.png" alt="شعار Earth Pure" class="logo">
         </div>
         <h1 id="employeeNameHeader"></h1>
         <div id="loadingSpinner" class="loading-spinner"></div>
@@ -123,61 +148,57 @@
         <table class="salary-details" id="currentMonthSalary">
             <thead>
                 <tr>
-                    <th>الشهر</th>
-                    <th>الراتب الأساسي</th>
-                    <th>المكافآت</th>
-                    <th>الخصومات</th>
-                    <th>الصافي</th>
-                </tr>
+                    <th class="text-col">الشهر</th>
+                    <th class="numeric-col">الراتب الأساسي</th>
+                    <th class="numeric-col">المكافآت</th>
+                    <th class="numeric-col">الخصومات</th>
+                    <th class="numeric-col">الصافي</th>
+                    <th class="text-col">ملاحظات</th> </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td id="currentMonth"></td>
-                    <td id="baseSalary"></td>
-                    <td id="bonuses"></td>
-                    <td id="deductions"></td>
-                    <td id="netSalary"></td>
-                </tr>
-            </tbody>
+                </tbody>
         </table>
 
         <h2>سجل الرواتب السابق</h2>
         <table class="history-table" id="salaryHistory">
             <thead>
                 <tr>
-                    <th>الشهر</th>
-                    <th>الراتب الأساسي</th>
-                    <th>المكافآت</th>
-                    <th>الخصومات</th>
-                    <th>الصافي</th>
-                </tr>
+                    <th class="text-col">الشهر</th>
+                    <th class="numeric-col">الراتب الأساسي</th>
+                    <th class="numeric-col">المكافآت</th>
+                    <th class="numeric-col">الخصومات</th>
+                    <th class="numeric-col">الصافي</th>
+                    <th class="text-col">ملاحظات</th> </tr>
             </thead>
             <tbody>
                 </tbody>
         </table>
-        <button class="back-button" onclick="window.location.href='index.html'">العودة للرئيسية</button>
+        <button class="back-button" onclick="google.script.history.back()">العودة للصفحة السابقة</button>
     </div>
 
     <script>
         // هذا هو الرابط الجديد الذي حصلت عليه من Google Apps Script (Web App URL)
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwMFY8mi5gJSsgAhk76AK2RMD-P6tx-_csOL0k2ztR4qiIEKI-roASlZUZ6KodjuDeE/exec'; 
+        // **مهم جدًا: استبدل هذا بالرابط الفعلي لتطبيق الويب الخاص بك بعد النشر.**
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzPTeQ74aEDyPz07FNArjrRRNs1pdayt1PK1YsYwOIED0w7kyfBhqU7RqWBQKxuXxII/exec';
 
         const employeeNameHeader = document.getElementById('employeeNameHeader');
         const currentMonthSalaryTable = document.getElementById('currentMonthSalary');
-        const salaryHistoryBody = document.getElementById('salaryHistory').getElementsByTagName('tbody')[0];
+        const currentMonthSalaryBody = currentMonthSalaryTable.getElementsByTagName('tbody')[0]; // الحصول على tbody لراتب الشهر الحالي
+        const salaryHistoryTable = document.getElementById('salaryHistory');
+        const salaryHistoryBody = salaryHistoryTable.getElementsByTagName('tbody')[0];
         const messageDiv = document.getElementById('messageDiv');
         const loadingSpinner = document.getElementById('loadingSpinner');
 
         function showMessage(msg, type = 'error') {
             messageDiv.textContent = msg;
-            messageDiv.classList.add(type);
+            messageDiv.className = `message ${type}`; // تعيين الفئة الصحيحة
             messageDiv.style.display = 'block';
         }
 
         async function fetchSalaryData() {
             loadingSpinner.style.display = 'block';
-            currentMonthSalaryTable.style.display = 'none';
-            salaryHistoryBody.innerHTML = '';
+            currentMonthSalaryBody.innerHTML = ''; // مسح المحتوى الحالي
+            salaryHistoryBody.innerHTML = ''; // مسح المحتوى الحالي
             messageDiv.style.display = 'none';
 
             const employeeId = localStorage.getItem('currentEmployeeId');
@@ -198,7 +219,7 @@
             try {
                 const response = await fetch(WEB_APP_URL, {
                     method: 'POST',
-                    mode: 'cors',
+                    mode: 'cors', // ضروري لطلبات Fetch بين النطاقات
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
@@ -209,30 +230,36 @@
                 console.log('Apps Script salary response:', result);
 
                 if (result.status === 'success' && result.data && Array.isArray(result.data)) {
-                    currentMonthSalaryTable.style.display = 'table';
-                    const latestRecord = result.data[result.data.length - 1];
+                    const allRecords = result.data;
+                    const currentMonth = new Date().toLocaleString('ar-EG', { month: 'long' });
 
-                    if (latestRecord) {
-                        document.getElementById('currentMonth').textContent = latestRecord['الشهر'] || '';
-                        document.getElementById('baseSalary').textContent = latestRecord['الراتب الأساسي'] || '';
-                        document.getElementById('bonuses').textContent = latestRecord['المكافآت'] || '';
-                        document.getElementById('deductions').textContent = latestRecord['الخصومات'] || '';
-                        document.getElementById('netSalary').textContent = latestRecord['الصافي'] || '';
+                    const currentRecord = allRecords.find(record => 
+                        String(record['الشهر'] || '').trim() === currentMonth.trim()
+                    );
+                    const pastRecords = allRecords.filter(record => 
+                        String(record['الشهر'] || '').trim() !== currentMonth.trim()
+                    );
+
+                    // **تعديل: ملء جدول راتب الشهر الحالي ديناميكيا**
+                    if (currentRecord) {
+                        populateTable(currentMonthSalaryBody, [currentRecord]);
                     } else {
-                        showMessage('لا توجد بيانات راتب للشهر الحالي.', 'info');
+                        const row = currentMonthSalaryBody.insertRow();
+                        const cell = row.insertCell();
+                        cell.colSpan = 6;
+                        cell.className = 'no-data-message';
+                        cell.textContent = 'لا توجد بيانات راتب للشهر الحالي.';
                     }
 
-                    if (result.data.length > 0) {
-                        result.data.forEach(record => {
-                            const row = salaryHistoryBody.insertRow();
-                            row.insertCell().textContent = record['الشهر'] || '';
-                            row.insertCell().textContent = record['الراتب الأساسي'] || '';
-                            row.insertCell().textContent = record['المكافآت'] || '';
-                            row.insertCell().textContent = record['الخصومات'] || '';
-                            row.insertCell().textContent = record['الصافي'] || '';
-                        });
+                    // **تعديل: ملء جدول سجل الرواتب السابق ديناميكيا**
+                    if (pastRecords.length > 0) {
+                        populateTable(salaryHistoryBody, pastRecords);
                     } else {
-                        showMessage('لا توجد سجلات رواتب سابقة.', 'info');
+                        const row = salaryHistoryBody.insertRow();
+                        const cell = row.insertCell();
+                        cell.colSpan = 6;
+                        cell.className = 'no-data-message';
+                        cell.textContent = 'لا توجد سجلات رواتب سابقة.';
                     }
 
                 } else {
@@ -246,6 +273,44 @@
             } finally {
                 loadingSpinner.style.display = 'none';
             }
+        }
+
+        // **دالة مساعدة لملء الجداول (تم تحسينها)**
+        function populateTable(tableBodyElement, records) {
+            tableBodyElement.innerHTML = ''; // مسح أي بيانات سابقة
+
+            records.forEach(record => {
+                const row = tableBodyElement.insertRow();
+                // الشهر
+                const monthCell = row.insertCell();
+                monthCell.textContent = record['الشهر'] || '';
+                monthCell.className = 'text-col'; // تطبيق فئة النص
+
+                // الراتب الأساسي
+                const baseSalaryCell = row.insertCell();
+                baseSalaryCell.textContent = typeof record['الراتب الأساسي'] === 'number' ? record['الراتب الأساسي'].toLocaleString('ar-EG') : (record['الراتب الأساسي'] || '0');
+                baseSalaryCell.className = 'numeric-col'; // تطبيق فئة الأرقام
+
+                // المكافآت
+                const bonusesCell = row.insertCell();
+                bonusesCell.textContent = typeof record['المكافآت'] === 'number' ? record['المكافآت'].toLocaleString('ar-EG') : (record['المكافآت'] || '0');
+                bonusesCell.className = 'numeric-col';
+
+                // الخصومات
+                const deductionsCell = row.insertCell();
+                deductionsCell.textContent = typeof record['الخصومات'] === 'number' ? record['الخصومات'].toLocaleString('ar-EG') : (record['الخصومات'] || '0');
+                deductionsCell.className = 'numeric-col';
+
+                // الصافي
+                const netSalaryCell = row.insertCell();
+                netSalaryCell.textContent = typeof record['الصافي'] === 'number' ? record['الصافي'].toLocaleString('ar-EG') : (record['الصافي'] || '0');
+                netSalaryCell.className = 'numeric-col';
+
+                // الملاحظات
+                const notesCell = row.insertCell();
+                notesCell.textContent = record['ملاحظات'] || '';
+                notesCell.className = 'text-col'; // تطبيق فئة النص
+            });
         }
 
         window.onload = fetchSalaryData;
