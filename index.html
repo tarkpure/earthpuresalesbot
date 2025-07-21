@@ -21,10 +21,13 @@
         .logo-container {
             text-align: center;
             margin-bottom: 30px;
+            /* تعديلات اللوجو هنا */
+            filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.1)); /* ظل خفيف للشعار */
         }
         .logo {
-            max-width: 150px;
+            max-width: 180px; /* تم تعديل الحجم ليتناسب مع التصميم */
             height: auto;
+            border-radius: 5px; /* حواف مستديرة طفيفة */
         }
         h1 {
             text-align: center;
@@ -125,10 +128,9 @@
             <div class="card-icon">🧾</div>
             <div class="card-title">إدارة الأوردرات والعينات</div>
         </a>
-        <div class="dashboard-card card-salaries disabled-card">
-            <div class="card-icon">💰</div>
+        <a href="employee_login.html" class="dashboard-card card-salaries"> <div class="card-icon">💰</div>
             <div class="card-title">الرواتب</div>
-        </div>
+        </a>
         <div class="dashboard-card card-accounts disabled-card">
             <div class="card-icon">📊</div>
             <div class="card-title">الحسابات</div>
