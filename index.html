@@ -5,9 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>الواجهة الرئيسية - Earth Pure</title>
     <style>
+        /* تعريف الألوان المتناسقة مع هوية الشعار (ذهبي، بني، وألوان محايدة) */
+        :root {
+            --primary-dark-brown: #3C2E2A; /* لون بني داكن من اللوجو (earth pure text) */
+            --accent-gold: #B89C5D;     /* لون ذهبي من اللوجو (الشكل العلوي و earth text) */
+            --light-bg: #f8f8f8;        /* خلفية عامة فاتحة قليلاً */
+            --medium-gray: #666;        /* نص رمادي متوسط للفقرات الثانوية */
+            --white: #ffffff;
+            --card-shadow: rgba(0, 0, 0, 0.08);
+            --card-hover-shadow: rgba(0, 0, 0, 0.12);
+
+            /* ألوان الكروت الحالية - تم الاحتفاظ بها كما هي */
+            --orders-bg: #e3f2fd; --orders-icon: #2196f3;
+            --salaries-bg: #e8f5e9; --salaries-icon: #4caf50;
+            --accounts-bg: #fff3e0; --accounts-icon: #ff9800;
+            --inventory-bg: #f3e5f5; --inventory-icon: #9c27b0;
+            
+            /* ألوان الكروت الجديدة - تم اختيارها لتكون متناسقة */
+            --performance-bg: #fdf5e6; /* لون كريمي فاتح للتقرير الأداء */
+            --performance-icon: #d4ac0d; /* لون ذهبي داكن لأيقونة الأداء */
+
+            --daily-report-bg: #e0f2f7; /* لون أزرق سماوي فاتح للتقرير اليومي */
+            --daily-report-icon: #3f51b5; /* لون أزرق داكن لأيقونة التقرير اليومي */
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f8f8; /* لون خلفية أفتح قليلاً */
+            background-color: var(--light-bg);
             margin: 0;
             padding: 20px;
             display: flex;
@@ -21,34 +45,34 @@
         .logo-container {
             text-align: center;
             margin-bottom: 30px;
-            /* تعديلات اللوجو هنا */
-            filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.1)); /* ظل خفيف للشعار */
+            filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.1));
         }
         .logo {
-            max-width: 180px; /* تم تعديل الحجم ليتناسب مع التصميم */
+            max-width: 180px;
             height: auto;
-            border-radius: 5px; /* حواف مستديرة طفيفة */
+            border-radius: 5px;
         }
         h1 {
             text-align: center;
-            color: #ad8a00; /* لون ذهبي أغمق قليلاً */
-            margin-bottom: 40px; /* زيادة الهامش السفلي للعنوان */
+            color: var(--accent-gold); /* لون ذهبي أغمق قليلاً من اللوجو */
+            margin-bottom: 40px;
             font-size: 2.2em;
         }
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            /* **تعديل: لـ 6 أيقونات، سنجعلها 3 أعمدة في الصف الواحد** */
+            grid-template-columns: repeat(3, minmax(200px, 1fr)); 
             gap: 20px;
             width: 100%;
-            max-width: 600px;
-            padding: 0 20px; /* إضافة padding أفقي */
+            max-width: 900px; /* زيادة أقصى عرض لاستيعاب 3 أعمدة */
+            padding: 0 20px;
             box-sizing: border-box;
         }
         .dashboard-card {
             background-color: #fff;
             border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* ظل أخف وأكثر نعومة */
-            padding: 25px; /* زيادة التباعد الداخلي */
+            box-shadow: 0 4px 10px var(--card-shadow);
+            padding: 25px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -56,53 +80,66 @@
             text-align: center;
             cursor: pointer;
             transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-            text-decoration: none; /* إزالة خط سفلي للروابط */
-            color: inherit; /* وراثة لون النص من الأب */
+            text-decoration: none;
+            color: inherit;
         }
         .dashboard-card:hover {
-            transform: translateY(-5px); /* تأثير رفع خفيف */
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12); /* ظل أعمق عند التحويم */
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px var(--card-hover-shadow);
         }
         .card-icon {
-            font-size: 3em; /* تكبير حجم الأيقونة */
+            font-size: 3em;
             margin-bottom: 15px;
-            line-height: 1; /* لضمان توسيط الأيقونات بشكل أفضل */
+            line-height: 1;
         }
         .card-title {
-            font-size: 1.25em; /* تكبير حجم العنوان قليلاً */
+            font-size: 1.25em;
             font-weight: bold;
-            color: #333; /* لون عنوان الكارت */
+            color: #333;
         }
-        /* ألوان الكروت وتدرجاتها */
-        .card-orders { background-color: #e3f2fd; } /* أزرق فاتح جداً */
-        .card-orders .card-icon { color: #2196f3; } /* أزرق */
+        /* ألوان الكروت الحالية */
+        .card-orders { background-color: var(--orders-bg); }
+        .card-orders .card-icon { color: var(--orders-icon); }
 
-        .card-salaries { background-color: #e8f5e9; } /* أخضر فاتح جداً */
-        .card-salaries .card-icon { color: #4caf50; } /* أخضر */
+        .card-salaries { background-color: var(--salaries-bg); }
+        .card-salaries .card-icon { color: var(--salaries-icon); }
 
-        .card-accounts { background-color: #fff3e0; } /* برتقالي فاتح جداً */
-        .card-accounts .card-icon { color: #ff9800; } /* برتقالي */
+        .card-accounts { background-color: var(--accounts-bg); }
+        .card-accounts .card-icon { color: var(--accounts-icon); }
 
-        .card-inventory { background-color: #f3e5f5; } /* بنفسجي فاتح جداً */
-        .card-inventory .card-icon { color: #9c27b0; } /* بنفسجي */
+        .card-inventory { background-color: var(--inventory-bg); }
+        .card-inventory .card-icon { color: var(--inventory-icon); }
+
+        /* **ألوان الكروت الجديدة** */
+        .card-performance { background-color: var(--performance-bg); }
+        .card-performance .card-icon { color: var(--performance-icon); }
+
+        .card-daily-report { background-color: var(--daily-report-bg); }
+        .card-daily-report .card-icon { color: var(--daily-report-icon); }
 
         /* لتحديد أن الكروت الأخرى غير قابلة للنقر مؤقتًا */
         .disabled-card {
-            cursor: default; /* مؤشر الفأرة الافتراضي */
-            opacity: 0.7; /* تقليل الشفافية قليلاً */
+            cursor: default;
+            opacity: 0.7;
         }
         .disabled-card:hover {
-            transform: none; /* إزالة تأثير التحويم */
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* إزالة الظل الأعمق */
+            transform: none;
+            box-shadow: 0 4px 10px var(--card-shadow); /* العودة للظل الأصلي عند التحويم */
         }
         .disabled-card .card-icon, .disabled-card .card-title {
-            color: #888; /* جعل الأيقونة والنص باهتين */
+            color: #888;
         }
 
         /* استجابة الهاتف (Mobile Responsiveness) */
-        @media (max-width: 600px) {
+        @media (max-width: 768px) { /* تعديل نقطة التوقف لـ 3 أعمدة */
             .dashboard-grid {
-                grid-template-columns: 1fr; /* عمود واحد على الشاشات الصغيرة */
+                grid-template-columns: repeat(2, minmax(150px, 1fr)); /* عمودين على الشاشات المتوسطة */
+                max-width: 600px;
+            }
+        }
+        @media (max-width: 480px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr; /* عمود واحد على الشاشات الصغيرة جداً */
                 padding: 0 10px;
             }
             .dashboard-card {
@@ -128,7 +165,8 @@
             <div class="card-icon">🧾</div>
             <div class="card-title">إدارة الأوردرات والعينات</div>
         </a>
-        <a href="employee_login.html" class="dashboard-card card-salaries"> <div class="card-icon">💰</div>
+        <a href="employee_login.html" class="dashboard-card card-salaries">
+            <div class="card-icon">💰</div>
             <div class="card-title">الرواتب</div>
         </a>
         <div class="dashboard-card card-accounts disabled-card">
@@ -139,6 +177,11 @@
             <div class="card-icon">📦</div>
             <div class="card-title">المخزون</div>
         </div>
+
+        <a href="#" class="dashboard-card card-performance"> <div class="card-icon">📈</div> <div class="card-title">تقرير الأداء</div>
+        </a>
+        <a href="#" class="dashboard-card card-daily-report"> <div class="card-icon">🗓️</div> <div class="card-title">التقرير اليومي</div>
+        </a>
     </div>
 </body>
 </html>
