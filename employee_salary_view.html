@@ -177,7 +177,6 @@
             background-color: var(--button-hover);
         }
 
-        /* ✅ تحسين العرض للموبايل */
         @media (max-width: 600px) {
             h1 { font-size: 1.5em; }
             h2 { font-size: 1.2em; }
@@ -193,138 +192,149 @@
     </style>
 </head>
 <body>
-    <div class="logo-container">
-        <img src="logo.png" alt="شعار Earth Pure" class="logo">
+<div class="logo-container">
+    <img src="logo.png" alt="شعار Earth Pure" class="logo">
+</div>
+<div class="container">
+    <h1 id="employeeNameHeader"></h1>
+    <div id="loadingSpinner" class="loading-spinner"></div>
+    <div id="messageDiv" class="message"></div>
+    <h2>راتب الشهر الحالي</h2>
+    <div class="table-wrapper">
+        <table class="salary-details" id="currentMonthSalary">
+            <thead>
+            <tr>
+                <th class="text-col">الشهر</th>
+                <th class="numeric-col">الراتب الأساسي</th>
+                <th class="numeric-col">المكافآت</th>
+                <th class="numeric-col">الخصومات</th>
+                <th class="numeric-col">الصافي</th>
+                <th class="text-col">ملاحظات</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
     </div>
-
-    <div class="container">
-        <h1 id="employeeNameHeader"></h1>
-        <div id="loadingSpinner" class="loading-spinner"></div>
-        <div id="messageDiv" class="message"></div>
-
-        <h2>راتب الشهر الحالي</h2>
-        <div class="table-wrapper">
-            <table class="salary-details" id="currentMonthSalary">
-                <thead>
-                    <tr>
-                        <th class="text-col">الشهر</th>
-                        <th class="numeric-col">الراتب الأساسي</th>
-                        <th class="numeric-col">المكافآت</th>
-                        <th class="numeric-col">الخصومات</th>
-                        <th class="numeric-col">الصافي</th>
-                        <th class="text-col">ملاحظات</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-
-        <h2>سجل الرواتب السابق</h2>
-        <div class="table-wrapper">
-            <table class="history-table" id="salaryHistory">
-                <thead>
-                    <tr>
-                        <th class="text-col">الشهر</th>
-                        <th class="numeric-col">الراتب الأساسي</th>
-                        <th class="numeric-col">المكافآت</th>
-                        <th class="numeric-col">الخصومات</th>
-                        <th class="numeric-col">الصافي</th>
-                        <th class="text-col">ملاحظات</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-
-        <button class="back-button" onclick="google.script.history.back()">العودة للصفحة السابقة</button>
+    <h2>سجل الرواتب السابق</h2>
+    <div class="table-wrapper">
+        <table class="history-table" id="salaryHistory">
+            <thead>
+            <tr>
+                <th class="text-col">الشهر</th>
+                <th class="numeric-col">الراتب الأساسي</th>
+                <th class="numeric-col">المكافآت</th>
+                <th class="numeric-col">الخصومات</th>
+                <th class="numeric-col">الصافي</th>
+                <th class="text-col">ملاحظات</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
     </div>
+    <button class="back-button" onclick="google.script.history.back()">العودة للصفحة السابقة</button>
+</div>
+<script>
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwss92WD7OrZj4nzcbeP-eoIyZGRQ-iist_reAqYvZpzSSOBFrkcH5nOKH8u-jyckSx/exec';
+    const employeeNameHeader = document.getElementById('employeeNameHeader');
+    const currentMonthSalaryBody = document.getElementById('currentMonthSalary').getElementsByTagName('tbody')[0];
+    const salaryHistoryBody = document.getElementById('salaryHistory').getElementsByTagName('tbody')[0];
+    const messageDiv = document.getElementById('messageDiv');
+    const loadingSpinner = document.getElementById('loadingSpinner');
 
-    <script>
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz-Xf9wAaT-IoJY6F3lYJHRarN3RsmD5snxS8eBVv0zuHD_UjPYtxZ1VS2el6Ua2FHb/exec';
+    function showMessage(msg, type = 'error') {
+        messageDiv.textContent = msg;
+        messageDiv.className = `message ${type}`;
+        messageDiv.style.display = 'block';
+    }
 
-        const employeeNameHeader = document.getElementById('employeeNameHeader');
-        const currentMonthSalaryBody = document.getElementById('currentMonthSalary').getElementsByTagName('tbody')[0];
-        const salaryHistoryBody = document.getElementById('salaryHistory').getElementsByTagName('tbody')[0];
-        const messageDiv = document.getElementById('messageDiv');
-        const loadingSpinner = document.getElementById('loadingSpinner');
+    async function fetchSalaryData() {
+        loadingSpinner.style.display = 'block';
+        currentMonthSalaryBody.innerHTML = '';
+        salaryHistoryBody.innerHTML = '';
+        messageDiv.style.display = 'none';
 
-        function showMessage(msg, type = 'error') {
-            messageDiv.textContent = msg;
-            messageDiv.className = `message ${type}`;
-            messageDiv.style.display = 'block';
+        const employeeId = localStorage.getItem('currentEmployeeId');
+        const employeeName = localStorage.getItem('currentEmployeeName');
+
+        if (!employeeId) {
+            showMessage('خطأ: لم يتم تسجيل الدخول. يرجى العودة لصفحة الدخول.', 'error');
+            loadingSpinner.style.display = 'none';
+            return;
         }
 
-        async function fetchSalaryData() {
-            loadingSpinner.style.display = 'block';
-            currentMonthSalaryBody.innerHTML = '';
-            salaryHistoryBody.innerHTML = '';
-            messageDiv.style.display = 'none';
+        employeeNameHeader.textContent = `مرحباً، ${employeeName || employeeId}`;
 
-            const employeeId = localStorage.getItem('currentEmployeeId');
-            const employeeName = localStorage.getItem('currentEmployeeName');
+        const params = new URLSearchParams();
+        params.append('action', 'getEmployeeSalary');
+        params.append('employeeId', employeeId);
 
-            if (!employeeId) {
-                showMessage('خطأ: لم يتم تسجيل الدخول. يرجى العودة لصفحة الدخول.', 'error');
-                loadingSpinner.style.display = 'none';
-                return;
-            }
-
-            employeeNameHeader.textContent = `مرحباً، ${employeeName || employeeId}`;
-
-            const params = new URLSearchParams();
-            params.append('action', 'getEmployeeSalary');
-            params.append('employeeId', employeeId);
-
-            try {
-                const response = await fetch(WEB_APP_URL, {
-                    method: 'POST',
-                    mode: 'cors',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: params.toString()
-                });
-
-                const result = await response.json();
-
-                if (result.status === 'success' && Array.isArray(result.data)) {
-                    const currentMonth = new Date().toLocaleString('ar-EG', { month: 'long' });
-                    const current = result.data.find(r => (r['الشهر'] || '').trim() === currentMonth.trim());
-                    const past = result.data.filter(r => (r['الشهر'] || '').trim() !== currentMonth.trim());
-
-                    if (current) populateTable(currentMonthSalaryBody, [current]);
-                    else currentMonthSalaryBody.innerHTML = `<tr><td colspan="6">لا توجد بيانات راتب للشهر الحالي.</td></tr>`;
-
-                    if (past.length > 0) populateTable(salaryHistoryBody, past);
-                    else salaryHistoryBody.innerHTML = `<tr><td colspan="6">لا توجد سجلات رواتب سابقة.</td></tr>`;
-
-                } else {
-                    showMessage('❌ حدث خطأ في جلب البيانات أو لا توجد بيانات.', 'error');
-                }
-
-            } catch (error) {
-                showMessage('حدث خطأ في الاتصال. يرجى المحاولة لاحقاً.', 'error');
-            } finally {
-                loadingSpinner.style.display = 'none';
-            }
-        }
-
-        function populateTable(body, records) {
-            body.innerHTML = '';
-            records.forEach(record => {
-                const row = body.insertRow();
-                const fields = ['الشهر', 'الراتب الأساسي', 'المكافآت', 'الخصومات', 'الصافي', 'ملاحظات'];
-                fields.forEach((field, i) => {
-                    const cell = row.insertCell();
-                    let value = record[field] || '0';
-                    if (!isNaN(value)) value = Number(value).toLocaleString('en-US');
-                    cell.textContent = value;
-                    cell.className = (i >= 1 && i <= 4) ? 'numeric-col' : 'text-col';
-                });
+        try {
+            const response = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: params.toString()
             });
-        }
 
-        window.onload = fetchSalaryData;
-    </script>
+            const result = await response.json();
+
+            if (result.status === 'success' && Array.isArray(result.data)) {
+                const today = new Date();
+                const currentMonth = today.getMonth();
+                const currentYear = today.getFullYear();
+
+                const current = result.data.find(r => {
+                    const raw = r['الشهر'];
+                    const date = new Date(raw);
+                    return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+                });
+
+                const past = result.data.filter(r => {
+                    const raw = r['الشهر'];
+                    const date = new Date(raw);
+                    return !(date.getMonth() === currentMonth && date.getFullYear() === currentYear);
+                });
+
+                if (current) populateTable(currentMonthSalaryBody, [current]);
+                else currentMonthSalaryBody.innerHTML = `<tr><td colspan="6">لا توجد بيانات راتب للشهر الحالي.</td></tr>`;
+
+                if (past.length > 0) populateTable(salaryHistoryBody, past);
+                else salaryHistoryBody.innerHTML = `<tr><td colspan="6">لا توجد سجلات رواتب سابقة.</td></tr>`;
+
+            } else {
+                showMessage('❌ حدث خطأ في جلب البيانات أو لا توجد بيانات.', 'error');
+            }
+
+        } catch (error) {
+            showMessage('حدث خطأ في الاتصال. يرجى المحاولة لاحقاً.', 'error');
+        } finally {
+            loadingSpinner.style.display = 'none';
+        }
+    }
+
+    function populateTable(body, records) {
+        body.innerHTML = '';
+        records.forEach(record => {
+            const row = body.insertRow();
+            const fields = ['الشهر', 'الراتب الأساسي', 'المكافآت', 'الخصومات', 'الصافي', 'ملاحظات'];
+            fields.forEach((field, i) => {
+                const cell = row.insertCell();
+                let value = record[field] || '0';
+                if (field === 'الشهر') {
+                    const d = new Date(value);
+                    value = d.toLocaleDateString('ar-EG', { year: 'numeric', month: 'long' });
+                } else if (!isNaN(value)) {
+                    value = Number(value).toLocaleString('en-US');
+                }
+                cell.textContent = value;
+                cell.className = (i >= 1 && i <= 4) ? 'numeric-col' : 'text-col';
+            });
+        });
+    }
+
+    window.onload = fetchSalaryData;
+</script>
 </body>
 </html>
