@@ -60,7 +60,6 @@
         }
         .dashboard-grid {
             display: grid;
-            /* **تعديل: لـ 6 أيقونات، سنجعلها 3 أعمدة في الصف الواحد** */
             grid-template-columns: repeat(3, minmax(200px, 1fr)); 
             gap: 20px;
             width: 100%;
@@ -110,7 +109,7 @@
         .card-inventory { background-color: var(--inventory-bg); }
         .card-inventory .card-icon { color: var(--inventory-icon); }
 
-        /* **ألوان الكروت الجديدة** */
+        /* ألوان الكروت الجديدة */
         .card-performance { background-color: var(--performance-bg); }
         .card-performance .card-icon { color: var(--performance-icon); }
 
@@ -157,10 +156,12 @@
 </head>
 <body>
     <div class="logo-container">
+        <!-- تأكد من وجود ملف logo.png في نفس المجلد -->
         <img src="logo.png" alt="شعار Earth Pure" class="logo">
     </div>
     <h1>لوحة التحكم الرئيسية</h1>
     <div class="dashboard-grid">
+        <!-- البطاقات الأربعة الحالية - تم الاحتفاظ بها كما هي -->
         <a href="form.html" class="dashboard-card card-orders">
             <div class="card-icon">🧾</div>
             <div class="card-title">إدارة الأوردرات والعينات</div>
@@ -173,14 +174,21 @@
             <div class="card-icon">📊</div>
             <div class="card-title">الحسابات</div>
         </div>
-        <div class="dashboard-card card-inventory disabled-card">
+        
+        <!-- **البطاقة الخاصة بالمخزون - تم تفعيلها الآن** -->
+        <a href="inventory_login.html" class="dashboard-card card-inventory">
             <div class="card-icon">📦</div>
             <div class="card-title">المخزون</div>
-        </div>
-
-        <a href="#" class="dashboard-card card-performance"> <div class="card-icon">📈</div> <div class="card-title">تقرير الأداء</div>
         </a>
-        <a href="#" class="dashboard-card card-daily-report"> <div class="card-icon">🗓️</div> <div class="card-title">التقرير اليومي</div>
+
+        <!-- البطاقات الجديدة - تم إضافتها سابقًا -->
+        <a href="#" class="dashboard-card card-performance"> <!-- رابط وهمي # - استبدله لاحقًا -->
+            <div class="card-icon">📈</div> <!-- أيقونة تقرير الأداء -->
+            <div class="card-title">تقرير الأداء</div>
+        </a>
+        <a href="#" class="dashboard-card card-daily-report"> <!-- رابط وهمي # - استبدله لاحقًا -->
+            <div class="card-icon">🗓️</div> <!-- أيقونة التقرير اليومي -->
+            <div class="card-title">التقرير اليومي</div>
         </a>
     </div>
 </body>
