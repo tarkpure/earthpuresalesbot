@@ -207,7 +207,7 @@
   </div>
 
   <script>
-    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw9K3VIK199uQHAHWgG_caYpX6rvyf0Gl_GuCLOuBBgIkyYlThKyHiFm-thOVn_I2_Q/exec';
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz7jay56voyymjETh4abPWUgGopt7UM3uoucfy5HZmIlMllZ7Jxut6g-r2C0B0mDhb5/exec';
 
     const itemNameInput = document.getElementById('itemNameInput');
     const searchButton = document.getElementById('searchButton');
@@ -317,12 +317,7 @@
         headers.forEach(headerText => {
           const cell = row.insertCell();
           const value = item[headerText];
-          if (typeof value === 'number') {
-            cell.textContent = value.toLocaleString('en-US');
-            cell.classList.add('numeric-cell');
-          } else {
-            cell.textContent = value || '';
-          }
+          cell.textContent = value !== undefined && value !== null ? String(value) : '';
         });
       });
     }
