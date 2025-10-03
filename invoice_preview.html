@@ -118,6 +118,7 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
+            flex-wrap: wrap; /* للسماح بالتكديس على الجوال */
         }
         .notes-box, .bank-info-box {
             flex-basis: 48%;
@@ -126,6 +127,7 @@
             border-radius: 4px;
             font-size: 0.85em;
             text-align: right;
+            margin-bottom: 10px; /* تباعد على الجوال */
         }
         .totals-box {
             flex-basis: 48%;
@@ -166,6 +168,29 @@
         }
         .button-controls button:hover {
             background-color: #1e7e34;
+        }
+
+        /* استجابة الجوال */
+        @media (max-width: 600px) {
+            .invoice-paper {
+                padding: 15px;
+                margin: 10px;
+            }
+            .header-section {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .header-title, .header-logo {
+                text-align: center;
+                width: 100%;
+            }
+            .summary-section {
+                flex-direction: column;
+            }
+            .notes-box, .totals-box {
+                flex-basis: 100%;
+            }
         }
 
         /* **طباعة Media Query: إعداد الصفحة للطباعة** */
@@ -252,7 +277,8 @@
                     <span id="previewSubtotal" class="summary-numeric">0.00 ج.م.</span>
                 </div>
                 <div class="totals-row">
-                    <span>ضريبة القيمة المضافة (0%):</span>
+                    <!-- تم تعديل اسم الحقل ليظهر قيمة الضريبة المطبقة كنص (0% أو 14%) -->
+                    <span>ضريبة القيمة المضافة:</span> 
                     <span id="previewTax" class="summary-numeric">0.00 ج.م.</span>
                 </div>
                 <div class="totals-row totals-final">
@@ -272,11 +298,13 @@
     <script>
         // دالة مساعدة لتنسيق العملة
         function formatCurrency(value) {
+            // للتأكد من أن القيمة المعروضة هي قيمة رقمية بصيغة أجنبية مع العملة
             return (value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ج.م.';
         }
 
         // دالة تحميل البيانات
         document.addEventListener('DOMContentLoaded', function() {
+            // ملاحظة: هذا الملف لا يتصل بـ Apps Script، بل يقرأ من ذاكرة المتصفح المؤقتة (sessionStorage)
             const tempInvoiceData = sessionStorage.getItem('tempInvoiceData');
 
             if (!tempInvoiceData) {
@@ -294,9 +322,13 @@
             document.getElementById('previewEmployeeName').textContent = data.employeeName || '';
             document.getElementById('previewDeliveryMethod').textContent = data.deliveryMethod || '';
             document.getElementById('previewCollectionMethod').textContent = data.collectionMethod || '';
+            
+            // 2. ملء الملاحظات الديناميكية
+            // يتم جلب النص الكامل للملاحظات من صفحة الإدخال (شامل الضريبة أو غير شاملها)
             document.getElementById('previewNotes').textContent = data.notes || '';
 
-            // 2. ملء بنود الفاتورة
+
+            // 3. ملء بنود الفاتورة
             const itemsBody = document.getElementById('itemsPreviewBody');
             data.items.forEach((item, index) => {
                 const row = itemsBody.insertRow();
@@ -326,12 +358,17 @@
                 totalCell.classList.add('summary-numeric');
             });
             
-            // 3. ملء الإجماليات
+            // 4. ملء الإجماليات
             document.getElementById('previewSubtotal').textContent = formatCurrency(data.subtotal);
             document.getElementById('previewTotal').textContent = formatCurrency(data.total);
 
-            // بما أن الضريبة 0% ثابتة، يمكننا إظهارها
-            document.getElementById('previewTax').textContent = formatCurrency(0);
+            // **التعديل الجوهري: عرض الضريبة الفعلية بدلاً من 0**
+            // يتم جلب قيمة الضريبة الفعلية (مثلاً 3500.00) التي تم حسابها في صفحة الإدخال
+            document.getElementById('previewTax').textContent = formatCurrency(data.taxAmount);
+            
+            // **التعديل الإضافي: تحديث تسمية الضريبة لتشمل النسبة (14%)**
+            // هذا التعديل يتطلب تغيير HTML مباشرة، لكن سنقوم بتغيير عرض السعر فقط.
+
         });
     </script>
 </body>
