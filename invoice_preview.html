@@ -15,6 +15,7 @@
             --header-bg: #EAE6D2; /* خلفية خفيفة لرؤوس الأقسام */
             --highlight-bg: #b89c5d; /* لون ذهبي للخلايا المميزة */
             --text-color: var(--primary-dark-brown);
+            --light-border: #ddd;
         }
 
         body {
@@ -117,14 +118,13 @@
         .summary-section {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: flex-end; /* **تعديل: محاذاة العناصر للأسفل** */
             flex-wrap: wrap; 
         }
         
-        /* **التعديل الجوهري لضمان ظهور الصندوقين بجانب بعضهما** */
         .notes-box {
-            order: 1; /* الترتيب الأول (على اليمين في RTL) */
-            flex-basis: 48%; 
+            order: 1; 
+            flex-basis: 58%; 
             padding: 10px;
             border: 1px dashed var(--border-color);
             border-radius: 4px;
@@ -133,15 +133,14 @@
             margin-bottom: 10px;
         }
         .totals-box {
-            order: 2; /* الترتيب الثاني (على اليسار في RTL) */
-            flex-basis: 48%; 
+            order: 2; 
+            flex-basis: 38%; 
             text-align: right;
             border: 2px solid var(--accent-gold);
             border-radius: 5px;
             padding: 15px;
             margin-bottom: 10px;
         }
-        /* **نهاية التعديل الجوهري** */
 
 
         .totals-row {
@@ -381,3 +380,4 @@
     </script>
 </body>
 </html>
+```
