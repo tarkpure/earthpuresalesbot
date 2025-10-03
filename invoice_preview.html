@@ -5,15 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>معاينة بيان المبيعات (فاتورة)</title>
     <style>
-        /* تعريف الألوان المتناسقة مع هوية الشعار (ذهبي، بني، وألوان محايدة) */
         :root {
             --primary-dark-brown: #3C2E2A;
             --accent-gold: #B89C5D;
             --light-bg: #f8f8f8;
             --white: #ffffff;
-            --border-color: #3C2E2A; /* حدود داكنة للطباعة */
-            --header-bg: #EAE6D2; /* خلفية خفيفة لرؤوس الأقسام */
-            --highlight-bg: #b89c5d; /* لون ذهبي للخلايا المميزة */
+            --border-color: #3C2E2A;
+            --header-bg: #EAE6D2;
+            --highlight-bg: #b89c5d;
             --text-color: var(--primary-dark-brown);
             --light-border: #ddd;
         }
@@ -24,26 +23,25 @@
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
+            flex-direction: column; /* لدمج الأزرار مع الورقة */
+            justify-content: flex-start;
+            align-items: center;
             min-height: 100vh;
             color: var(--text-color);
             direction: rtl;
         }
 
-        /* حاوية الفاتورة (للعرض والطباعة) */
         .invoice-paper {
             width: 100%;
             max-width: 800px;
             margin: 20px;
             background-color: var(--white);
             padding: 30px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
             border: 1px solid #ccc;
             box-sizing: border-box;
         }
 
-        /* أقسام الرأس واللوجو */
         .header-section {
             display: flex;
             justify-content: space-between;
@@ -52,17 +50,21 @@
             border-bottom: 2px solid var(--text-color);
             padding-bottom: 15px;
         }
+
         .header-logo {
             flex-basis: 30%;
             text-align: left;
         }
+
         .header-logo img {
             max-width: 150px;
         }
+
         .header-title {
             flex-basis: 65%;
             text-align: right;
         }
+
         .header-title h1 {
             font-size: 2.2em;
             color: var(--text-color);
@@ -70,43 +72,46 @@
             padding-top: 5px;
         }
 
-        /* تفاصيل العميل ورأس الفاتورة */
         .details-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
+
         .details-table th, .details-table td {
             border: 1px solid var(--border-color);
             padding: 8px 12px;
             text-align: right;
             font-size: 0.9em;
         }
+
         .details-table th {
             background-color: var(--header-bg);
             font-weight: bold;
             width: 20%;
         }
 
-        /* جدول بنود الفاتورة */
         .items-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
+
         .items-table thead th {
-            background-color: var(--highlight-bg); /* لون ذهبي لرؤوس الجدول */
+            background-color: var(--highlight-bg);
             color: var(--white);
             font-weight: bold;
             padding: 10px;
             border: 1px solid var(--border-color);
             white-space: nowrap;
         }
+
         .items-table tbody td {
             border: 1px solid var(--light-border);
             padding: 8px 10px;
             font-size: 0.9em;
         }
+
         .items-table .numeric-cell, .summary-numeric {
             direction: ltr;
             text-align: left;
@@ -114,54 +119,57 @@
             white-space: nowrap;
         }
 
-        /* قسم الإجمالي والملاحظات */
+        /* قسم الإجمالي والملاحظات - تم تعديل Flex-basis لضمان بقائها أفقياً */
         .summary-section {
             display: flex;
             justify-content: space-between;
-            align-items: flex-end; /* **تعديل: محاذاة العناصر للأسفل** */
-            flex-wrap: wrap; 
+            align-items: stretch; /* لضبط نفس ارتفاع الصناديق */
+            gap: 20px; 
+            flex-wrap: nowrap; /* منع النزول إلى سطر جديد إلا في الشاشات الصغيرة جداً */
         }
-        
+
         .notes-box {
-            order: 1; 
+            flex-grow: 1; /* لتأخذ المساحة المتبقية */
             flex-basis: 58%; 
             padding: 10px;
             border: 1px dashed var(--border-color);
             border-radius: 4px;
             font-size: 0.85em;
             text-align: right;
-            margin-bottom: 10px;
+            min-height: 120px; 
+            white-space: pre-wrap; /* للحفاظ على تنسيق السطور الجديدة */
         }
+
         .totals-box {
-            order: 2; 
-            flex-basis: 38%; 
+            flex-basis: 38%;
+            min-width: 250px; /* لضمان عدم ضغط الإجماليات كثيراً */
             text-align: right;
             border: 2px solid var(--accent-gold);
             border-radius: 5px;
             padding: 15px;
-            margin-bottom: 10px;
+            /* min-height: 120px; تم إزالته والاعتماد على align-items: stretch */
         }
-
 
         .totals-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 5px;
+            margin-bottom: 8px; /* زيادة الهامش */
         }
+
         .totals-final {
             font-size: 1.3em;
             font-weight: bold;
             color: var(--text-color);
-            border-top: 1px dashed var(--border-color);
-            padding-top: 5px;
-            margin-top: 5px;
+            border-top: 2px dashed var(--border-color); /* زيادة سمك الخط الفاصل */
+            padding-top: 8px;
+            margin-top: 8px;
         }
 
-        /* الأزرار (تختفي عند الطباعة) */
         .button-controls {
             margin: 20px auto;
             text-align: center;
         }
+
         .button-controls button {
             background-color: #28a745;
             color: white;
@@ -173,34 +181,23 @@
             font-size: 1em;
             transition: background-color 0.3s;
         }
+
         .button-controls button:hover {
             background-color: #1e7e34;
         }
 
-        /* استجابة الجوال */
-        @media (max-width: 600px) {
-            .invoice-paper {
-                padding: 15px;
-                margin: 10px;
-            }
-            .header-section {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-            }
-            .header-title, .header-logo {
-                text-align: center;
-                width: 100%;
-            }
+        @media (max-width: 768px) { /* تغيير نقطة التوقف للشاشات المتوسطة والصغيرة */
             .summary-section {
                 flex-direction: column;
+                flex-wrap: wrap;
             }
+
             .notes-box, .totals-box {
                 flex-basis: 100%;
+                min-width: unset;
             }
         }
 
-        /* **طباعة Media Query: إعداد الصفحة للطباعة** */
         @media print {
             body {
                 background: none;
@@ -213,15 +210,13 @@
                 width: 100%;
             }
             .button-controls {
-                display: none; /* إخفاء الأزرار عند الطباعة */
+                display: none;
             }
         }
     </style>
 </head>
 <body>
     <div class="invoice-paper" id="invoicePaper">
-
-        <!-- رأس الفاتورة: الشعار والعنوان -->
         <div class="header-section">
             <div class="header-title">
                 <h1>بيان مبيعات</h1>
@@ -233,14 +228,13 @@
             </div>
         </div>
 
-        <!-- تفاصيل العميل والتحصيل -->
         <table class="details-table">
             <thead>
                 <tr>
-                    <th style="width: 25%;">اسم العميل</th>
-                    <td id="previewCustomerName" style="width: 25%;"></td>
-                    <th style="width: 25%;">طريقة التسليم</th>
-                    <td id="previewDeliveryMethod" style="width: 25%;"></td>
+                    <th>اسم العميل</th>
+                    <td id="previewCustomerName"></td>
+                    <th>طريقة التسليم</th>
+                    <td id="previewDeliveryMethod"></td>
                 </tr>
                 <tr>
                     <th>اسم الموظف</th>
@@ -251,43 +245,41 @@
             </thead>
         </table>
 
-        <!-- جدول بنود الأصناف -->
         <table class="items-table">
             <thead>
                 <tr>
-                    <th style="width: 5%;">م</th>
-                    <th style="width: 35%;">اسم المنتج</th>
-                    <th style="width: 15%;">الوحدة</th>
-                    <th style="width: 15%;">الكمية</th>
-                    <th style="width: 15%;">السعر</th>
-                    <th style="width: 15%;">الإجمالي</th>
+                    <th>م</th>
+                    <th>اسم المنتج</th>
+                    <th>الوحدة</th>
+                    <th>الكمية</th>
+                    <th>السعر</th>
+                    <th>الإجمالي</th>
                 </tr>
             </thead>
-            <tbody id="itemsPreviewBody">
-                <!-- بنود الفاتورة تضاف هنا -->
-            </tbody>
+            <tbody id="itemsPreviewBody"></tbody>
         </table>
 
-        <!-- الإجمالي والملاحظات السفلية -->
         <div class="summary-section">
-            
-            <!-- الملاحظات وشروط الشحن -->
             <div class="notes-box">
                 <p><strong>ملاحظات:</strong></p>
                 <p id="previewNotes"></p>
             </div>
-
-            <!-- صندوق الإجماليات -->
             <div class="totals-box">
                 <div class="totals-row">
                     <span>الإجمالي الفرعي:</span>
                     <span id="previewSubtotal" class="summary-numeric">0.00 ج.م.</span>
                 </div>
+                
                 <div class="totals-row">
-                    <!-- تم تعديل اسم الحقل ليظهر قيمة الضريبة المطبقة كنص (0% أو 14%) -->
-                    <span>ضريبة القيمة المضافة:</span> 
+                    <span>مصاريف الشحن:</span>
+                    <span id="previewShippingCost" class="summary-numeric">0.00 ج.م.</span>
+                </div>
+
+                <div class="totals-row">
+                    <span>ضريبة القيمة المضافة:</span>
                     <span id="previewTax" class="summary-numeric">0.00 ج.م.</span>
                 </div>
+                
                 <div class="totals-row totals-final">
                     <strong>الإجمالي الكلي:</strong>
                     <strong id="previewTotal" class="summary-numeric">0.00 ج.م.</strong>
@@ -295,89 +287,60 @@
             </div>
         </div>
     </div>
-    
-    <!-- أزرار التحكم -->
+
     <div class="button-controls">
         <button onclick="window.close()">إغلاق المعاينة</button>
         <button onclick="window.print()">تصدير وطباعة PDF</button>
     </div>
 
     <script>
-        // دالة مساعدة لتنسيق العملة
         function formatCurrency(value) {
-            // للتأكد من أن القيمة المعروضة هي قيمة رقمية بصيغة أجنبية مع العملة
             return (value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ج.م.';
         }
 
-        // دالة تحميل البيانات
         document.addEventListener('DOMContentLoaded', function() {
-            // ملاحظة: هذا الملف لا يتصل بـ Apps Script، بل يقرأ من ذاكرة المتصفح المؤقتة (sessionStorage)
             const tempInvoiceData = sessionStorage.getItem('tempInvoiceData');
-
             if (!tempInvoiceData) {
                 document.getElementById('invoicePaper').innerHTML = '<h2>خطأ: لا توجد بيانات معاينة متاحة.</h2><p style="text-align:center;">يرجى العودة لصفحة إدخال الفاتورة.</p>';
                 document.querySelector('.button-controls').style.display = 'none';
                 return;
             }
-
             const data = JSON.parse(tempInvoiceData);
-            
-            // 1. ملء بيانات الرأس
+
             document.getElementById('previewInvoiceNumber').textContent = data.invoiceNumber || 'جاري الحفظ';
             document.getElementById('previewInvoiceDate').textContent = data.invoiceDate || new Date().toLocaleDateString('ar-EG');
             document.getElementById('previewCustomerName').textContent = data.customerName || '';
             document.getElementById('previewEmployeeName').textContent = data.employeeName || '';
             document.getElementById('previewDeliveryMethod').textContent = data.deliveryMethod || '';
             document.getElementById('previewCollectionMethod').textContent = data.collectionMethod || '';
-            
-            // 2. ملء الملاحظات الديناميكية
-            // يتم جلب النص الكامل للملاحظات من صفحة الإدخال (شامل الضريبة أو غير شاملها)
             document.getElementById('previewNotes').textContent = data.notes || '';
 
-
-            // 3. ملء بنود الفاتورة
             const itemsBody = document.getElementById('itemsPreviewBody');
             data.items.forEach((item, index) => {
                 const row = itemsBody.insertRow();
-                
-                // م (التسلسل)
-                row.insertCell().textContent = index + 1; 
-
-                // اسم المنتج
+                row.insertCell().textContent = index + 1;
                 row.insertCell().textContent = item.product;
-
-                // الوحدة
                 row.insertCell().textContent = item.unit;
-
-                // الكمية
                 const quantityCell = row.insertCell();
                 quantityCell.textContent = item.quantity;
                 quantityCell.classList.add('summary-numeric');
-
-                // السعر
                 const priceCell = row.insertCell();
                 priceCell.textContent = formatCurrency(item.price);
                 priceCell.classList.add('summary-numeric');
-
-                // الإجمالي
                 const totalCell = row.insertCell();
                 totalCell.textContent = formatCurrency(item.total);
                 totalCell.classList.add('summary-numeric');
             });
-            
-            // 4. ملء الإجماليات
+
+            // تحديث الإجماليات
+            const shippingCost = data.shippingCost || 0;
+            const finalTotal = (data.subtotal || 0) + shippingCost + (data.taxAmount || 0);
+
             document.getElementById('previewSubtotal').textContent = formatCurrency(data.subtotal);
-            document.getElementById('previewTotal').textContent = formatCurrency(data.total);
-
-            // **التعديل الجوهري: عرض الضريبة الفعلية بدلاً من 0**
-            // يتم جلب قيمة الضريبة الفعلية (مثلاً 3500.00) التي تم حسابها في صفحة الإدخال
+            document.getElementById('previewShippingCost').textContent = formatCurrency(shippingCost); // **التعديل هنا**
             document.getElementById('previewTax').textContent = formatCurrency(data.taxAmount);
-            
-            // **التعديل الإضافي: تحديث تسمية الضريبة لتشمل النسبة (14%)**
-            // يجب تحديث التسمية في HTML مباشرة، لكن هنا نكتفي بالتأكيد على ظهور القيمة.
-
+            document.getElementById('previewTotal').textContent = formatCurrency(finalTotal);
         });
     </script>
 </body>
 </html>
-```
