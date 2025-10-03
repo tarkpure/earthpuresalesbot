@@ -180,18 +180,15 @@
             <button onclick="window.location.href='index.html'" class="px-6 py-3 bg-gray-600 text-white font-medium rounded-lg hover:bg-gray-700 transition duration-150">
                 العودة للوحة التحكم
             </button>
-            <button id="previewButton" onclick="previewInvoice()" class="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition duration-150">
+            <button id="previewButton" onclick="saveInvoiceAndPreview()" class="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition duration-150">
                 معاينة الفاتورة
-            </button>
-            <button id="saveButton" onclick="saveInvoice()" class="px-6 py-3 bg-amber-600 text-white font-medium rounded-lg hover:bg-amber-700 transition duration-150">
-                حفظ الفاتورة
             </button>
         </div>
     </div>
 
     <script>
         // **ملاحظة هامة: يجب لصق رابط تطبيق الويب هنا**
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwGRVQ8U90klB4IlyyY962UqRIeG30QKiWAZ-gbFnq0dVvK42smiMF2FWHMImYID1a9GA/exec'; 
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyrj2Wzvcmi2EBIN2z-DzplYsot8F-YPt54nqsqDsNljT-d3RZ6yfZ5coblTSOXoOWy8g/exec'; 
         
         let currentEmployeeName = localStorage.getItem('inventoryEmployeeName') || 'الموظف';
         let itemCounter = 0;
@@ -207,12 +204,12 @@
         const employeeNameInput = document.getElementById('employeeName');
         const messageBox = document.getElementById('message-box');
         const loadingOverlay = document.getElementById('loading-overlay');
-        const saveButton = document.getElementById('saveButton');
+        // تم إزالة saveButton
         const previewButton = document.getElementById('previewButton');
-        const notesDisplay = document.getElementById('notesDisplay'); // **جديد: لعرض الملاحظات**
+        const notesDisplay = document.getElementById('notesDisplay'); 
         const notesBank = document.getElementById('notesBank').value;
         const notesShipping = document.getElementById('notesShipping').value;
-        const shippingCostInput = document.getElementById('shippingCost'); // **جديد: حقل مصاريف الشحن**
+        const shippingCostInput = document.getElementById('shippingCost'); 
 
         // *************** وظائف مساعدة ***************
 
@@ -222,7 +219,7 @@
 
         function toggleLoading(show) {
             loadingOverlay.classList.toggle('hidden', !show);
-            saveButton.disabled = show;
+            // تم تعديل هذا الجزء ليتعامل مع زر المعاينة فقط
             previewButton.disabled = show;
         }
 
@@ -292,7 +289,7 @@
             });
 
             const applyTax = taxToggle.checked; 
-            const shippingCost = parseFloat(shippingCostInput.value) || 0; // **جديد: جلب قيمة الشحن**
+            const shippingCost = parseFloat(shippingCostInput.value) || 0;
             let taxAmount = 0;
             let finalTotal = grandSubtotal;
 
@@ -301,7 +298,6 @@
                 finalTotal += taxAmount;
             }
             
-            // **الإضافة: إضافة مصاريف الشحن إلى الإجمالي النهائي**
             finalTotal += shippingCost;
 
 
@@ -310,11 +306,10 @@
             taxDisplay.textContent = formatCurrency(taxAmount) + ' ج.م.';
             totalDisplay.textContent = formatCurrency(finalTotal) + ' ج.م.';
 
-            // **التعديل الجوهري: تحديث نص الملاحظات بناءً على الضريبة**
+            // تحديث نص الملاحظات بناءً على الضريبة
             notesDisplay.textContent = generateNotesText(applyTax);
             
-            // تمكين/تعطيل زر الحفظ
-            saveButton.disabled = grandSubtotal <= 0;
+            // تمكين/تعطيل زر المعاينة (الحفظ)
             previewButton.disabled = grandSubtotal <= 0;
         }
 
@@ -400,7 +395,7 @@
             const subtotal = parseFloat(subtotalDisplay.textContent.replace(/[^0-9.-]+/g,""));
             const taxAmount = parseFloat(taxDisplay.textContent.replace(/[^0-9.-]+/g,""));
             const total = parseFloat(totalDisplay.textContent.replace(/[^0-9.-]+/g,""));
-            const shippingCost = parseFloat(shippingCostInput.value) || 0; // **الإضافة: جمع مصاريف الشحن**
+            const shippingCost = parseFloat(shippingCostInput.value) || 0;
 
             const customerName = document.getElementById('customerName').value.trim();
             const employeeName = document.getElementById('employeeName').value.trim();
@@ -423,20 +418,21 @@
                 notes: notes, 
                 subtotal: subtotal,
                 taxAmount: taxAmount, 
-                shippingCost: shippingCost, // **الإضافة: إرسال مصاريف الشحن إلى الـ Apps Script**
+                shippingCost: shippingCost, 
                 taxRateApplied: taxRateApplied, 
                 total: total,
                 items: items
             };
         }
 
-        // *************** وظائف الحفظ والمعاينة ***************
+        // *************** وظائف الحفظ والمعاينة (المُعدَّلة) ***************
 
-        async function saveInvoice() {
+        async function saveInvoiceAndPreview() {
             try {
                 const invoiceData = collectInvoiceData();
                 
                 toggleLoading(true);
+                showMessage('info', 'جاري حفظ الفاتورة وتوليد الرقم...');
 
                 const response = await fetch(WEB_APP_URL, {
                     method: 'POST',
@@ -446,11 +442,13 @@
                 const result = await response.json();
 
                 if (result.status === 'success') {
-                    // تحديث رقم الفاتورة في المعاينة قبل الفتح
+                    showMessage('success', `تم حفظ الفاتورة بنجاح. رقم الفاتورة: ${result.invoiceNumber}`);
+                    
+                    // 1. تحديث رقم الفاتورة في بيانات المعاينة
                     invoiceData.invoiceNumber = result.invoiceNumber;
                     sessionStorage.setItem('tempInvoiceData', JSON.stringify(invoiceData));
                     
-                    // فتح صفحة المعاينة وإعادة تعيين النموذج
+                    // 2. فتح صفحة المعاينة وإعادة تعيين النموذج
                     window.open('invoice_preview.html', '_blank');
                     initializeInvoiceForm();
 
@@ -465,19 +463,6 @@
             }
         }
 
-        function previewInvoice() {
-            try {
-                const invoiceData = collectInvoiceData();
-                sessionStorage.setItem('tempInvoiceData', JSON.stringify(invoiceData));
-                
-                // فتح صفحة المعاينة في نافذة جديدة
-                window.open('invoice_preview.html', '_blank');
-
-            } catch (error) {
-                showMessage('error', `خطأ في المعاينة: ${error.message}`);
-            }
-        }
-
         function initializeInvoiceForm() {
             // تعيين التاريخ الحالي
             document.getElementById('invoiceDate').value = new Date().toLocaleDateString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -487,7 +472,7 @@
             employeeNameInput.removeAttribute('readonly'); 
             
             document.getElementById('customerName').value = '';
-            shippingCostInput.value = '0.00'; // **جديد: إعادة تعيين مصاريف الشحن**
+            shippingCostInput.value = '0.00'; 
             
             // مسح بنود الجدول وإضافة صف فارغ
             itemsTableBody.innerHTML = '';
