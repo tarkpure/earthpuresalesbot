@@ -180,7 +180,7 @@
             <button onclick="window.location.href='index.html'" class="px-6 py-3 bg-gray-600 text-white font-medium rounded-lg hover:bg-gray-700 transition duration-150">
                 العودة للوحة التحكم
             </button>
-            <button id="previewButton" onclick="saveInvoiceAndPreview()" class="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition duration-150">
+            <button id="previewButton" onclick="previewInvoice()" class="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition duration-150">
                 معاينة الفاتورة
             </button>
         </div>
@@ -204,7 +204,6 @@
         const employeeNameInput = document.getElementById('employeeName');
         const messageBox = document.getElementById('message-box');
         const loadingOverlay = document.getElementById('loading-overlay');
-        // تم إزالة saveButton
         const previewButton = document.getElementById('previewButton');
         const notesDisplay = document.getElementById('notesDisplay'); 
         const notesBank = document.getElementById('notesBank').value;
@@ -219,7 +218,6 @@
 
         function toggleLoading(show) {
             loadingOverlay.classList.toggle('hidden', !show);
-            // تم تعديل هذا الجزء ليتعامل مع زر المعاينة فقط
             previewButton.disabled = show;
         }
 
@@ -232,7 +230,7 @@
         // *************** وظائف API ***************
 
         async function fetchInvoiceNumber() {
-            if (WEB_APP_URL.includes('PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE')) {
+            if (WEB_APP_URL.includes('https://script.google.com/macros/s/AKfycbwijDWSTGuSFpagGRER_c1U30o5D7K6E2jG3oETgyHXv--Mz2x_RJzIYDnMpvR_n9uUiQ/exec')) {
                 invoiceNumberInput.value = 'الرجاء لصق رابط الويب أولاً!';
                 return;
             }
@@ -425,9 +423,10 @@
             };
         }
 
-        // *************** وظائف الحفظ والمعاينة (المُعدَّلة) ***************
+        // *************** وظائف الحفظ والمعاينة (المُعدَّلة) ***************
 
-        async function saveInvoiceAndPreview() {
+        // **تم تعديل اسم الدالة إلى previewInvoice()**
+        async function previewInvoice() { 
             try {
                 const invoiceData = collectInvoiceData();
                 
