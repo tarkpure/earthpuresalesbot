@@ -148,7 +148,13 @@
             <!-- ملاحظات -->
             <div class="md:col-span-2">
                 <label for="notes" class="block text-sm font-medium text-gray-700">ملاحظات (نص أسفل الفاتورة):</label>
-                <textarea id="notes" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" style="resize: vertical;">الأسعار غير شاملة ضريبة القيمة المضافة. الشحن داخل القاهرة من يومين لخمسة أيام / خارج القاهرة حسب المسافة. تحويل بنكي/انستبا (126039049001) بنك الاسكندرية.</textarea>
+                <!-- **التعديل: تحويل الملاحظات إلى عرض ديناميكي** -->
+                <div id="notesDisplay" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-4 border bg-white min-h-[100px] text-sm text-gray-700 text-right whitespace-pre-wrap">
+                    <!-- يتم ملء هذا الجزء بواسطة JavaScript -->
+                </div>
+                <!-- حقول إدخال مخفية للبيانات الثابتة التي سيتم دمجها في الملاحظات -->
+                <input type="hidden" id="notesBank" value="تحويل بنكي/انستبا (126039049001) بنك الاسكندرية.">
+                <input type="hidden" id="notesShipping" value="الشحن داخل القاهرة من يومين لخمسة أيام / خارج القاهرة حسب المسافة.">
             </div>
             <!-- الإجماليات -->
             <div class="bg-gray-100 p-4 rounded-lg shadow-inner">
@@ -196,7 +202,7 @@
     <!-- ************************************************************************************************** -->
     <script>
         // **ملاحظة هامة: يجب لصق رابط تطبيق الويب هنا**
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzulnRcWREsGCqI_E6CTWtDiNhcdFEGJ54NTKcyeOTSkVAL4VspkNfYQATsZ0OV_lGQAQ/exec'; 
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxW_6HbsuFW6DnXBk4e4ValVLudnXfiWrYBza4EjwxnZRWIqrU9jVu6tdw92QYqpCuBIw/exec'; 
         
         let currentEmployeeName = localStorage.getItem('inventoryEmployeeName') || 'الموظف';
         let itemCounter = 0;
@@ -214,6 +220,9 @@
         const loadingOverlay = document.getElementById('loading-overlay');
         const saveButton = document.getElementById('saveButton');
         const previewButton = document.getElementById('previewButton');
+        const notesDisplay = document.getElementById('notesDisplay'); // **جديد: لعرض الملاحظات**
+        const notesBank = document.getElementById('notesBank').value;
+        const notesShipping = document.getElementById('notesShipping').value;
 
         // *************** وظائف مساعدة ***************
 
@@ -270,6 +279,18 @@
             calculateOverallTotal();
         }
 
+        function generateNotesText(taxApplied) {
+            let taxMessage = taxApplied 
+                             ? 'الأسعار شاملة ضريبة القيمة المضافة (14%).'
+                             : 'الأسعار غير شاملة ضريبة القيمة المضافة.';
+            
+            // دمج جميع الأجزاء في نص واحد لورقة الملاحظات
+            return `${taxMessage}
+${notesShipping}
+${notesBank}`;
+        }
+
+
         function calculateOverallTotal() {
             let grandSubtotal = 0;
             const itemRows = itemsTableBody.querySelectorAll('tr');
@@ -296,6 +317,9 @@
             taxDisplay.textContent = formatCurrency(taxAmount) + ' ج.م.';
             totalDisplay.textContent = formatCurrency(finalTotal) + ' ج.م.';
 
+            // **التعديل الجوهري: تحديث نص الملاحظات بناءً على الضريبة**
+            notesDisplay.textContent = generateNotesText(applyTax);
+            
             // تمكين/تعطيل زر الحفظ
             saveButton.disabled = grandSubtotal <= 0;
             previewButton.disabled = grandSubtotal <= 0;
@@ -387,12 +411,13 @@
 
             const customerName = document.getElementById('customerName').value.trim();
             const employeeName = document.getElementById('employeeName').value.trim();
+            const notes = notesDisplay.textContent; // **التعديل: جلب الملاحظات من العرض الديناميكي**
             
             if (!customerName) throw new Error("يرجى إدخال اسم العميل.");
             if (!employeeName) throw new Error("يرجى إدخال اسم الموظف.");
 
             const taxToggle = document.getElementById('taxToggle');
-            const applyTax = taxToggle.checked; 
+            const taxRateApplied = taxToggle.checked ? '14% شاملة الضريبة' : '0% غير شاملة الضريبة'; 
 
             return {
                 action: 'saveInvoice',
@@ -402,10 +427,10 @@
                 employeeName: employeeName, 
                 deliveryMethod: document.getElementById('deliveryMethod').value,
                 collectionMethod: document.getElementById('collectionMethod').value,
-                notes: document.getElementById('notes').value,
+                notes: notes, // إرسال النص الكامل للملاحظات للواجهة الخلفية
                 subtotal: subtotal,
                 taxAmount: taxAmount, 
-                taxRateApplied: applyTax ? '14%' : '0%',
+                taxRateApplied: taxRateApplied, // إرسال حالة الضريبة المطبقة كنص
                 total: total,
                 items: items
             };
@@ -427,11 +452,6 @@
                 const result = await response.json();
 
                 if (result.status === 'success') {
-                    // تخزين البيانات المؤقتة للمعاينة
-                    sessionStorage.setItem('tempInvoiceData', JSON.stringify(invoiceData));
-
-                    showMessage('success', `تم حفظ بيان المبيعات رقم ${result.invoiceNumber} بنجاح! سيتم تحويلك الآن للمعاين`);
-                    
                     // تحديث رقم الفاتورة في المعاينة قبل الفتح
                     invoiceData.invoiceNumber = result.invoiceNumber;
                     sessionStorage.setItem('tempInvoiceData', JSON.stringify(invoiceData));
