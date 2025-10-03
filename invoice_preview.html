@@ -118,24 +118,32 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            flex-wrap: wrap; /* للسماح بالتكديس على الجوال */
+            flex-wrap: wrap; 
         }
-        .notes-box, .bank-info-box {
-            flex-basis: 48%;
+        
+        /* **التعديل الجوهري لضمان ظهور الصندوقين بجانب بعضهما** */
+        .notes-box {
+            order: 1; /* الترتيب الأول (على اليمين في RTL) */
+            flex-basis: 48%; 
             padding: 10px;
             border: 1px dashed var(--border-color);
             border-radius: 4px;
             font-size: 0.85em;
             text-align: right;
-            margin-bottom: 10px; /* تباعد على الجوال */
+            margin-bottom: 10px;
         }
         .totals-box {
-            flex-basis: 48%;
+            order: 2; /* الترتيب الثاني (على اليسار في RTL) */
+            flex-basis: 48%; 
             text-align: right;
             border: 2px solid var(--accent-gold);
             border-radius: 5px;
             padding: 15px;
+            margin-bottom: 10px;
         }
+        /* **نهاية التعديل الجوهري** */
+
+
         .totals-row {
             display: flex;
             justify-content: space-between;
@@ -367,7 +375,7 @@
             document.getElementById('previewTax').textContent = formatCurrency(data.taxAmount);
             
             // **التعديل الإضافي: تحديث تسمية الضريبة لتشمل النسبة (14%)**
-            // هذا التعديل يتطلب تغيير HTML مباشرة، لكن سنقوم بتغيير عرض السعر فقط.
+            // يجب تحديث التسمية في HTML مباشرة، لكن هنا نكتفي بالتأكيد على ظهور القيمة.
 
         });
     </script>
