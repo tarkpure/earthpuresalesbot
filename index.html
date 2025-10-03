@@ -27,6 +27,10 @@
 
             --daily-report-bg: #e0f2f7; /* لون أزرق سماوي فاتح للتقرير اليومي */
             --daily-report-icon: #3f51b5; /* لون أزرق داكن لأيقونة التقرير اليومي */
+
+            /* **تعديل: لون بطاقة الفواتير** */
+            --invoice-bg: #f5f0ff; /* بنفسجي فاتح أو وردي ناعم */
+            --invoice-icon: #7c4dff; /* بنفسجي ساطع */
         }
 
         body {
@@ -109,12 +113,14 @@
         .card-inventory { background-color: var(--inventory-bg); }
         .card-inventory .card-icon { color: var(--inventory-icon); }
 
-        /* ألوان الكروت الجديدة */
+        /* ألوان بطاقة الفواتير الجديدة */
+        .card-invoice { background-color: var(--invoice-bg); }
+        .card-invoice .card-icon { color: var(--invoice-icon); }
+
+
+        /* ألوان الكروت الأخرى الجديدة */
         .card-performance { background-color: var(--performance-bg); }
         .card-performance .card-icon { color: var(--performance-icon); }
-
-        .card-daily-report { background-color: var(--daily-report-bg); }
-        .card-daily-report .card-icon { color: var(--daily-report-icon); }
 
         /* لتحديد أن الكروت الأخرى غير قابلة للنقر مؤقتًا */
         .disabled-card {
@@ -161,7 +167,7 @@
     </div>
     <h1>لوحة التحكم الرئيسية</h1>
     <div class="dashboard-grid">
-        <!-- البطاقات الأربعة الحالية - تم الاحتفاظ بها كما هي -->
+        <!-- البطاقات التي تم تفعيلها سابقًا -->
         <a href="form.html" class="dashboard-card card-orders">
             <div class="card-icon">🧾</div>
             <div class="card-title">إدارة الأوردرات والعينات</div>
@@ -170,26 +176,27 @@
             <div class="card-icon">💰</div>
             <div class="card-title">الرواتب</div>
         </a>
-        <div class="dashboard-card card-accounts disabled-card">
-            <div class="card-icon">📊</div>
-            <div class="card-title">الحسابات</div>
-        </div>
-        
-        <!-- **البطاقة الخاصة بالمخزون - تم تفعيلها الآن** -->
         <a href="inventory_login.html" class="dashboard-card card-inventory">
             <div class="card-icon">📦</div>
             <div class="card-title">المخزون</div>
         </a>
+        
+        <!-- **التعديل هنا: التقرير اليومي يصبح نظام فواتير** -->
+        <a href="invoice_entry.html" class="dashboard-card card-invoice">
+            <div class="card-icon">📝</div> <!-- أيقونة فاتورة/مبيعات -->
+            <div class="card-title">بيان المبيعات والفواتير</div>
+        </a>
 
-        <!-- البطاقات الجديدة - تم إضافتها سابقًا -->
-        <a href="#" class="dashboard-card card-performance"> <!-- رابط وهمي # - استبدله لاحقًا -->
+        <!-- البطاقات الأخرى -->
+        <a href="#" class="dashboard-card card-performance"> <!-- رابط وهمي # - تم تفعيله سابقاً كنص -->
             <div class="card-icon">📈</div> <!-- أيقونة تقرير الأداء -->
             <div class="card-title">تقرير الأداء</div>
         </a>
-        <a href="#" class="dashboard-card card-daily-report"> <!-- رابط وهمي # - استبدله لاحقًا -->
-            <div class="card-icon">🗓️</div> <!-- أيقونة التقرير اليومي -->
-            <div class="card-title">التقرير اليومي</div>
-        </a>
+
+        <div class="dashboard-card card-accounts disabled-card">
+            <div class="card-icon">📊</div>
+            <div class="card-title">الحسابات</div>
+        </div>
     </div>
 </body>
 </html>

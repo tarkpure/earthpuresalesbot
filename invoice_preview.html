@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>معاينة بيان المبيعات (فاتورة)</title>
+    <style>
+        /* تعريف الألوان المتناسقة مع هوية الشعار (ذهبي، بني، وألوان محايدة) */
+        :root {
+            --primary-dark-brown: #3C2E2A;
+            --accent-gold: #B89C5D;
+            --light-bg: #f8f8f8;
+            --white: #ffffff;
+            --border-color: #3C2E2A; /* حدود داكنة للطباعة */
+            --header-bg: #EAE6D2; /* خلفية خفيفة لرؤوس الأقسام */
+            --highlight-bg: #b89c5d; /* لون ذهبي للخلايا المميزة */
+            --text-color: var(--primary-dark-brown);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            color: var(--text-color);
+            direction: rtl;
+        }
+
+        /* حاوية الفاتورة (للعرض والطباعة) */
+        .invoice-paper {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px;
+            background-color: var(--white);
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        /* أقسام الرأس واللوجو */
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--text-color);
+            padding-bottom: 15px;
+        }
+        .header-logo {
+            flex-basis: 30%;
+            text-align: left;
+        }
+        .header-logo img {
+            max-width: 150px;
+        }
+        .header-title {
+            flex-basis: 65%;
+            text-align: right;
+        }
+        .header-title h1 {
+            font-size: 2.2em;
+            color: var(--text-color);
+            margin: 0;
+            padding-top: 5px;
+        }
+
+        /* تفاصيل العميل ورأس الفاتورة */
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .details-table th, .details-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            text-align: right;
+            font-size: 0.9em;
+        }
+        .details-table th {
+            background-color: var(--header-bg);
+            font-weight: bold;
+            width: 20%;
+        }
+
+        /* جدول بنود الفاتورة */
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .items-table thead th {
+            background-color: var(--highlight-bg); /* لون ذهبي لرؤوس الجدول */
+            color: var(--white);
+            font-weight: bold;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+        .items-table tbody td {
+            border: 1px solid var(--light-border);
+            padding: 8px 10px;
+            font-size: 0.9em;
+        }
+        .items-table .numeric-cell, .summary-numeric {
+            direction: ltr;
+            text-align: left;
+            font-family: 'Consolas', 'Courier New', monospace;
+            white-space: nowrap;
+        }
+
+        /* قسم الإجمالي والملاحظات */
+        .summary-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .notes-box, .bank-info-box {
+            flex-basis: 48%;
+            padding: 10px;
+            border: 1px dashed var(--border-color);
+            border-radius: 4px;
+            font-size: 0.85em;
+            text-align: right;
+        }
+        .totals-box {
+            flex-basis: 48%;
+            text-align: right;
+            border: 2px solid var(--accent-gold);
+            border-radius: 5px;
+            padding: 15px;
+        }
+        .totals-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        .totals-final {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: var(--text-color);
+            border-top: 1px dashed var(--border-color);
+            padding-top: 5px;
+            margin-top: 5px;
+        }
+
+        /* الأزرار (تختفي عند الطباعة) */
+        .button-controls {
+            margin: 20px auto;
+            text-align: center;
+        }
+        .button-controls button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 5px;
+            font-size: 1em;
+            transition: background-color 0.3s;
+        }
+        .button-controls button:hover {
+            background-color: #1e7e34;
+        }
+
+        /* **طباعة Media Query: إعداد الصفحة للطباعة** */
+        @media print {
+            body {
+                background: none;
+            }
+            .invoice-paper {
+                box-shadow: none;
+                margin: 0;
+                padding: 0;
+                border: none;
+                width: 100%;
+            }
+            .button-controls {
+                display: none; /* إخفاء الأزرار عند الطباعة */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-paper" id="invoicePaper">
+
+        <!-- رأس الفاتورة: الشعار والعنوان -->
+        <div class="header-section">
+            <div class="header-title">
+                <h1>بيان مبيعات</h1>
+                <p>رقم الفاتورة: <span id="previewInvoiceNumber">N/A</span></p>
+                <p>التاريخ: <span id="previewInvoiceDate">N/A</span></p>
+            </div>
+            <div class="header-logo">
+                <img src="logo.png" alt="شعار Earth Pure">
+            </div>
+        </div>
+
+        <!-- تفاصيل العميل والتحصيل -->
+        <table class="details-table">
+            <thead>
+                <tr>
+                    <th style="width: 25%;">اسم العميل</th>
+                    <td id="previewCustomerName" style="width: 25%;"></td>
+                    <th style="width: 25%;">طريقة التسليم</th>
+                    <td id="previewDeliveryMethod" style="width: 25%;"></td>
+                </tr>
+                <tr>
+                    <th>اسم الموظف</th>
+                    <td id="previewEmployeeName"></td>
+                    <th>طريقة التحصيل</th>
+                    <td id="previewCollectionMethod"></td>
+                </tr>
+            </thead>
+        </table>
+
+        <!-- جدول بنود الأصناف -->
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%;">م</th>
+                    <th style="width: 35%;">اسم المنتج</th>
+                    <th style="width: 15%;">الوحدة</th>
+                    <th style="width: 15%;">الكمية</th>
+                    <th style="width: 15%;">السعر</th>
+                    <th style="width: 15%;">الإجمالي</th>
+                </tr>
+            </thead>
+            <tbody id="itemsPreviewBody">
+                <!-- بنود الفاتورة تضاف هنا -->
+            </tbody>
+        </table>
+
+        <!-- الإجمالي والملاحظات السفلية -->
+        <div class="summary-section">
+            
+            <!-- الملاحظات وشروط الشحن -->
+            <div class="notes-box">
+                <p><strong>ملاحظات:</strong></p>
+                <p id="previewNotes"></p>
+            </div>
+
+            <!-- صندوق الإجماليات -->
+            <div class="totals-box">
+                <div class="totals-row">
+                    <span>الإجمالي الفرعي:</span>
+                    <span id="previewSubtotal" class="summary-numeric">0.00 ج.م.</span>
+                </div>
+                <div class="totals-row">
+                    <span>ضريبة القيمة المضافة (0%):</span>
+                    <span id="previewTax" class="summary-numeric">0.00 ج.م.</span>
+                </div>
+                <div class="totals-row totals-final">
+                    <strong>الإجمالي الكلي:</strong>
+                    <strong id="previewTotal" class="summary-numeric">0.00 ج.م.</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- أزرار التحكم -->
+    <div class="button-controls">
+        <button onclick="window.close()">إغلاق المعاينة</button>
+        <button onclick="window.print()">تصدير وطباعة PDF</button>
+    </div>
+
+    <script>
+        // دالة مساعدة لتنسيق العملة
+        function formatCurrency(value) {
+            return (value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ج.م.';
+        }
+
+        // دالة تحميل البيانات
+        document.addEventListener('DOMContentLoaded', function() {
+            const tempInvoiceData = sessionStorage.getItem('tempInvoiceData');
+
+            if (!tempInvoiceData) {
+                document.getElementById('invoicePaper').innerHTML = '<h2>خطأ: لا توجد بيانات معاينة متاحة.</h2><p style="text-align:center;">يرجى العودة لصفحة إدخال الفاتورة.</p>';
+                document.querySelector('.button-controls').style.display = 'none';
+                return;
+            }
+
+            const data = JSON.parse(tempInvoiceData);
+            
+            // 1. ملء بيانات الرأس
+            document.getElementById('previewInvoiceNumber').textContent = data.invoiceNumber || 'جاري الحفظ';
+            document.getElementById('previewInvoiceDate').textContent = data.invoiceDate || new Date().toLocaleDateString('ar-EG');
+            document.getElementById('previewCustomerName').textContent = data.customerName || '';
+            document.getElementById('previewEmployeeName').textContent = data.employeeName || '';
+            document.getElementById('previewDeliveryMethod').textContent = data.deliveryMethod || '';
+            document.getElementById('previewCollectionMethod').textContent = data.collectionMethod || '';
+            document.getElementById('previewNotes').textContent = data.notes || '';
+
+            // 2. ملء بنود الفاتورة
+            const itemsBody = document.getElementById('itemsPreviewBody');
+            data.items.forEach((item, index) => {
+                const row = itemsBody.insertRow();
+                
+                // م (التسلسل)
+                row.insertCell().textContent = index + 1; 
+
+                // اسم المنتج
+                row.insertCell().textContent = item.product;
+
+                // الوحدة
+                row.insertCell().textContent = item.unit;
+
+                // الكمية
+                const quantityCell = row.insertCell();
+                quantityCell.textContent = item.quantity;
+                quantityCell.classList.add('summary-numeric');
+
+                // السعر
+                const priceCell = row.insertCell();
+                priceCell.textContent = formatCurrency(item.price);
+                priceCell.classList.add('summary-numeric');
+
+                // الإجمالي
+                const totalCell = row.insertCell();
+                totalCell.textContent = formatCurrency(item.total);
+                totalCell.classList.add('summary-numeric');
+            });
+            
+            // 3. ملء الإجماليات
+            document.getElementById('previewSubtotal').textContent = formatCurrency(data.subtotal);
+            document.getElementById('previewTotal').textContent = formatCurrency(data.total);
+
+            // بما أن الضريبة 0% ثابتة، يمكننا إظهارها
+            document.getElementById('previewTax').textContent = formatCurrency(0);
+        });
+    </script>
+</body>
+</html>

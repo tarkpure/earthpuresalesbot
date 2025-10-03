@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدخال بيان مبيعات (فاتورة)</title>
+    <style>
+        /* تعريف الألوان المتناسقة مع هوية الشعار (ذهبي، بني، وألوان محايدة) */
+        :root {
+            --primary-dark-brown: #3C2E2A;
+            --accent-gold: #B89C5D;
+            --light-bg: #f8f8f8;
+            --white: #ffffff;
+            --input-border: #ddd;
+            --button-bg: var(--accent-gold);
+            --button-hover: #a18b52;
+            --header-bg: var(--primary-dark-brown);
+            --text-color: var(--primary-dark-brown);
+            --table-row-even-bg: #fcfcfc;
+            --error-bg: #ffe0e0;
+            --error-text: #cc0000;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text-color);
+            direction: rtl;
+        }
+        .invoice-container {
+            background-color: var(--white);
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 1000px; /* لتناسب حجم الفاتورة */
+            box-sizing: border-box;
+        }
+        .logo {
+            max-width: 150px;
+            margin-bottom: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        h1 {
+            color: var(--primary-dark-brown);
+            text-align: center;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: var(--accent-gold);
+            margin-bottom: 30px;
+        }
+
+        /* أقسام رأس الفاتورة */
+        .invoice-header, .invoice-summary {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+            text-align: right;
+        }
+        .invoice-header label, .invoice-summary label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .invoice-header input[type="text"],
+        .invoice-summary select,
+        #invoiceNumber,
+        #invoiceDate {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--input-border);
+            border-radius: 4px;
+            box-sizing: border-box;
+            background-color: var(--table-row-even-bg);
+            direction: rtl;
+            text-align: right;
+        }
+
+        /* قسم بنود الفاتورة */
+        .item-table-container {
+            overflow-x: auto;
+            margin-bottom: 20px;
+            border: 1px solid var(--input-border);
+            border-radius: 4px;
+        }
+        #itemsTable {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        #itemsTable th {
+            background-color: var(--header-bg);
+            color: var(--white);
+            padding: 10px;
+            white-space: nowrap;
+        }
+        #itemsTable td {
+            padding: 8px;
+            border-left: 1px solid var(--light-border);
+            border-right: 1px solid var(--light-border);
+        }
+        #itemsTable input[type="text"],
+        #itemsTable input[type="number"],
+        #itemsTable select {
+            width: 95%;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+            text-align: right;
+        }
+        .item-row td:nth-child(2), .item-row td:nth-child(3) { width: 30%; } /* اسم المنتج والوحدة */
+        .item-row td:nth-child(4), .item-row td:nth-child(5), .item-row td:nth-child(6) { width: 15%; } /* كمية وسعر واجمالي */
+        .item-row td:last-child { text-align: center; } /* زر الحذف */
+
+        /* الإجماليات */
+        .totals-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+        .totals-box {
+            width: 300px;
+            padding: 15px;
+            border: 2px solid var(--accent-gold);
+            border-radius: 5px;
+        }
+        .totals-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+        .totals-value {
+            font-weight: bold;
+            color: var(--primary-dark-brown);
+            direction: ltr; /* لضمان أن الأرقام الإنجليزية تظهر بشكل صحيح */
+        }
+
+        /* الأزرار */
+        .button-group {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .button-group button {
+            background-color: var(--button-bg);
+            color: var(--white);
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 0 10px;
+            transition: background-color 0.3s ease;
+        }
+        .button-group button:hover {
+            background-color: var(--button-hover);
+        }
+        .btn-add {
+            background-color: #28a745; /* أخضر للإضافة */
+        }
+        .btn-add:hover {
+            background-color: #1e7e34;
+        }
+        .btn-back {
+            background-color: #6c757d;
+        }
+        .btn-back:hover {
+            background-color: #5a6268;
+        }
+
+        /* الرسائل والتحميل */
+        #message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            font-weight: bold;
+            text-align: center;
+        }
+        #message.error { background-color: var(--error-bg); color: var(--error-text); }
+        #loadingSpinner {
+            display: none;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--accent-gold);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 15px auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <img src="logo.png" alt="شعار Earth Pure" class="logo">
+        <h1>بيان مبيعات (فاتورة)</h1>
+        <p class="subtitle">إدخال وحفظ تفاصيل الفاتورة</p>
+
+        <div id="loadingSpinner"></div>
+        <div id="message"></div>
+
+        <!-- معلومات رأس الفاتورة -->
+        <div class="invoice-header">
+            <div>
+                <label>رقم الفاتورة:</label>
+                <input type="text" id="invoiceNumber" readonly value="جاري التوليد..." style="font-weight: bold; color: #dc3545;">
+            </div>
+            <div>
+                <label>التاريخ:</label>
+                <input type="text" id="invoiceDate" readonly>
+            </div>
+            <div>
+                <label for="employeeName">اسم الموظف:</label>
+                <input type="text" id="employeeName" readonly>
+            </div>
+            <div>
+                <label for="customerName">اسم العميل:</label>
+                <input type="text" id="customerName" required>
+            </div>
+            <div>
+                <label for="deliveryMethod">طريقة التسليم:</label>
+                <select id="deliveryMethod">
+                    <option value="شحن">شحن</option>
+                    <option value="استلام">استلام</option>
+                </select>
+            </div>
+            <div>
+                <label for="collectionMethod">طريقة التحصيل:</label>
+                <select id="collectionMethod">
+                    <option value="تحويل بنكي">تحويل بنكي</option>
+                    <option value="كاش">كاش</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- بنود الفاتورة -->
+        <h3>بنود الصنف</h3>
+        <button class="btn-add" onclick="addItemRow()">+ إضافة صنف</button>
+        <div class="item-table-container">
+            <table id="itemsTable">
+                <thead>
+                    <tr>
+                        <th style="width: 5%;">م</th>
+                        <th style="width: 30%;">اسم المنتج</th>
+                        <th style="width: 15%;">الوحدة</th>
+                        <th style="width: 15%;">الكمية</th>
+                        <th style="width: 15%;">السعر</th>
+                        <th style="width: 15%;">الإجمالي</th>
+                        <th style="width: 5%;">حذف</th>
+                    </tr>
+                </thead>
+                <tbody id="itemsTableBody">
+                    <!-- صفوف البنود ستضاف هنا -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- الملاحظات والبنود السفلية -->
+        <div class="invoice-summary">
+            <div style="grid-column: 1 / span 1;">
+                <label for="notes">ملاحظات (نص أسفل الفاتورة):</label>
+                <textarea id="notes" rows="4" style="width: 100%; padding: 8px; border: 1px solid var(--input-border); border-radius: 4px; box-sizing: border-box; resize: vertical; direction: rtl; text-align: right;">الأسعار غير شاملة ضريبة القيمة المضافة. الشحن داخل القاهرة من يومين لخمسة أيام / خارج القاهرة حسب المسافة. تحويل بنكي/انستبا (126039049001) بنك الاسكندرية.</textarea>
+            </div>
+            <!-- صندوق الإجماليات -->
+            <div style="grid-column: 2 / span 1; display: flex; justify-content: flex-end;">
+                <div class="totals-box">
+                    <div class="totals-row">
+                        <span>الإجمالي الفرعي:</span>
+                        <span id="subtotalValue" class="totals-value">0.00 ج.م.</span>
+                    </div>
+                    <div class="totals-row">
+                        <span>الضريبة (0%):</span>
+                        <span id="taxValue" class="totals-value">0.00 ج.م.</span>
+                    </div>
+                    <hr style="border-top: 1px dashed var(--input-border);">
+                    <div class="totals-row" style="font-size: 1.3em; color: var(--primary-dark-brown);">
+                        <strong>الإجمالي الكلي:</strong>
+                        <strong id="totalValue" class="totals-value">0.00 ج.م.</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- أزرار الإجراءات -->
+        <div class="button-group">
+            <button onclick="window.location.href='index.html'" class="btn-back">العودة للوحة التحكم</button>
+            <button id="previewButton" disabled>معاينة الفاتورة</button>
+            <button id="saveButton" onclick="saveInvoice()">حفظ الفاتورة</button>
+        </div>
+    </div>
+
+    <script>
+        // **مهم جداً: استبدل هذا بالرابط الفعلي لتطبيق ويب الفواتير الجديد**
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw22snN7TESYRJMTbxlRTLTo2L4BjDNiimg6kDvxeLJyn0Fu8FL49kGeu4J6ESxWZsi2g/exec';
+        
+        let currentEmployeeName = localStorage.getItem('inventoryEmployeeName') || 'الموظف';
+        let currentInvoiceNumber = null;
+        let invoiceItems = [];
+        
+        const itemsTableBody = document.getElementById('itemsTableBody');
+        const subtotalValue = document.getElementById('subtotalValue');
+        const totalValue = document.getElementById('totalValue');
+        const saveButton = document.getElementById('saveButton');
+        const previewButton = document.getElementById('previewButton');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const messageDiv = document.getElementById('message');
+
+        // *************** وظائف مساعدة ***************
+
+        function showMessage(msg, type) {
+            messageDiv.textContent = msg;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
+        }
+
+        function toggleLoading(isLoading) {
+            loadingSpinner.style.display = isLoading ? 'block' : 'none';
+            saveButton.disabled = isLoading;
+            previewButton.disabled = isLoading;
+        }
+
+        function formatCurrency(value) {
+            // تنسيق الأرقام الإنجليزية مع فاصلة الآلاف
+            return (value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ج.م.';
+        }
+
+        function calculateTotals() {
+            let subtotal = 0;
+            const rows = itemsTableBody.querySelectorAll('.item-row');
+            
+            rows.forEach(row => {
+                const quantity = parseFloat(row.querySelector('[data-type="quantity"]').value) || 0;
+                const price = parseFloat(row.querySelector('[data-type="price"]').value) || 0;
+                const total = quantity * price;
+
+                row.querySelector('[data-type="total"]').textContent = formatCurrency(total);
+                subtotal += total;
+            });
+
+            // الضريبة هنا 0% حسب طلبك
+            const tax = 0;
+            const total = subtotal + tax;
+
+            subtotalValue.textContent = formatCurrency(subtotal);
+            totalValue.textContent = formatCurrency(total);
+
+            // تمكين/تعطيل زر الحفظ
+            saveButton.disabled = subtotal <= 0;
+            previewButton.disabled = subtotal <= 0;
+        }
+
+        // *************** وظائف الجدول ***************
+
+        function addItemRow() {
+            const index = itemsTableBody.rows.length;
+            const row = itemsTableBody.insertRow();
+            row.className = 'item-row';
+            
+            // م (التسلسل)
+            row.insertCell().textContent = index + 1;
+
+            // اسم المنتج
+            row.insertCell().innerHTML = '<input type="text" data-type="product" placeholder="اسم المنتج" required>';
+
+            // الوحدة
+            row.insertCell().innerHTML = '<input type="text" data-type="unit" placeholder="وحدة">';
+
+            // الكمية (مهم جداً: نوع رقمي)
+            const quantityCell = row.insertCell();
+            quantityCell.innerHTML = '<input type="number" data-type="quantity" min="0.01" step="0.01" value="1" required>';
+            quantityCell.classList.add('numeric-cell');
+
+            // السعر (مهم جداً: نوع رقمي)
+            const priceCell = row.insertCell();
+            priceCell.innerHTML = '<input type="number" data-type="price" min="0" step="0.01" value="0.00" required>';
+            priceCell.classList.add('numeric-cell');
+
+            // الإجمالي (للعرض فقط)
+            const totalCell = row.insertCell();
+            totalCell.innerHTML = '<span data-type="total">' + formatCurrency(0) + '</span>';
+            totalCell.classList.add('numeric-cell');
+            
+            // حذف
+            row.insertCell().innerHTML = '<button onclick="deleteItemRow(this)" style="background-color: #dc3545; color: white; padding: 5px 8px; border: none; border-radius: 3px;">X</button>';
+
+            // إضافة مستمعي الأحداث للحساب التلقائي
+            row.querySelector('[data-type="quantity"]').addEventListener('input', calculateTotals);
+            row.querySelector('[data-type="price"]').addEventListener('input', calculateTotals);
+
+            // الحساب الفوري للإجمالي
+            calculateTotals();
+        }
+
+        function deleteItemRow(button) {
+            const row = button.parentNode.parentNode;
+            row.remove();
+            
+            // إعادة ترقيم الصفوف المتبقية
+            const rows = itemsTableBody.querySelectorAll('.item-row');
+            rows.forEach((r, index) => {
+                r.cells[0].textContent = index + 1;
+            });
+
+            calculateTotals();
+        }
+
+        // *************** وظائف الواجهة الخلفية ***************
+
+        async function fetchInvoiceNumber() {
+            // جلب رقم الفاتورة التالي من Apps Script
+            toggleLoading(true);
+            try {
+                const response = await fetch(WEB_APP_URL + '?action=getInvoiceNumber', { method: 'GET' });
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    currentInvoiceNumber = result.invoiceNumber;
+                    document.getElementById('invoiceNumber').value = currentInvoiceNumber;
+                } else {
+                    showMessage(result.message || 'فشل في جلب رقم الفاتورة.', 'error');
+                }
+            } catch (error) {
+                showMessage('خطأ في الاتصال بالخادم عند جلب الترقيم.', 'error');
+                console.error('Fetch error:', error);
+            }
+            toggleLoading(false);
+        }
+
+        function collectInvoiceData() {
+            const items = [];
+            const rows = itemsTableBody.querySelectorAll('.item-row');
+            let isValid = true;
+            
+            rows.forEach(row => {
+                const product = row.querySelector('[data-type="product"]').value.trim();
+                const unit = row.querySelector('[data-type="unit"]').value.trim();
+                const quantity = parseFloat(row.querySelector('[data-type="quantity"]').value);
+                const price = parseFloat(row.querySelector('[data-type="price"]').value);
+                const totalText = row.querySelector('[data-type="total"]').textContent;
+                
+                // التحقق من صحة الإدخالات
+                if (!product || quantity <= 0 || price < 0 || isNaN(quantity) || isNaN(price)) {
+                    isValid = false;
+                    row.style.backgroundColor = '#ffe0e0'; // تمييز الصف الخاطئ
+                } else {
+                    row.style.backgroundColor = '';
+                }
+
+                items.push({
+                    product: product,
+                    unit: unit,
+                    quantity: quantity,
+                    price: price,
+                    total: quantity * price // إجمالي البند
+                });
+            });
+
+            if (!isValid) {
+                showMessage('الرجاء مراجعة البيانات المدخلة في بنود الأصناف.', 'error');
+                return null;
+            }
+
+            const total = parseFloat(totalValue.textContent.replace(/[^\d.]/g, '')); // استخراج القيمة الرقمية فقط
+            
+            return {
+                action: 'saveInvoice',
+                invoiceNumber: currentInvoiceNumber,
+                employeeName: document.getElementById('employeeName').value,
+                customerName: document.getElementById('customerName').value.trim(),
+                deliveryMethod: document.getElementById('deliveryMethod').value,
+                collectionMethod: document.getElementById('collectionMethod').value,
+                notes: document.getElementById('notes').value,
+                subtotal: parseFloat(subtotalValue.textContent.replace(/[^\d.]/g, '')),
+                total: total,
+                items: items // قائمة بنود الفاتورة
+            };
+        }
+
+        async function saveInvoice() {
+            const invoiceData = collectInvoiceData();
+
+            if (!invoiceData || !document.getElementById('customerName').value.trim()) {
+                showMessage('الرجاء إكمال اسم العميل وإضافة بنود صحيحة.', 'error');
+                return;
+            }
+            
+            toggleLoading(true);
+
+            // يجب إرسال البيانات كـ JSON لسهولة التعامل مع قائمة items
+            try {
+                const response = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json' // مهم جداً
+                    },
+                    body: JSON.stringify(invoiceData) // إرسال كـ JSON
+                });
+
+                const result = await response.json();
+                toggleLoading(false);
+
+                if (result.status === 'success') {
+                    showMessage(`تم حفظ الفاتورة رقم ${result.invoiceNumber} بنجاح!`, 'success');
+                    
+                    // بعد الحفظ الناجح، يتم التوجيه إلى صفحة المعاينة
+                    // نستخدم window.open لفتح المعاينة في علامة تبويب جديدة قبل إعادة تعيين الصفحة الحالية
+                    window.open(`invoice_preview.html?invoice=${result.invoiceNumber}`, '_blank');
+                    
+                    // إعادة تعيين الواجهة
+                    initializeInvoiceForm();
+                } else {
+                    showMessage(result.message || 'فشل الحفظ في الخادم.', 'error');
+                }
+            } catch (error) {
+                toggleLoading(false);
+                showMessage('خطأ في الاتصال بالخادم أثناء الحفظ.', 'error');
+                console.error('Save error:', error);
+            }
+        }
+
+        function initializeInvoiceForm() {
+            // تعيين التاريخ الحالي
+            document.getElementById('invoiceDate').value = new Date().toLocaleDateString('ar-EG', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            
+            // تعيين اسم الموظف من التخزين المحلي
+            document.getElementById('employeeName').value = currentEmployeeName;
+            document.getElementById('customerName').value = '';
+            
+            // مسح بنود الجدول (ما عدا صف الرؤوس)
+            itemsTableBody.innerHTML = '';
+            addItemRow(); // إضافة صف إدخال فارغ واحد
+
+            calculateTotals();
+            fetchInvoiceNumber(); // جلب رقم الفاتورة الجديد
+        }
+
+        // *************** وظائف التحميل ***************
+        document.addEventListener('DOMContentLoaded', function() {
+            // التحقق من تسجيل الدخول قبل أي شيء
+            if (!localStorage.getItem('inventoryEmployeeId')) {
+                window.location.href = 'inventory_login.html';
+                return;
+            }
+            
+            initializeInvoiceForm();
+        });
+
+        // *************** وظائف المعاينة ***************
+        previewButton.addEventListener('click', function() {
+            const data = collectInvoiceData();
+            if (data) {
+                 // تخزين البيانات المؤقتة في sessionStorage للمعاينة
+                sessionStorage.setItem('tempInvoiceData', JSON.stringify(data));
+                
+                // فتح صفحة المعاينة
+                window.open('invoice_preview.html', '_blank');
+            }
+        });
+
+    </script>
+</body>
