@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل دخول المخزون</title>
+    <title>تسجيل دخول النظام</title>
     <style>
-        /* تعريف الألوان المتناسقة مع هوية الشعار (ذهبي، بني، وألوان محايدة) */
         :root {
             --primary-dark-brown: #3C2E2A;
             --accent-gold: #B89C5D;
@@ -61,13 +60,13 @@
         }
         input[type="text"],
         input[type="password"] {
-            width: calc(100% - 22px); /* 100% - padding - border */
+            width: calc(100% - 22px);
             padding: 10px;
             border: 1px solid var(--input-border);
             border-radius: 5px;
             font-size: 1em;
             box-sizing: border-box;
-            direction: ltr; /* لجعل الإدخال من اليسار لليمين للأرقام والحروف اللاتينية */
+            direction: ltr;
             text-align: left;
         }
         button {
@@ -113,8 +112,8 @@
 </head>
 <body>
     <div class="login-container">
-        <img src="logo.png" alt="شعار Earth Pure" class="logo"> <!-- تأكد من وجود logo.png في نفس مجلد هذا الملف -->
-        <h1>تسجيل الدخول للمخزون</h1>
+        <img src="logo.png" alt="شعار Earth Pure" class="logo">
+        <h1>تسجيل الدخول</h1>
 
         <div class="input-group">
             <label for="employeeId">رقم الموظف:</label>
@@ -131,7 +130,7 @@
     </div>
 
     <script>
-        // **مهم جداً: استبدل هذا بالرابط الفعلي لتطبيق ويب المخزون الذي حصلت عليه في الخطوة 3**
+        // رابط تطبيق الويب الخاص بك
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz7jay56voyymjETh4abPWUgGopt7UM3uoucfy5HZmIlMllZ7Jxut6g-r2C0B0mDhb5/exec'; 
 
         const employeeIdInput = document.getElementById('employeeId');
@@ -141,15 +140,10 @@
         const messageDiv = document.getElementById('message');
 
         loginButton.addEventListener('click', doLogin);
-        employeeIdInput.addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                doLogin();
-            }
-        });
-        passwordInput.addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                doLogin();
-            }
+        
+        // دعم تسجيل الدخول عند الضغط على Enter
+        [employeeIdInput, passwordInput].forEach(input => {
+            input.addEventListener('keypress', (e) => { if (e.key === 'Enter') doLogin(); });
         });
 
         function showMessage(msg, type) {
@@ -158,19 +152,12 @@
             messageDiv.style.display = 'block';
         }
 
-        function showLoading() {
-            loadingSpinner.style.display = 'block';
-            loginButton.disabled = true;
-            employeeIdInput.disabled = true;
-            passwordInput.disabled = true;
-            messageDiv.style.display = 'none';
-        }
-
-        function hideLoading() {
-            loadingSpinner.style.display = 'none';
-            loginButton.disabled = false;
-            employeeIdInput.disabled = false;
-            passwordInput.disabled = false;
+        function toggleLoading(isLoading) {
+            loadingSpinner.style.display = isLoading ? 'block' : 'none';
+            loginButton.disabled = isLoading;
+            employeeIdInput.disabled = isLoading;
+            passwordInput.disabled = isLoading;
+            if (isLoading) messageDiv.style.display = 'none';
         }
 
         async function doLogin() {
@@ -182,7 +169,7 @@
                 return;
             }
 
-            showLoading();
+            toggleLoading(true);
 
             const params = new URLSearchParams();
             params.append('action', 'login');
@@ -193,29 +180,35 @@
                 const response = await fetch(WEB_APP_URL, {
                     method: 'POST',
                     mode: 'cors',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: params.toString()
                 });
 
                 const result = await response.json();
-                hideLoading();
+                toggleLoading(false);
 
                 if (result.status === 'success') {
-                    // تخزين معلومات المستخدم في Local Storage
+                    // تخزين معلومات الجلسة
                     localStorage.setItem('inventoryEmployeeId', employeeId);
                     localStorage.setItem('inventoryUserRole', result.role);
-                    
-                    // التوجيه إلى لوحة التحكم بعد تسجيل الدخول
-                    window.location.href = `inventory_dashboard.html`; // التوجيه إلى ملف HTML الآخر في نفس المجلد
+                    localStorage.setItem('inventoryEmployeeName', result.name || 'موظف');
+
+                    // --- منطق التوجيه الذكي ---
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const redirectTarget = urlParams.get('redirect');
+
+                    if (redirectTarget === 'invoices') {
+                        window.location.href = 'invoice_entry.html';
+                    } else {
+                        window.location.href = 'inventory_dashboard.html';
+                    }
                 } else {
-                    showMessage(result.message || 'خطأ في تسجيل الدخول.', 'error');
+                    showMessage(result.message || 'خطأ في بيانات الدخول.', 'error');
                 }
             } catch (error) {
-                hideLoading();
-                showMessage('حدث خطأ في الاتصال بالخادم. الرجاء المحاولة لاحقاً.', 'error');
-                console.error('Fetch error:', error);
+                toggleLoading(false);
+                showMessage('خطأ في الاتصال بالخادم. حاول مرة أخرى.', 'error');
+                console.error('Login error:', error);
             }
         }
     </script>
