@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>معاينة بيان المبيعات (فاتورة)</title>
-    <!-- استدعاء خط Cairo لضمان أعلى درجة وضوح للنصوص العربية عند الطباعة -->
+    <!-- استدعاء خط Cairo بأوزان مختلفة (400 للرفيع، 600 للوسط، 700 للعريض) -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -19,7 +19,7 @@
             --light-border: #ddd;
         }
 
-        /* تحسينات الوضوح والدقة للطباعة */
+        /* تحسينات الدقة والحدة للطباعة */
         * {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
@@ -29,7 +29,8 @@
         }
 
         body {
-            font-family: 'Cairo', sans-serif; /* خط حاد وواضح جداً للطباعة */
+            font-family: 'Cairo', sans-serif; 
+            font-weight: 600; /* تم رفع الوزن هنا ليكون الخط Bold في كامل الفاتورة */
             background-color: var(--light-bg);
             margin: 0;
             padding: 0;
@@ -42,18 +43,15 @@
             direction: rtl;
         }
 
-        /* ضبط أبعاد الورقة لمنع ظهور صفحة ثانية */
         .invoice-paper {
             width: 210mm; 
-            height: 297mm; /* طول A4 ثابت */
+            height: 297mm;
             max-height: 297mm;
-            margin: 20px auto;
+            margin: 0; 
             background-color: var(--white);
             padding: 15mm;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            border: 1px solid #ccc;
             position: relative;
-            overflow: hidden; /* يمنع تسرب أي محتوى لصفحة ثانية */
+            overflow: hidden;
         }
 
         .header-section {
@@ -61,7 +59,7 @@
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 20px;
-            border-bottom: 2px solid var(--text-color);
+            border-bottom: 3px solid var(--text-color); /* زيادة سمك الخط الفاصل */
             padding-bottom: 15px;
         }
 
@@ -80,51 +78,53 @@
         }
 
         .header-title h1 {
-            font-size: 2.2em;
+            font-size: 2.5em;
             color: var(--text-color);
             margin: 0;
             padding-top: 5px;
-            font-weight: 700;
+            font-weight: 700; /* عريض جداً للعناوين */
         }
 
         .details-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .details-table th, .details-table td {
-            border: 1px solid var(--border-color);
+            border: 1.5px solid var(--border-color); /* زيادة سمك الحدود */
             padding: 8px 12px;
             text-align: right;
             font-size: 14px;
+            font-weight: 600; /* جعل النصوص داخل الجدول Bold */
         }
 
         .details-table th {
             background-color: var(--header-bg);
-            font-weight: bold;
-            width: 20%;
+            font-weight: 700;
         }
 
         .items-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .items-table thead th {
             background-color: var(--highlight-bg);
             color: var(--white);
-            font-weight: bold;
+            font-weight: 700;
             padding: 10px;
-            border: 1px solid var(--border-color);
+            border: 1.5px solid var(--border-color);
             white-space: nowrap;
+            font-size: 14px;
         }
 
         .items-table tbody td {
             border: 1px solid var(--light-border);
             padding: 8px 10px;
             font-size: 14px;
+            font-weight: 600; /* جعل محتويات الجدول Bold */
         }
 
         .items-table .numeric-cell, .summary-numeric {
@@ -132,13 +132,14 @@
             text-align: left;
             font-family: 'Consolas', monospace;
             white-space: nowrap;
+            font-weight: 700; /* الأرقام تكون Bold جداً */
         }
 
         .summary-section {
             display: flex;
             justify-content: space-between;
             align-items: stretch;
-            gap: 20px;
+            gap: 15px;
             flex-wrap: nowrap;
         }
 
@@ -146,36 +147,39 @@
             flex-grow: 1;
             flex-basis: 58%;
             padding: 10px;
-            border: 1px dashed var(--border-color);
+            border: 1.5px dashed var(--border-color);
             border-radius: 4px;
             font-size: 13px;
             text-align: right;
-            min-height: 100px;
+            min-height: 80px;
             white-space: pre-wrap;
+            font-weight: 600;
         }
 
         .totals-box {
             flex-basis: 38%;
-            min-width: 250px;
+            min-width: 240px;
             text-align: right;
             border: 2px solid var(--accent-gold);
             border-radius: 5px;
-            padding: 15px;
+            padding: 10px;
         }
 
         .totals-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: 600;
         }
 
         .totals-final {
             font-size: 1.3em;
-            font-weight: bold;
+            font-weight: 700;
             color: var(--text-color);
-            border-top: 2px dashed var(--border-color);
-            padding-top: 8px;
-            margin-top: 8px;
+            border-top: 2.5px dashed var(--border-color);
+            padding-top: 5px;
+            margin-top: 5px;
         }
 
         .button-controls {
@@ -192,6 +196,7 @@
             cursor: pointer;
             margin: 0 5px;
             font-size: 1em;
+            font-weight: bold;
         }
 
         @media print {
@@ -201,16 +206,14 @@
             }
             body {
                 background: none;
-                margin: 0;
                 padding: 0;
             }
             .invoice-paper {
                 box-shadow: none;
                 margin: 0;
-                padding: 10mm 15mm;
                 border: none;
                 width: 210mm;
-                height: 297mm; /* إجبار المحتوى على صفحة واحدة فقط */
+                height: 297mm;
                 page-break-after: avoid;
                 page-break-before: avoid;
             }
@@ -225,8 +228,8 @@
         <div class="header-section">
             <div class="header-title">
                 <h1>بيان مبيعات</h1>
-                <p>رقم الفاتورة: <span id="previewInvoiceNumber">N/A</span></p>
-                <p>التاريخ: <span id="previewInvoiceDate">N/A</span></p>
+                <p>رقم الفاتورة: <span id="previewInvoiceNumber" style="font-weight: 700;">N/A</span></p>
+                <p>التاريخ: <span id="previewInvoiceDate" style="font-weight: 700;">N/A</span></p>
             </div>
             <div class="header-logo">
                 <img src="logo.png" alt="شعار Earth Pure">
