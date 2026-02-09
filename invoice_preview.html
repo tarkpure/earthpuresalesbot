@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>معاينة بيان المبيعات (فاتورة)</title>
+    <!-- استدعاء خط Cairo لضمان أعلى درجة وضوح للنصوص العربية عند الطباعة -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-dark-brown: #3C2E2A;
@@ -17,13 +19,22 @@
             --light-border: #ddd;
         }
 
+        /* تحسينات الوضوح والدقة للطباعة */
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Cairo', sans-serif; /* خط حاد وواضح جداً للطباعة */
             background-color: var(--light-bg);
             margin: 0;
             padding: 0;
             display: flex;
-            flex-direction: column; /* لدمج الأزرار مع الورقة */
+            flex-direction: column;
             justify-content: flex-start;
             align-items: center;
             min-height: 100vh;
@@ -31,15 +42,18 @@
             direction: rtl;
         }
 
+        /* ضبط أبعاد الورقة لمنع ظهور صفحة ثانية */
         .invoice-paper {
-            width: 100%;
-            max-width: 800px;
-            margin: 20px;
+            width: 210mm; 
+            height: 297mm; /* طول A4 ثابت */
+            max-height: 297mm;
+            margin: 20px auto;
             background-color: var(--white);
-            padding: 30px;
+            padding: 15mm;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             border: 1px solid #ccc;
-            box-sizing: border-box;
+            position: relative;
+            overflow: hidden; /* يمنع تسرب أي محتوى لصفحة ثانية */
         }
 
         .header-section {
@@ -70,6 +84,7 @@
             color: var(--text-color);
             margin: 0;
             padding-top: 5px;
+            font-weight: 700;
         }
 
         .details-table {
@@ -82,7 +97,7 @@
             border: 1px solid var(--border-color);
             padding: 8px 12px;
             text-align: right;
-            font-size: 0.9em;
+            font-size: 14px;
         }
 
         .details-table th {
@@ -109,58 +124,56 @@
         .items-table tbody td {
             border: 1px solid var(--light-border);
             padding: 8px 10px;
-            font-size: 0.9em;
+            font-size: 14px;
         }
 
         .items-table .numeric-cell, .summary-numeric {
             direction: ltr;
             text-align: left;
-            font-family: 'Consolas', 'Courier New', monospace;
+            font-family: 'Consolas', monospace;
             white-space: nowrap;
         }
 
-        /* قسم الإجمالي والملاحظات - تم تعديل Flex-basis لضمان بقائها أفقياً */
         .summary-section {
             display: flex;
             justify-content: space-between;
-            align-items: stretch; /* لضبط نفس ارتفاع الصناديق */
-            gap: 20px; 
-            flex-wrap: nowrap; /* منع النزول إلى سطر جديد إلا في الشاشات الصغيرة جداً */
+            align-items: stretch;
+            gap: 20px;
+            flex-wrap: nowrap;
         }
 
         .notes-box {
-            flex-grow: 1; /* لتأخذ المساحة المتبقية */
-            flex-basis: 58%; 
+            flex-grow: 1;
+            flex-basis: 58%;
             padding: 10px;
             border: 1px dashed var(--border-color);
             border-radius: 4px;
-            font-size: 0.85em;
+            font-size: 13px;
             text-align: right;
-            min-height: 120px; 
-            white-space: pre-wrap; /* للحفاظ على تنسيق السطور الجديدة */
+            min-height: 100px;
+            white-space: pre-wrap;
         }
 
         .totals-box {
             flex-basis: 38%;
-            min-width: 250px; /* لضمان عدم ضغط الإجماليات كثيراً */
+            min-width: 250px;
             text-align: right;
             border: 2px solid var(--accent-gold);
             border-radius: 5px;
             padding: 15px;
-            /* min-height: 120px; تم إزالته والاعتماد على align-items: stretch */
         }
 
         .totals-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px; /* زيادة الهامش */
+            margin-bottom: 8px;
         }
 
         .totals-final {
             font-size: 1.3em;
             font-weight: bold;
             color: var(--text-color);
-            border-top: 2px dashed var(--border-color); /* زيادة سمك الخط الفاصل */
+            border-top: 2px dashed var(--border-color);
             padding-top: 8px;
             margin-top: 8px;
         }
@@ -179,35 +192,27 @@
             cursor: pointer;
             margin: 0 5px;
             font-size: 1em;
-            transition: background-color 0.3s;
-        }
-
-        .button-controls button:hover {
-            background-color: #1e7e34;
-        }
-
-        @media (max-width: 768px) { /* تغيير نقطة التوقف للشاشات المتوسطة والصغيرة */
-            .summary-section {
-                flex-direction: column;
-                flex-wrap: wrap;
-            }
-
-            .notes-box, .totals-box {
-                flex-basis: 100%;
-                min-width: unset;
-            }
         }
 
         @media print {
+            @page {
+                size: A4;
+                margin: 0;
+            }
             body {
                 background: none;
+                margin: 0;
+                padding: 0;
             }
             .invoice-paper {
                 box-shadow: none;
                 margin: 0;
-                padding: 0;
+                padding: 10mm 15mm;
                 border: none;
-                width: 100%;
+                width: 210mm;
+                height: 297mm; /* إجبار المحتوى على صفحة واحدة فقط */
+                page-break-after: avoid;
+                page-break-before: avoid;
             }
             .button-controls {
                 display: none;
@@ -301,8 +306,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const tempInvoiceData = sessionStorage.getItem('tempInvoiceData');
             if (!tempInvoiceData) {
-                document.getElementById('invoicePaper').innerHTML = '<h2>خطأ: لا توجد بيانات معاينة متاحة.</h2><p style="text-align:center;">يرجى العودة لصفحة إدخال الفاتورة.</p>';
-                document.querySelector('.button-controls').style.display = 'none';
+                document.getElementById('invoicePaper').innerHTML = '<h2>خطأ: لا توجد بيانات معاينة متاحة.</h2>';
                 return;
             }
             const data = JSON.parse(tempInvoiceData);
@@ -332,12 +336,11 @@
                 totalCell.classList.add('summary-numeric');
             });
 
-            // تحديث الإجماليات
             const shippingCost = data.shippingCost || 0;
             const finalTotal = (data.subtotal || 0) + shippingCost + (data.taxAmount || 0);
 
             document.getElementById('previewSubtotal').textContent = formatCurrency(data.subtotal);
-            document.getElementById('previewShippingCost').textContent = formatCurrency(shippingCost); // **التعديل هنا**
+            document.getElementById('previewShippingCost').textContent = formatCurrency(shippingCost);
             document.getElementById('previewTax').textContent = formatCurrency(data.taxAmount);
             document.getElementById('previewTotal').textContent = formatCurrency(finalTotal);
         });
