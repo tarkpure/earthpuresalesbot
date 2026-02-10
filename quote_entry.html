@@ -28,7 +28,6 @@
 </head>
 <body class="p-4 md:p-8">
 
-    <!-- Loading Overlay -->
     <div id="loading" class="loading-overlay">
         <div class="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-brand-gold"></div>
         <p class="mt-4 font-bold text-brand-brown text-xl">جاري حفظ عرض السعر...</p>
@@ -98,7 +97,6 @@
                 </div>
             </div>
 
-            <!-- Summary & Notes -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10 pt-8 border-t">
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-2">ملاحظات وشروط التوريد</label>
@@ -114,28 +112,25 @@
 
             <div class="pt-8 border-t">
                 <button type="submit" class="w-full bg-brand-brown hover:bg-black text-white py-5 rounded-2xl font-bold text-xl shadow-xl transition-all transform hover:-translate-y-1">
-                    حفظ وعرض بيان السعر (PDF)
+                    حفظ عرض السعر في السيستم
                 </button>
             </div>
         </form>
     </div>
 
     <script>
-        // الرابط الذي قمت بإرساله
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwoFKE-axoXbXXZh9ZP1i1DZYKVxtLVMKfRhsBVPJ6pdxw-gx9FetD_h-ypUmfI3Mv3Ug/exec";
+        let currentGrandTotal = 0; // تخزين الرقم الصافي للمجموع لتجنب أخطاء الفورمات
 
         document.addEventListener('DOMContentLoaded', () => {
-            // تعيين التاريخ
             document.getElementById('quoteDate').value = new Date().toLocaleDateString('ar-EG');
             
-            // الشروط الافتراضية
             const defaultNotes = "• الأسعار المذكورة أعلاه غير شاملة ضريبة القيمة المضافة (14%).\n" +
                                "• الأسعار لا تشمل مصاريف الشحن.\n" +
                                "• مدة التوريد: من 3 إلى 5 أيام عمل داخل القاهرة وخارجها حسب المسافة من تاريخ استلام أمر التوريد (P.O).\n" +
                                "• شروط الدفع: نقداً أو تحويل بنكي عند الاستلام.";
             document.getElementById('notes').value = defaultNotes;
             
-            // جلب الرقم التلقائي
             fetch(`${SCRIPT_URL}?action=getQuoteNumber`)
                 .then(res => res.json())
                 .then(data => {
@@ -182,21 +177,25 @@
             const row = input.closest('tr');
             const q = parseFloat(row.cells[1].querySelector('input').value) || 0;
             const p = parseFloat(row.cells[2].querySelector('input').value) || 0;
-            row.cells[3].textContent = (q * p).toFixed(2);
+            const total = q * p;
+            row.cells[3].textContent = total.toFixed(2);
             calcAll();
         }
 
         function calcAll() {
-            let t = 0;
-            document.querySelectorAll('.row-total').forEach(c => t += parseFloat(c.textContent) || 0);
-            document.getElementById('totalDisplay').textContent = t.toLocaleString('ar-EG', {minimumFractionDigits: 2}) + " ج.م";
+            let total = 0;
+            document.querySelectorAll('.row-total').forEach(c => {
+                total += parseFloat(c.textContent) || 0;
+            });
+            currentGrandTotal = total; // حفظ القيمة الرقمية الصافية
+            document.getElementById('totalDisplay').textContent = total.toLocaleString('ar-EG', {minimumFractionDigits: 2}) + " ج.م";
         }
 
         document.getElementById('quoteForm').onsubmit = function(e) {
             e.preventDefault();
             const qId = document.getElementById('quoteId').value;
             if(!qId || qId.includes("جاري") || qId.includes("خطأ")) {
-                alert("يرجى الانتظار حتى جلب رقم العرض من السيرفر");
+                alert("يرجى الانتظار حتى جلب رقم عرض السعر");
                 return;
             }
 
@@ -209,7 +208,7 @@
                 employeeName: document.getElementById('employeeName').value,
                 validity: document.getElementById('validity').value,
                 notes: document.getElementById('notes').value,
-                total: parseFloat(document.getElementById('totalDisplay').textContent.replace(/[^0-9.]/g, '')),
+                total: currentGrandTotal, // إرسال المجموع كرقَم صافي
                 items: Array.from(document.getElementById('itemsBody').rows).map(r => ({
                     product: r.cells[0].querySelector('input').value,
                     quantity: r.cells[1].querySelector('input').value,
@@ -218,7 +217,7 @@
                 }))
             };
 
-            // تخزين البيانات محلياً للمعاينة
+            // تخزين البيانات محلياً للمعاينة مع رقم عرض السعر
             sessionStorage.setItem('tempQuoteData', JSON.stringify({ ...formData, quoteNumber: qId }));
 
             fetch(SCRIPT_URL, {
