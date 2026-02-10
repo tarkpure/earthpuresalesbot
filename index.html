@@ -7,30 +7,27 @@
     <style>
         /* تعريف الألوان المتناسقة مع هوية الشعار (ذهبي، بني، وألوان محايدة) */
         :root {
-            --primary-dark-brown: #3C2E2A; /* لون بني داكن من اللوجو (earth pure text) */
-            --accent-gold: #B89C5D;     /* لون ذهبي من اللوجو (الشكل العلوي و earth text) */
+            --primary-dark-brown: #3C2E2A; /* لون بني داكن من اللوجو */
+            --accent-gold: #B89C5D;     /* لون ذهبي من اللوجو */
             --light-bg: #f8f8f8;        /* خلفية عامة فاتحة قليلاً */
             --medium-gray: #666;        /* نص رمادي متوسط للفقرات الثانوية */
             --white: #ffffff;
             --card-shadow: rgba(0, 0, 0, 0.08);
             --card-hover-shadow: rgba(0, 0, 0, 0.12);
 
-            /* ألوان الكروت الحالية - تم الاحتفاظ بها كما هي */
+            /* ألوان الكروت */
             --orders-bg: #e3f2fd; --orders-icon: #2196f3;
             --salaries-bg: #e8f5e9; --salaries-icon: #4caf50;
             --accounts-bg: #fff3e0; --accounts-icon: #ff9800;
             --inventory-bg: #f3e5f5; --inventory-icon: #9c27b0;
             
             /* ألوان كرت عروض الأسعار */
-            --quotes-bg: #fdf5e6; /* لون كريمي فاتح */
-            --quotes-icon: #d4ac0d; /* لون ذهبي داكن */
+            --quotes-bg: #fdf5e6; 
+            --quotes-icon: #d4ac0d; 
 
-            --daily-report-bg: #e0f2f7; 
-            --daily-report-icon: #3f51b5; 
-
-            /* **تعديل: لون بطاقة الفواتير** */
-            --invoice-bg: #f5f0ff; /* بنفسجي فاتح أو وردي ناعم */
-            --invoice-icon: #7c4dff; /* بنفسجي ساطع */
+            /* لون بطاقة الفواتير */
+            --invoice-bg: #f5f0ff; 
+            --invoice-icon: #7c4dff; 
         }
 
         body {
@@ -41,7 +38,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; /* توسيط رأسي للمحتوى */
+            justify-content: center;
             min-height: 100vh;
             color: #333;
             direction: rtl;
@@ -58,7 +55,7 @@
         }
         h1 {
             text-align: center;
-            color: var(--accent-gold); /* لون ذهبي أغمق قليلاً من اللوجو */
+            color: var(--accent-gold);
             margin-bottom: 40px;
             font-size: 2.2em;
         }
@@ -67,7 +64,7 @@
             grid-template-columns: repeat(3, minmax(200px, 1fr)); 
             gap: 20px;
             width: 100%;
-            max-width: 900px; /* زيادة أقصى عرض لاستيعاب 3 أعمدة */
+            max-width: 900px;
             padding: 0 20px;
             box-sizing: border-box;
         }
@@ -100,7 +97,7 @@
             font-weight: bold;
             color: #333;
         }
-        /* ألوان الكروت الحالية */
+        /* ألوان الكروت */
         .card-orders { background-color: var(--orders-bg); }
         .card-orders .card-icon { color: var(--orders-icon); }
 
@@ -113,38 +110,34 @@
         .card-inventory { background-color: var(--inventory-bg); }
         .card-inventory .card-icon { color: var(--inventory-icon); }
 
-        /* ألوان بطاقة الفواتير */
         .card-invoice { background-color: var(--invoice-bg); }
         .card-invoice .card-icon { color: var(--invoice-icon); }
 
-
-        /* ألوان كرت عروض الأسعار */
         .card-quotes { background-color: var(--quotes-bg); }
         .card-quotes .card-icon { color: var(--quotes-icon); }
 
-        /* لتحديد أن الكروت الأخرى غير قابلة للنقر مؤقتًا */
         .disabled-card {
             cursor: default;
             opacity: 0.7;
         }
         .disabled-card:hover {
             transform: none;
-            box-shadow: 0 4px 10px var(--card-shadow); /* العودة للظل الأصلي عند التحويم */
+            box-shadow: 0 4px 10px var(--card-shadow);
         }
         .disabled-card .card-icon, .disabled-card .card-title {
             color: #888;
         }
 
-        /* استجابة الهاتف (Mobile Responsiveness) */
-        @media (max-width: 768px) { /* تعديل نقطة التوقف لـ 3 أعمدة */
+        /* استجابة الهاتف */
+        @media (max-width: 768px) {
             .dashboard-grid {
-                grid-template-columns: repeat(2, minmax(150px, 1fr)); /* عمودين على الشاشات المتوسطة */
+                grid-template-columns: repeat(2, minmax(150px, 1fr));
                 max-width: 600px;
             }
         }
         @media (max-width: 480px) {
             .dashboard-grid {
-                grid-template-columns: 1fr; /* عمود واحد على الشاشات الصغيرة جداً */
+                grid-template-columns: 1fr;
                 padding: 0 10px;
             }
             .dashboard-card {
@@ -155,19 +148,16 @@
             }
             h1 {
                 font-size: 1.8em;
-                margin-bottom: 30px;
             }
         }
     </style>
 </head>
 <body>
     <div class="logo-container">
-        <!-- تأكد من وجود ملف logo.png في نفس المجلد -->
         <img src="logo.png" alt="شعار Earth Pure" class="logo">
     </div>
     <h1>لوحة التحكم الرئيسية</h1>
     <div class="dashboard-grid">
-        <!-- البطاقات التي تم تفعيلها سابقًا -->
         <a href="form.html" class="dashboard-card card-orders">
             <div class="card-icon">🧾</div>
             <div class="card-title">إدارة الأوردرات والعينات</div>
@@ -181,15 +171,14 @@
             <div class="card-title">المخزون</div>
         </a>
         
-        <!-- بطاقة بيان المبيعات والفواتير -->
         <a href="inventory_login.html?redirect=invoices" class="dashboard-card card-invoice">
-            <div class="card-icon">📝</div> <!-- أيقونة فاتورة/مبيعات -->
+            <div class="card-icon">📝</div>
             <div class="card-title">بيان المبيعات والفواتير</div>
         </a>
 
-        <!-- **التعديل هنا: تقرير الأداء أصبح عروض الأسعار** -->
-        <a href="#" class="dashboard-card card-quotes"> 
-            <div class="card-icon">📋</div> <!-- أيقونة عرض سعر -->
+        <!-- تم تحديث الرابط هنا ليشير لملف عرض السعر -->
+        <a href="quote_entry.html" class="dashboard-card card-quotes"> 
+            <div class="card-icon">📋</div>
             <div class="card-title">عروض الأسعار</div>
         </a>
 
