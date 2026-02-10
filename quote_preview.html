@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>معاينة عرض سعر - Earth Pure</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #3C2E2A; --accent: #B89C5D; --white: #ffffff; }
+        * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        body { font-family: 'Cairo', sans-serif; background-color: #f0f0f0; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; font-weight: 600; }
+        .paper { width: 210mm; min-height: 297mm; background: var(--white); padding: 15mm; box-shadow: 0 0 10px rgba(0,0,0,0.1); position: relative; box-sizing: border-box; display: flex; flex-direction: column; }
+        
+        /* الهيدر */
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary); padding-bottom: 15px; margin-bottom: 20px; }
+        .header h1 { font-size: 32px; color: var(--primary); margin: 0; }
+        .logo img { max-width: 150px; }
+
+        /* شبكة البيانات */
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; border: 1.5px solid var(--primary); padding: 12px; border-radius: 8px; background-color: #fafafa; }
+        .info-item { font-size: 15px; }
+        .info-item b { color: var(--accent); }
+
+        /* الجدول */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
+        th { background: var(--accent); color: var(--white); padding: 12px; border: 1.5px solid var(--primary); text-align: center; font-size: 14px; }
+        td { padding: 10px; border: 1px solid #ccc; text-align: center; font-size: 14px; }
+        .numeric { direction: ltr; font-family: sans-serif; font-weight: 700; }
+
+        /* قسم الشروط والملاحظات */
+        .footer-section { margin-top: auto; display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; padding-top: 20px; }
+        .conditions-box { border: 1.5px solid var(--accent); padding: 15px; border-radius: 8px; font-size: 13px; background-color: #fffdf9; }
+        .conditions-box b { color: var(--primary); display: block; margin-bottom: 8px; font-size: 15px; border-bottom: 1px solid var(--accent); padding-bottom: 5px; }
+        .conditions-list { list-style: none; padding: 0; margin: 0; line-height: 1.8; color: #444; }
+        .conditions-list li::before { content: "• "; color: var(--accent); font-weight: bold; }
+
+        /* الإجمالي والختم */
+        .totals-and-stamp { display: flex; flex-direction: column; gap: 20px; }
+        .totals { border: 2.5px solid var(--primary); border-radius: 8px; padding: 15px; background: var(--primary); color: white; }
+        .total-row { display: flex; justify-content: space-between; font-size: 20px; align-items: center; }
+        
+        .stamp-area { text-align: center; margin-top: 10px; border: 1px dashed #ccc; padding: 10px; min-height: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        .stamp-area b { font-size: 14px; color: #888; margin-bottom: 5px; }
+        .company-stamp { max-width: 140px; position: absolute; bottom: 5px; }
+
+        /* الأزرار */
+        .btns { margin-top: 20px; position: sticky; bottom: 20px; background: rgba(240,240,240,0.8); padding: 10px; border-radius: 50px; }
+        button { background: #28a745; color: white; border: none; padding: 12px 25px; border-radius: 25px; cursor: pointer; font-weight: bold; font-size: 16px; margin: 0 5px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        
+        @media print { .paper { margin: 0; box-shadow: none; border: none; } .btns { display: none; } body { background: white; padding: 0; } }
+    </style>
+</head>
+<body>
+    <div class="paper" id="paper">
+        <!-- ترويسة العرض -->
+        <div class="header">
+            <div class="header-text">
+                <h1>عـرض سـعـر</h1>
+                <p style="margin: 5px 0;">رقم العرض: <span id="qNum" style="color:var(--accent)"></span></p>
+                <p style="margin: 5px 0;">التاريخ: <span id="qDate"></span></p>
+            </div>
+            <div class="logo">
+                <img src="./logo.png" alt="Earth Pure" onerror="this.src='https://i.ibb.co/p6V8n9X/logo.png'">
+            </div>
+        </div>
+
+        <!-- بيانات العميل -->
+        <div class="info-grid">
+            <div class="info-item"><b>السادة /</b> <span id="qCust"></span></div>
+            <div class="info-item"><b>صلاحية العرض:</b> <span id="qVal"></span></div>
+            <div class="info-item"><b>الموظف المسؤول:</b> <span id="qEmp"></span></div>
+            <div class="info-item"><b>عناية السيد /</b> ....................................</div>
+        </div>
+
+        <!-- جدول المنتجات -->
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 40px;">م</th>
+                    <th>اسم الصنف</th>
+                    <th style="width: 70px;">الكمية</th>
+                    <th style="width: 120px;">سعر الوحدة</th>
+                    <th style="width: 120px;">الإجمالي</th>
+                </tr>
+            </thead>
+            <tbody id="qItems"></tbody>
+        </table>
+
+        <!-- الجزء السفلي: الشروط والختم -->
+        <div class="footer-section">
+            <div class="conditions-box">
+                <b>الشروط العامة والتوريد:</b>
+                <ul class="conditions-list">
+                    <li>الأسعار المذكورة أعلاه غير شاملة ضريبة القيمة المضافة (14%).</li>
+                    <li>الأسعار لا تشمل مصاريف الشحن.</li>
+                    <li>مدة التوريد: من 3 إلى 5 أيام عمل داخل القاهرة وخارجها حسب المسافة من تاريخ استلام أمر التوريد (P.O).</li>
+                    <li>شروط الدفع: نقداً أو تحويل بنكي عند الاستلام.</li>
+                </ul>
+                <div style="margin-top: 15px; font-size: 12px; color: var(--primary); border-top: 1px solid #eee; padding-top: 5px;">
+                    <b>ملاحظات إضافية:</b>
+                    <span id="qNotes"></span>
+                </div>
+            </div>
+
+            <div class="totals-and-stamp">
+                <div class="totals">
+                    <div class="total-row">
+                        <span>إجمالي العرض:</span>
+                        <span class="numeric" id="qTotal"></span>
+                    </div>
+                </div>
+
+                <div class="stamp-area">
+                    <b>ختم الشركة والاعتماد</b>
+                    <div id="stampPlaceholder" style="font-size: 11px; color: #ccc;">[مكان الختم]</div>
+                    <img id="stampImage" src="./stamp.png" alt="Stamp" class="company-stamp" onerror="this.style.display='none'; document.getElementById('stampPlaceholder').style.display='block';">
+                </div>
+            </div>
+        </div>
+        
+        <p style="text-align: center; font-size: 14px; color: var(--primary); margin-top: 30px; border-top: 1.5px solid var(--primary); padding-top: 10px; font-weight: 700;">
+            شركة ايرث بيور للزيوت الطبيعية - شكراً لثقتكم بنا
+        </p>
+    </div>
+
+    <div class="btns">
+        <button onclick="window.print()">تصدير PDF / طباعة</button>
+        <button style="background: #6c757d;" onclick="window.close()">إغلاق</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const data = JSON.parse(sessionStorage.getItem('tempQuoteData'));
+            if(!data) return;
+
+            document.getElementById('qNum').textContent = data.quoteNumber;
+            document.getElementById('qDate').textContent = data.date;
+            document.getElementById('qCust').textContent = data.customerName;
+            document.getElementById('qEmp').textContent = data.employeeName;
+            document.getElementById('qVal').textContent = data.validity + " أيام";
+            document.getElementById('qNotes').textContent = data.notes || "لا يوجد ملاحظات إضافية";
+            document.getElementById('qTotal').textContent = data.total.toLocaleString('en-US', {minimumFractionDigits: 2}) + " ج.م";
+
+            const tbody = document.getElementById('qItems');
+            data.items.forEach((item, i) => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${i+1}</td>
+                    <td style="text-align: right; padding-right: 15px;">${item.product}</td>
+                    <td class="numeric">${item.quantity}</td>
+                    <td class="numeric">${parseFloat(item.price).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                    <td class="numeric">${parseFloat(item.total).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                `;
+            });
+
+            // التأكد من ظهور صورة الختم إذا كانت موجودة
+            const stampImg = document.getElementById('stampImage');
+            if (stampImg.complete) {
+                document.getElementById('stampPlaceholder').style.display = 'none';
+                stampImg.style.display = 'block';
+            } else {
+                stampImg.onload = function() {
+                    document.getElementById('stampPlaceholder').style.display = 'none';
+                    this.style.display = 'block';
+                };
+            }
+        });
+    </script>
+</body>
+</html>
