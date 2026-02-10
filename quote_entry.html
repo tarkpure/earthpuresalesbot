@@ -30,11 +30,10 @@
 
     <div id="loading" class="loading-overlay">
         <div class="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-brand-gold"></div>
-        <p class="mt-4 font-bold text-brand-brown text-xl">جاري حفظ عرض السعر...</p>
+        <p class="mt-4 font-bold text-brand-brown text-xl">جاري معالجة عرض السعر...</p>
     </div>
 
     <div class="max-w-5xl mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden border border-gray-100">
-        <!-- Header -->
         <div class="bg-brand-brown p-8 text-white flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
                 <h1 class="text-3xl font-bold tracking-tight text-white">إنشاء عرض سعر</h1>
@@ -46,7 +45,6 @@
         </div>
 
         <form id="quoteForm" class="p-8 space-y-10">
-            <!-- Basic Info Section -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div class="space-y-2">
                     <label class="block text-sm font-bold text-gray-700">رقم عرض السعر</label>
@@ -74,7 +72,6 @@
                 </div>
             </div>
 
-            <!-- Items Table Section -->
             <div class="border-t pt-8">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-bold text-brand-brown">تفاصيل المنتجات</h2>
@@ -111,8 +108,11 @@
             </div>
 
             <div class="pt-8 border-t">
-                <button type="submit" class="w-full bg-brand-brown hover:bg-black text-white py-5 rounded-2xl font-bold text-xl shadow-xl transition-all transform hover:-translate-y-1">
-                    حفظ عرض السعر في السيستم
+                <button type="submit" class="w-full bg-brand-brown hover:bg-black text-white py-5 rounded-2xl font-bold text-xl shadow-xl transition-all transform hover:-translate-y-1 flex items-center justify-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    حفظ ومعاينة عرض السعر (PDF)
                 </button>
             </div>
         </form>
@@ -120,7 +120,7 @@
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwoFKE-axoXbXXZh9ZP1i1DZYKVxtLVMKfRhsBVPJ6pdxw-gx9FetD_h-ypUmfI3Mv3Ug/exec";
-        let currentGrandTotal = 0; // تخزين الرقم الصافي للمجموع لتجنب أخطاء الفورمات
+        let currentGrandTotal = 0;
 
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('quoteDate').value = new Date().toLocaleDateString('ar-EG');
@@ -187,13 +187,15 @@
             document.querySelectorAll('.row-total').forEach(c => {
                 total += parseFloat(c.textContent) || 0;
             });
-            currentGrandTotal = total; // حفظ القيمة الرقمية الصافية
+            currentGrandTotal = total;
             document.getElementById('totalDisplay').textContent = total.toLocaleString('ar-EG', {minimumFractionDigits: 2}) + " ج.م";
         }
 
+        // Modified Form Submission Logic
         document.getElementById('quoteForm').onsubmit = function(e) {
             e.preventDefault();
             const qId = document.getElementById('quoteId').value;
+            
             if(!qId || qId.includes("جاري") || qId.includes("خطأ")) {
                 alert("يرجى الانتظار حتى جلب رقم عرض السعر");
                 return;
@@ -203,12 +205,13 @@
             
             const formData = {
                 action: 'saveQuotation',
+                quoteNumber: qId,
                 date: document.getElementById('quoteDate').value,
                 customerName: document.getElementById('customerName').value,
                 employeeName: document.getElementById('employeeName').value,
                 validity: document.getElementById('validity').value,
                 notes: document.getElementById('notes').value,
-                total: currentGrandTotal, // إرسال المجموع كرقَم صافي
+                total: currentGrandTotal,
                 items: Array.from(document.getElementById('itemsBody').rows).map(r => ({
                     product: r.cells[0].querySelector('input').value,
                     quantity: r.cells[1].querySelector('input').value,
@@ -217,9 +220,10 @@
                 }))
             };
 
-            // تخزين البيانات محلياً للمعاينة مع رقم عرض السعر
-            sessionStorage.setItem('tempQuoteData', JSON.stringify({ ...formData, quoteNumber: qId }));
+            // 1. Storage for Preview
+            sessionStorage.setItem('tempQuoteData', JSON.stringify(formData));
 
+            // 2. Submit to Server
             fetch(SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
@@ -227,12 +231,22 @@
             })
             .then(() => {
                 document.getElementById('loading').style.display = 'none';
-                window.open('quote_preview.html', '_blank');
-                window.location.reload();
+                
+                // 3. Open Preview
+                const previewWindow = window.open('quote_preview.html', '_blank');
+                
+                if(!previewWindow) {
+                    alert("برجاء السماح بظهور النوافذ المنبثقة (Pop-ups) لعرض الـ PDF");
+                }
+
+                // 4. Reset Form Confirmation
+                if(confirm("تم الحفظ بنجاح. هل تريد تفريغ النموذج لعمل عرض سعر جديد؟")) {
+                    window.location.reload();
+                }
             })
             .catch(err => {
                 document.getElementById('loading').style.display = 'none';
-                alert('حدث خطأ أثناء الاتصال بالسيرفر');
+                alert('حدث خطأ أثناء حفظ البيانات');
             });
         };
     </script>
