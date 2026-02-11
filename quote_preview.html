@@ -8,51 +8,93 @@
     <style>
         :root { --primary: #3C2E2A; --accent: #B89C5D; --white: #ffffff; }
         * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }
-        body { font-family: 'Cairo', sans-serif; background-color: #f0f0f0; margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
         
-        /* ضبط الورقة لتناسب صفحة واحدة */
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            background-color: #f0f0f0; 
+            margin: 0; 
+            padding: 5px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+        }
+
+        /* تنسيق الورقة لضمان صفحة واحدة */
         .paper { 
             width: 210mm; 
-            height: 296mm; /* أقل بقليل من A4 لضمان عدم الخروج لصفحة ثانية */
+            height: 290mm; /* تقليل الارتفاع الإجمالي لضمان عدم الكسر */
             background: var(--white); 
-            padding: 10mm; 
+            padding: 8mm; 
             box-shadow: 0 0 10px rgba(0,0,0,0.1); 
             position: relative; 
             display: flex; 
             flex-direction: column;
             overflow: hidden;
         }
-        
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); padding-bottom: 10px; margin-bottom: 15px; }
-        .header h1 { font-size: 28px; color: var(--primary); margin: 0; }
-        .logo img { max-width: 130px; height: auto; }
 
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; border: 1px solid var(--primary); padding: 10px; border-radius: 8px; background-color: #fafafa; }
-        .info-item { font-size: 14px; font-weight: 700; }
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 2px solid var(--primary); 
+            padding-bottom: 5px; 
+            margin-bottom: 10px; 
+        }
+        .header h1 { font-size: 24px; color: var(--primary); margin: 0; }
+        .logo img { max-width: 110px; height: auto; }
+
+        .info-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 5px; 
+            margin-bottom: 10px; 
+            border: 1px solid var(--primary); 
+            padding: 8px; 
+            border-radius: 8px; 
+            background-color: #fafafa; 
+        }
+        .info-item { font-size: 13px; font-weight: 700; }
         .info-item b { color: var(--accent); }
 
-        /* جعل الجدول مرن ليشغل المساحة المتاحة */
-        .table-container { flex-grow: 1; overflow: hidden; margin-bottom: 15px; }
+        /* منطقة الجدول المرنة */
+        .table-container { 
+            flex-grow: 1; 
+            margin-bottom: 10px; 
+        }
         table { width: 100%; border-collapse: collapse; }
-        th { background: var(--accent); color: var(--white); padding: 8px; border: 1px solid var(--primary); text-align: center; font-size: 13px; }
-        td { padding: 6px; border: 1px solid #ccc; text-align: center; font-size: 13px; color: #333; font-weight: 600; }
+        th { background: var(--accent); color: var(--white); padding: 5px; border: 1px solid var(--primary); text-align: center; font-size: 12px; }
+        td { padding: 4px; border: 1px solid #ccc; text-align: center; font-size: 12px; color: #333; font-weight: 600; }
         .numeric { direction: ltr; font-family: sans-serif; font-weight: 700; }
 
-        .footer-section { display: grid; grid-template-columns: 1.4fr 1fr; gap: 15px; padding-top: 10px; border-top: 1px solid #eee; }
-        .conditions-box { border: 1px solid var(--accent); padding: 10px; border-radius: 8px; font-size: 12px; background-color: #fffdf9; }
-        .conditions-box b { color: var(--primary); display: block; margin-bottom: 5px; font-size: 14px; border-bottom: 1px solid var(--accent); }
+        /* التذييل والختم بمسافات مضغوطة */
+        .footer-section { 
+            display: grid; 
+            grid-template-columns: 1.5fr 1fr; 
+            gap: 10px; 
+            padding-top: 5px; 
+            border-top: 1px solid #eee; 
+        }
+        .conditions-box { 
+            border: 1px solid var(--accent); 
+            padding: 8px; 
+            border-radius: 8px; 
+            font-size: 11px; 
+            background-color: #fffdf9; 
+            min-height: 80px;
+        }
+        .conditions-box b { color: var(--primary); display: block; margin-bottom: 3px; font-size: 12px; border-bottom: 1px solid var(--accent); }
         
-        #qNotes { white-space: pre-wrap; line-height: 1.6; color: #444; font-weight: 600; }
+        #qNotes { white-space: pre-wrap; line-height: 1.4; color: #444; font-weight: 600; }
 
-        .totals-and-stamp { display: flex; flex-direction: column; gap: 10px; }
-        .totals { border: 2px solid var(--primary); border-radius: 8px; padding: 10px; background: var(--primary); color: white; }
-        .total-row { display: flex; justify-content: space-between; font-size: 18px; align-items: center; font-weight: 700; }
+        .totals-and-stamp { display: flex; flex-direction: column; gap: 8px; }
+        .totals { border: 2px solid var(--primary); border-radius: 8px; padding: 6px; background: var(--primary); color: white; }
+        .total-row { display: flex; justify-content: space-between; font-size: 16px; align-items: center; font-weight: 700; }
         
         .stamp-area { 
             text-align: center; 
             border: 1px dashed #ccc; 
             padding: 5px; 
-            height: 120px; 
+            height: 90px; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
@@ -60,18 +102,18 @@
             background-color: #fdfdfd;
             border-radius: 8px;
         }
-        .company-stamp { max-width: 110px; max-height: 90px; object-fit: contain; display: none; }
+        .company-stamp { max-width: 90px; max-height: 70px; object-fit: contain; display: none; }
 
         .btns { margin-top: 10px; position: fixed; bottom: 10px; display: flex; gap: 10px; z-index: 100; }
         button { background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; }
         
-        /* تعديلات الطباعة لضمان صفحة واحدة */
         @media print { 
             body { padding: 0; background: white; }
-            .paper { margin: 0; box-shadow: none; border: none; width: 210mm; height: 297mm; padding: 8mm; } 
+            .paper { margin: 0; box-shadow: none; border: none; width: 210mm; height: 297mm; padding: 6mm; } 
             .btns { display: none; } 
-            /* تقليل الخط إذا زادت الأصناف تلقائياً */
-            table td, table th { font-size: 11px; padding: 4px; }
+            .footer-section { page-break-inside: avoid; }
+            /* تصغير الخط في الجدول عند الطباعة لتوفير مساحة */
+            table td, table th { font-size: 11px; padding: 3px; }
         }
     </style>
 </head>
@@ -80,8 +122,8 @@
         <div class="header">
             <div class="header-text">
                 <h1>عـرض سـعـر</h1>
-                <p style="margin: 2px 0; font-size: 14px;">رقم العرض: <span id="qNum" style="color:var(--accent); font-weight: 800;"></span></p>
-                <p style="margin: 2px 0; font-size: 14px;">التاريخ: <span id="qDate"></span></p>
+                <p style="margin: 2px 0; font-size: 13px;">رقم العرض: <span id="qNum" style="color:var(--accent); font-weight: 800;"></span></p>
+                <p style="margin: 2px 0; font-size: 13px;">التاريخ: <span id="qDate"></span></p>
             </div>
             <div class="logo">
                 <img src="./logo.png" alt="Earth Pure" onerror="this.src='https://i.ibb.co/p6V8n9X/logo.png'">
@@ -100,9 +142,9 @@
                     <tr>
                         <th style="width: 30px;">م</th>
                         <th>اسم الصنف</th>
-                        <th style="width: 70px;">الكمية</th>
-                        <th style="width: 110px;">سعر الوحدة</th>
-                        <th style="width: 110px;">الإجمالي</th>
+                        <th style="width: 60px;">الكمية</th>
+                        <th style="width: 100px;">سعر الوحدة</th>
+                        <th style="width: 100px;">الإجمالي</th>
                     </tr>
                 </thead>
                 <tbody id="qItems"></tbody>
@@ -124,13 +166,13 @@
                 </div>
 
                 <div class="stamp-area">
-                    <b style="font-size: 12px; color: #888; margin-bottom: 5px;">ختم الشركة والاعتماد</b>
+                    <b style="font-size: 11px; color: #888; margin-bottom: 3px;">ختم الشركة والاعتماد</b>
                     <img id="stampImage" src="./stamp.png" alt="Stamp" class="company-stamp" onerror="this.style.display='none';">
                 </div>
             </div>
         </div>
         
-        <p style="text-align: center; font-size: 12px; color: var(--primary); margin-top: 15px; border-top: 1px solid var(--primary); padding-top: 5px; font-weight: 700;">
+        <p style="text-align: center; font-size: 11px; color: var(--primary); margin-top: 8px; border-top: 1px solid var(--primary); padding-top: 3px; font-weight: 700;">
             شركة ايرث بيور للزيوت الطبيعية - شكراً لثقتكم بنا
         </p>
     </div>
@@ -151,7 +193,11 @@
             document.getElementById('qDate').textContent = data.date || "N/A";
             document.getElementById('qCust').textContent = data.customerName || "N/A";
             document.getElementById('qEmp').textContent = data.employeeName || "N/A";
-            document.getElementById('qVal').textContent = (data.validity || "14") + " يوم ";
+            
+            // ضبط كلمة يوم/أيام
+            let val = data.validity || "14";
+            document.getElementById('qVal').textContent = val.includes("يوم") ? val : val + " يوم";
+            
             document.getElementById('qNotes').textContent = data.notes;
             
             const totalValue = parseFloat(data.total) || 0;
@@ -164,7 +210,7 @@
                 const row = tbody.insertRow();
                 row.innerHTML = `
                     <td>${i+1}</td>
-                    <td style="text-align: right; padding-right: 10px;">${item.product}</td>
+                    <td style="text-align: right; padding-right: 8px;">${item.product}</td>
                     <td class="numeric">${item.quantity}</td>
                     <td class="numeric">${parseFloat(item.price).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
                     <td class="numeric">${parseFloat(item.total).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
