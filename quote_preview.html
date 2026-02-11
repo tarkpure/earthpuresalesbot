@@ -19,6 +19,7 @@
             align-items: center; 
         }
 
+        /* تنسيق الورقة وضبط المسافات لضمان صفحة واحدة */
         .paper { 
             width: 210mm; 
             min-height: 296mm; 
@@ -31,6 +32,7 @@
             overflow: hidden;
         }
 
+        /* محاذاة الهيدر وضبط المسافات */
         .header { 
             display: flex; 
             justify-content: space-between; 
@@ -39,9 +41,10 @@
             padding-bottom: 5px; 
             margin-bottom: 10px; 
         }
-        .header h1 { font-size: 24px; color: var(--primary); margin: 0; }
-        .logo img { max-width: 100px; height: auto; }
+        .header h1 { font-size: 24px; color: var(--primary); margin: 0; text-align: right; }
+        .logo img { max-width: 110px; height: auto; }
 
+        /* ضبط شبكة المعلومات ومنع انجراف النص لليسار */
         .info-grid { 
             display: grid; 
             grid-template-columns: 1fr 1fr; 
@@ -51,27 +54,29 @@
             padding: 8px; 
             border-radius: 8px; 
             background-color: #fafafa; 
-            text-align: right; /* ضمان المحاذاة لليمين */
+            text-align: right;
         }
         .info-item { font-size: 13px; font-weight: 700; }
         .info-item b { color: var(--accent); }
 
+        /* منطقة الجدول */
         .table-container { 
             flex-grow: 1; 
             margin-bottom: 10px; 
         }
         table { width: 100%; border-collapse: collapse; table-layout: fixed; }
         th { background: var(--accent); color: var(--white); padding: 5px; border: 1px solid var(--primary); text-align: center; font-size: 12px; }
-        td { padding: 4px; border: 1px solid #ccc; text-align: center; font-size: 12px; color: #333; font-weight: 600; overflow: hidden; text-overflow: ellipsis; }
+        td { padding: 4px; border: 1px solid #ccc; text-align: center; font-size: 12px; color: #333; font-weight: 600; word-wrap: break-word; }
         .numeric { direction: ltr; font-family: sans-serif; font-weight: 700; }
 
+        /* تنسيق التذييل والختم لضمان التمركز والمحاذاة */
         .footer-section { 
             display: grid; 
             grid-template-columns: 1.5fr 1fr; 
             gap: 10px; 
             padding-top: 5px; 
             border-top: 1px solid #eee; 
-            text-align: right; /* منع الانجراف لليسار */
+            text-align: right;
         }
         .conditions-box { 
             border: 1px solid var(--accent); 
@@ -106,7 +111,7 @@
         .btns { margin-top: 10px; position: fixed; bottom: 10px; display: flex; gap: 10px; z-index: 100; }
         button { background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; }
         
-        @page { size: A4; margin: 0; }
+        /* إعدادات الطباعة لضمان صفحة واحدة */
         @media print { 
             body { padding: 0; background: white; }
             .paper { margin: 0; box-shadow: none; border: none; width: 210mm; height: 297mm; padding: 8mm; } 
@@ -142,8 +147,8 @@
                         <th style="width: 30px;">م</th>
                         <th>اسم الصنف</th>
                         <th style="width: 60px;">الكمية</th>
-                        <th style="width: 90px;">سعر الوحدة</th>
-                        <th style="width: 90px;">الإجمالي</th>
+                        <th style="width: 100px;">سعر الوحدة</th>
+                        <th style="width: 100px;">الإجمالي</th>
                     </tr>
                 </thead>
                 <tbody id="qItems"></tbody>
@@ -171,7 +176,7 @@
             </div>
         </div>
         
-        <p style="text-align: center; font-size: 10px; color: var(--primary); margin-top: 5px; border-top: 1px solid var(--primary); padding-top: 3px; font-weight: 700;">
+        <p style="text-align: center; font-size: 11px; color: var(--primary); margin-top: 8px; border-top: 1px solid var(--primary); padding-top: 3px; font-weight: 700;">
             شركة ايرث بيور للزيوت الطبيعية - شكراً لثقتكم بنا
         </p>
     </div>
