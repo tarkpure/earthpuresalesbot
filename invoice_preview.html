@@ -3,319 +3,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>معاينة بيان المبيعات (فاتورة)</title>
-    <!-- استدعاء خط Cairo بأوزان مختلفة (400 للرفيع، 600 للوسط، 700 للعريض) -->
+    <title>معاينة بيان المبيعات - Earth Pure</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-dark-brown: #3C2E2A;
-            --accent-gold: #B89C5D;
-            --light-bg: #f8f8f8;
+            --primary: #3C2E2A;
+            --accent: #B89C5D;
             --white: #ffffff;
-            --border-color: #3C2E2A;
-            --header-bg: #EAE6D2;
-            --highlight-bg: #b89c5d;
-            --text-color: var(--primary-dark-brown);
-            --light-border: #ddd;
+            --light-bg: #fdfdfd;
         }
 
-        /* تحسينات الدقة والحدة للطباعة */
         * {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
-            text-rendering: optimizeLegibility;
-            -webkit-font-smoothing: antialiased;
             box-sizing: border-box;
         }
 
         body {
             font-family: 'Cairo', sans-serif; 
-            font-weight: 600; /* تم رفع الوزن هنا ليكون الخط Bold في كامل الفاتورة */
-            background-color: var(--light-bg);
+            background-color: #f0f0f0;
             margin: 0;
             padding: 0;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
             align-items: center;
-            min-height: 100vh;
-            color: var(--text-color);
             direction: rtl;
         }
 
-        .invoice-paper {
+        /* تنسيق الورقة لضمان صفحة واحدة */
+        .paper {
             width: 210mm; 
-            height: 297mm;
-            max-height: 297mm;
-            margin: 0; 
+            min-height: 290mm;
             background-color: var(--white);
-            padding: 15mm;
+            padding: 8mm 10mm;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
             position: relative;
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
         }
 
-        .header-section {
+        .header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 20px;
-            border-bottom: 3px solid var(--text-color); /* زيادة سمك الخط الفاصل */
-            padding-bottom: 15px;
+            align-items: center;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 8px;
+            margin-bottom: 12px;
         }
 
-        .header-logo {
-            flex-basis: 30%;
-            text-align: left;
-        }
+        .header-text { text-align: right; }
+        .header h1 { font-size: 26px; color: var(--primary); margin: 0; font-weight: 700; }
+        .logo img { max-width: 120px; height: auto; }
 
-        .header-logo img {
-            max-width: 150px;
-        }
-
-        .header-title {
-            flex-basis: 65%;
-            text-align: right;
-        }
-
-        .header-title h1 {
-            font-size: 2.5em;
-            color: var(--text-color);
-            margin: 0;
-            padding-top: 5px;
-            font-weight: 700; /* عريض جداً للعناوين */
-        }
-
+        /* شبكة معلومات الفاتورة */
         .details-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
+            text-align: right;
         }
 
         .details-table th, .details-table td {
-            border: 1.5px solid var(--border-color); /* زيادة سمك الحدود */
-            padding: 8px 12px;
-            text-align: right;
-            font-size: 14px;
-            font-weight: 600; /* جعل النصوص داخل الجدول Bold */
+            border: 1.5px solid var(--primary);
+            padding: 6px 10px;
+            font-size: 13px;
+            font-weight: 600;
         }
 
         .details-table th {
-            background-color: var(--header-bg);
-            font-weight: 700;
+            background-color: #fafafa;
+            color: var(--accent);
+            width: 15%;
         }
 
+        /* جدول الأصناف */
         .items-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
+            flex-grow: 1;
         }
 
-        .items-table thead th {
-            background-color: var(--highlight-bg);
+        .items-table th {
+            background-color: var(--accent);
             color: var(--white);
+            padding: 8px;
+            border: 1px solid var(--primary);
+            font-size: 13px;
             font-weight: 700;
-            padding: 10px;
-            border: 1.5px solid var(--border-color);
-            white-space: nowrap;
-            font-size: 14px;
         }
 
-        .items-table tbody td {
-            border: 1px solid var(--light-border);
-            padding: 8px 10px;
-            font-size: 14px;
-            font-weight: 600; /* جعل محتويات الجدول Bold */
+        .items-table td {
+            border: 1px solid #ccc;
+            padding: 6px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
         }
 
-        .items-table .numeric-cell, .summary-numeric {
-            direction: ltr;
-            text-align: left;
-            font-family: 'Consolas', monospace;
-            white-space: nowrap;
-            font-weight: 700; /* الأرقام تكون Bold جداً */
-        }
+        .numeric { direction: ltr; font-family: sans-serif; font-weight: 700; }
 
-        .summary-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: stretch;
-            gap: 15px;
-            flex-wrap: nowrap;
+        /* منطقة التذييل والختم */
+        .footer-section {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 12px;
+            padding-top: 8px;
+            border-top: 1px solid #eee;
         }
 
         .notes-box {
-            flex-grow: 1;
-            flex-basis: 58%;
-            padding: 10px;
-            border: 1.5px dashed var(--border-color);
-            border-radius: 4px;
-            font-size: 13px;
+            border: 1px solid var(--accent);
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            background-color: #fffdf9;
+            min-height: 90px;
             text-align: right;
-            min-height: 80px;
-            white-space: pre-wrap;
-            font-weight: 600;
         }
+
+        .notes-box b { color: var(--primary); display: block; margin-bottom: 4px; font-size: 13px; border-bottom: 1px solid var(--accent); }
+
+        .totals-and-stamp { display: flex; flex-direction: column; gap: 8px; }
 
         .totals-box {
-            flex-basis: 38%;
-            min-width: 240px;
-            text-align: right;
-            border: 2px solid var(--accent-gold);
-            border-radius: 5px;
-            padding: 10px;
+            background-color: var(--primary);
+            color: var(--white);
+            border-radius: 8px;
+            padding: 8px;
         }
 
-        .totals-row {
+        .total-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 5px;
             font-size: 14px;
-            font-weight: 600;
+            margin-bottom: 3px;
         }
 
-        .totals-final {
-            font-size: 1.3em;
-            font-weight: 700;
-            color: var(--text-color);
-            border-top: 2.5px dashed var(--border-color);
+        .total-final {
+            border-top: 1px dashed var(--white);
             padding-top: 5px;
             margin-top: 5px;
+            font-size: 17px;
+            font-weight: 700;
         }
 
-        .button-controls {
-            margin: 20px auto;
+        .stamp-area {
             text-align: center;
+            border: 1px dashed #ccc;
+            padding: 5px;
+            height: 90px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--light-bg);
+            border-radius: 8px;
         }
 
-        .button-controls button {
-            background-color: #28a745;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 0 5px;
-            font-size: 1em;
-            font-weight: bold;
-        }
+        .company-stamp { max-width: 90px; max-height: 70px; object-fit: contain; display: none; }
 
+        .button-controls { margin: 10px; position: fixed; bottom: 10px; display: flex; gap: 10px; }
+        button { background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; }
+
+        @page { size: A4; margin: 0; }
         @media print {
-            @page {
-                size: A4;
-                margin: 0;
-            }
-            body {
-                background: none;
-                padding: 0;
-            }
-            .invoice-paper {
-                box-shadow: none;
-                margin: 0;
-                border: none;
-                width: 210mm;
-                height: 297mm;
-                page-break-after: avoid;
-                page-break-before: avoid;
-            }
-            .button-controls {
-                display: none;
-            }
+            body { background: white; padding: 0; }
+            .paper { margin: 0 auto; box-shadow: none; width: 210mm; height: 297mm; padding: 8mm 10mm; }
+            .button-controls { display: none; }
+            .footer-section { page-break-inside: avoid; }
         }
     </style>
 </head>
 <body>
-    <div class="invoice-paper" id="invoicePaper">
-        <div class="header-section">
-            <div class="header-title">
+
+    <div class="paper" id="invoicePaper">
+        <div class="header">
+            <div class="header-text">
                 <h1>بيان مبيعات</h1>
-                <p>رقم الفاتورة: <span id="previewInvoiceNumber" style="font-weight: 700;">N/A</span></p>
-                <p>التاريخ: <span id="previewInvoiceDate" style="font-weight: 700;">N/A</span></p>
+                <p style="margin: 2px 0; font-size: 13px;">رقم الفاتورة: <span id="previewInvoiceNumber" style="font-weight: 800; color: var(--accent);"></span></p>
+                <p style="margin: 2px 0; font-size: 13px;">التاريخ: <span id="previewInvoiceDate"></span></p>
             </div>
-            <div class="header-logo">
-                <img src="logo.png" alt="شعار Earth Pure">
+            <div class="logo">
+                <img src="logo.png" alt="Earth Pure" onerror="this.src='https://i.ibb.co/p6V8n9X/logo.png'">
             </div>
         </div>
 
         <table class="details-table">
-            <thead>
-                <tr>
-                    <th>اسم العميل</th>
-                    <td id="previewCustomerName"></td>
-                    <th>طريقة التسليم</th>
-                    <td id="previewDeliveryMethod"></td>
-                </tr>
-                <tr>
-                    <th>اسم الموظف</th>
-                    <td id="previewEmployeeName"></td>
-                    <th>طريقة التحصيل</th>
-                    <td id="previewCollectionMethod"></td>
-                </tr>
-            </thead>
+            <tr>
+                <th>اسم العميل</th>
+                <td id="previewCustomerName"></td>
+                <th>طريقة التسليم</th>
+                <td id="previewDeliveryMethod"></td>
+            </tr>
+            <tr>
+                <th>اسم الموظف</th>
+                <td id="previewEmployeeName"></td>
+                <th>طريقة التحصيل</th>
+                <td id="previewCollectionMethod"></td>
+            </tr>
         </table>
 
         <table class="items-table">
             <thead>
                 <tr>
-                    <th>م</th>
+                    <th style="width: 30px;">م</th>
                     <th>اسم المنتج</th>
-                    <th>الوحدة</th>
-                    <th>الكمية</th>
-                    <th>السعر</th>
-                    <th>الإجمالي</th>
+                    <th style="width: 60px;">الوحدة</th>
+                    <th style="width: 60px;">الكمية</th>
+                    <th style="width: 90px;">السعر</th>
+                    <th style="width: 90px;">الإجمالي</th>
                 </tr>
             </thead>
             <tbody id="itemsPreviewBody"></tbody>
         </table>
 
-        <div class="summary-section">
+        <div class="footer-section">
             <div class="notes-box">
-                <p><strong>ملاحظات:</strong></p>
-                <p id="previewNotes"></p>
+                <b>ملاحظات وشروط البيع:</b>
+                <div id="previewNotes"></div>
             </div>
-            <div class="totals-box">
-                <div class="totals-row">
-                    <span>الإجمالي الفرعي:</span>
-                    <span id="previewSubtotal" class="summary-numeric">0.00 ج.م.</span>
-                </div>
-                
-                <div class="totals-row">
-                    <span>مصاريف الشحن:</span>
-                    <span id="previewShippingCost" class="summary-numeric">0.00 ج.م.</span>
+
+            <div class="totals-and-stamp">
+                <div class="totals-box">
+                    <div class="total-row">
+                        <span>الإجمالي الفرعي:</span>
+                        <span id="previewSubtotal" class="numeric"></span>
+                    </div>
+                    <div class="total-row">
+                        <span>مصاريف الشحن:</span>
+                        <span id="previewShippingCost" class="numeric"></span>
+                    </div>
+                    <div class="total-row">
+                        <span>ضريبة (14%):</span>
+                        <span id="previewTax" class="numeric"></span>
+                    </div>
+                    <div class="total-row total-final">
+                        <span>الإجمالي الكلي:</span>
+                        <span id="previewTotal" class="numeric"></span>
+                    </div>
                 </div>
 
-                <div class="totals-row">
-                    <span>ضريبة القيمة المضافة:</span>
-                    <span id="previewTax" class="summary-numeric">0.00 ج.م.</span>
-                </div>
-                
-                <div class="totals-row totals-final">
-                    <strong>الإجمالي الكلي:</strong>
-                    <strong id="previewTotal" class="summary-numeric">0.00 ج.م.</strong>
+                <div class="stamp-area">
+                    <b style="font-size: 11px; color: #888; margin-bottom: 4px;">ختم الشركة والاعتماد</b>
+                    <img id="stampImage" src="stamp.png" alt="Stamp" class="company-stamp" onerror="this.style.display='none';">
                 </div>
             </div>
         </div>
+
+        <p style="text-align: center; font-size: 11px; color: var(--primary); margin-top: 10px; border-top: 1px solid var(--primary); padding-top: 4px; font-weight: 700;">
+            شركة ايرث بيور للزيوت الطبيعية - شكراً لثقتكم بنا
+        </p>
     </div>
 
     <div class="button-controls">
-        <button onclick="window.close()">إغلاق المعاينة</button>
         <button onclick="window.print()">تصدير وطباعة PDF</button>
+        <button style="background: #6c757d;" onclick="window.close()">إغلاق</button>
     </div>
 
     <script>
         function formatCurrency(value) {
-            return (value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ج.م.';
+            return (parseFloat(value) || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ج.م';
         }
 
         document.addEventListener('DOMContentLoaded', function() {
             const tempInvoiceData = sessionStorage.getItem('tempInvoiceData');
-            if (!tempInvoiceData) {
-                document.getElementById('invoicePaper').innerHTML = '<h2>خطأ: لا توجد بيانات معاينة متاحة.</h2>';
-                return;
-            }
+            if (!tempInvoiceData) return;
+            
             const data = JSON.parse(tempInvoiceData);
 
-            document.getElementById('previewInvoiceNumber').textContent = data.invoiceNumber || 'جاري الحفظ';
-            document.getElementById('previewInvoiceDate').textContent = data.invoiceDate || new Date().toLocaleDateString('ar-EG');
+            document.getElementById('previewInvoiceNumber').textContent = data.invoiceNumber || 'N/A';
+            document.getElementById('previewInvoiceDate').textContent = data.invoiceDate || '';
             document.getElementById('previewCustomerName').textContent = data.customerName || '';
             document.getElementById('previewEmployeeName').textContent = data.employeeName || '';
             document.getElementById('previewDeliveryMethod').textContent = data.deliveryMethod || '';
@@ -325,27 +284,27 @@
             const itemsBody = document.getElementById('itemsPreviewBody');
             data.items.forEach((item, index) => {
                 const row = itemsBody.insertRow();
-                row.insertCell().textContent = index + 1;
-                row.insertCell().textContent = item.product;
-                row.insertCell().textContent = item.unit;
-                const quantityCell = row.insertCell();
-                quantityCell.textContent = item.quantity;
-                quantityCell.classList.add('summary-numeric');
-                const priceCell = row.insertCell();
-                priceCell.textContent = formatCurrency(item.price);
-                priceCell.classList.add('summary-numeric');
-                const totalCell = row.insertCell();
-                totalCell.textContent = formatCurrency(item.total);
-                totalCell.classList.add('summary-numeric');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td style="text-align: right; padding-right: 8px;">${item.product}</td>
+                    <td>${item.unit}</td>
+                    <td class="numeric">${item.quantity}</td>
+                    <td class="numeric">${formatCurrency(item.price)}</td>
+                    <td class="numeric">${formatCurrency(item.total)}</td>
+                `;
             });
 
-            const shippingCost = data.shippingCost || 0;
-            const finalTotal = (data.subtotal || 0) + shippingCost + (data.taxAmount || 0);
+            const shippingCost = parseFloat(data.shippingCost) || 0;
+            const taxAmount = parseFloat(data.taxAmount) || 0;
+            const finalTotal = (parseFloat(data.subtotal) || 0) + shippingCost + taxAmount;
 
             document.getElementById('previewSubtotal').textContent = formatCurrency(data.subtotal);
             document.getElementById('previewShippingCost').textContent = formatCurrency(shippingCost);
-            document.getElementById('previewTax').textContent = formatCurrency(data.taxAmount);
+            document.getElementById('previewTax').textContent = formatCurrency(taxAmount);
             document.getElementById('previewTotal').textContent = formatCurrency(finalTotal);
+
+            const stampImg = document.getElementById('stampImage');
+            stampImg.onload = () => stampImg.style.display = 'block';
         });
     </script>
 </body>

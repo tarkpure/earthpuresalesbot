@@ -3,201 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدخال بيان مبيعات (فاتورة)</title>
+    <title>إدخال بيان مبيعات - Earth Pure</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* تعريف الألوان المتناسقة مع هوية الشعار (ذهبي، بني، وألوان محايدة) */
         :root {
-            --primary-dark-brown: #3C2E2A;
+            --primary-brown: #3C2E2A;
             --accent-gold: #B89C5D;
-            --light-bg: #f8f8f8;
-            --white: #ffffff;
-            --input-border: #ddd;
-            --button-bg: var(--accent-gold);
-            --button-hover: #a18b52;
-            --header-bg: var(--primary-dark-brown);
-            --text-color: var(--primary-dark-brown);
-            --error-bg: #ffe0e0;
-            --error-text: #cc0000;
+            --light-bg: #f8f9fa;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Cairo', sans-serif;
             background-color: var(--light-bg);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-            min-height: 100vh;
-            color: var(--text-color);
-            direction: rtl;
+            color: var(--primary-brown);
         }
+
+        /* تحسين الجدول للموبايل */
+        @media (max-width: 768px) {
+            thead { display: none; }
+            tr { display: block; margin-bottom: 1rem; border: 1px solid #e5e7eb; padding: 1rem; border-radius: 1rem; background: #fff; }
+            td { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0 !important; border: none !important; text-align: left !important; }
+            td::before { content: attr(data-label); font-weight: bold; color: #6b7280; font-size: 0.85rem; }
+            .item-input { width: 60% !important; }
+        }
+
         .item-input {
-            padding: 5px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-            box-sizing: border-box;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
             width: 100%;
             text-align: right;
-            font-size: 0.95em;
+            transition: border-color 0.2s;
         }
+
+        .item-input:focus {
+            border-color: var(--accent-gold);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(184, 156, 93, 0.1);
+        }
+
         .dir-ltr { direction: ltr; }
+        
+        .loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.9); display: flex;
+            justify-content: center; align-items: center; z-index: 1000;
+        }
+
         .spinner {
             border: 4px solid rgba(0, 0, 0, 0.1);
             border-left-color: var(--accent-gold);
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
+            border-radius: 50%; width: 40px; height: 40px;
             animation: spin 1s linear infinite;
         }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
-<body>
-    <div class="invoice-container w-full max-w-4xl mx-auto bg-white p-6 sm:p-10 rounded-xl shadow-2xl border-t-8 border-b-8 border-gray-600">
-        <img src="logo.png" alt="شعار Earth Pure" class="max-w-[150px] mx-auto mb-5">
-        <h1 class="text-3xl font-bold text-center mb-2 text-gray-700">📝 بيان مبيعات (فاتورة)</h1>
-        <p class="text-center text-sm mb-8 text-gray-500">إدخال وحفظ تفاصيل الفاتورة</p>
+<body class="p-4 md:p-8">
 
-        <div id="loading-overlay" class="hidden loading-overlay">
-            <div class="spinner"></div>
+    <div id="loading-overlay" class="hidden loading-overlay">
+        <div class="flex flex-col items-center">
+            <div class="spinner mb-4"></div>
+            <p class="font-bold text-gray-600">جاري معالجة البيانات...</p>
         </div>
+    </div>
 
-        <div id="message-box" class="hidden p-3 mb-4 text-center rounded-lg font-medium"></div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mb-8 p-4 border rounded-lg bg-gray-50">
-            <div>
-                <label for="invoiceNumber" class="block text-sm font-medium text-gray-700">رقم الفاتورة (آلي)</label>
-                <input type="text" id="invoiceNumber" readonly class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 bg-gray-200 font-bold text-red-600" value="جاري التحميل...">
+    <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100">
+        <div class="bg-gray-800 p-6 text-white flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="text-center md:text-right">
+                <h1 class="text-2xl md:text-3xl font-bold">📝 بيان مبيعات (فاتورة)</h1>
+                <p class="text-sm opacity-80 mt-1">نظام إدارة مبيعات Earth Pure</p>
             </div>
-            <div>
-                <label for="invoiceDate" class="block text-sm font-medium text-gray-700">تاريخ البيان</label>
-                <input type="date" id="invoiceDate" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
-            </div>
-            <div>
-                <label for="customerName" class="block text-sm font-medium text-gray-700">اسم العميل (مطلوب)</label>
-                <input type="text" id="customerName" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" placeholder="أدخل اسم العميل">
-            </div>
-            <div>
-                <label for="employeeName" class="block text-sm font-medium text-gray-700">اسم الموظف / البائع (قابل للتعديل)</label>
-                <input type="text" id="employeeName" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" placeholder="اسم الموظف الذي قام بالعملية">
-            </div>
-            <div>
-                <label for="deliveryMethod" class="block text-sm font-medium text-gray-700">طريقة التسليم (الشحن)</label>
-                <select id="deliveryMethod" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
-                    <option value="نقل خاص">نقل خاص</option>
-                    <option value="شحن سريع">شحن سريع</option>
-                    <option value="تسليم باليد">تسليم باليد</option>
-                </select>
-            </div>
-            <div>
-                <label for="collectionMethod">طريقة التحصيل:</label>
-                <select id="collectionMethod" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
-                    <option value="تحويل بنكي">تحويل بنكي</option>
-                    <option value="كاش">كاش</option>
-                    <option value="آجل">آجل</option>
-                </select>
+            <div class="bg-white p-2 rounded-xl flex items-center justify-center">
+                <img src="logo.png" alt="Earth Pure" class="h-12 md:h-16 object-contain" onerror="this.src='https://i.ibb.co/p6V8n9X/logo.png'">
             </div>
         </div>
 
-        <h2 class="text-xl font-semibold mb-3 text-gray-700 text-right">بنود الأصناف</h2>
-        <div class="overflow-x-auto border rounded-lg shadow-sm mb-4">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th class="px-3 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider w-[5%]">م</th>
-                        <th class="px-3 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider w-[35%]">اسم المنتج</th>
-                        <th class="px-3 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider w-[15%]">الوحدة</th>
-                        <th class="px-3 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider w-[15%]">الكمية</th>
-                        <th class="px-3 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider w-[15%]">السعر</th>
-                        <th class="px-3 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider w-[10%]">الإجمالي</th>
-                        <th class="px-3 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wider w-[5%]">حذف</th>
-                    </tr>
-                </thead>
-                <tbody id="itemsTableBody" class="bg-white divide-y divide-gray-200">
-                    </tbody>
-            </table>
-        </div>
-        <button onclick="addItemRow()" class="px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition duration-150 mb-6">
-            + إضافة صنف
-        </button>
+        <div class="p-6 md:p-10">
+            <div id="message-box" class="hidden p-4 mb-6 text-center rounded-xl font-bold"></div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-            <div class="md:col-span-2">
-                <label for="notes" class="block text-sm font-medium text-gray-700">ملاحظات (نص أسفل الفاتورة):</label>
-                <div id="notesDisplay" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-4 border bg-white min-h-[100px] text-sm text-gray-700 text-right whitespace-pre-wrap">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 p-6 bg-gray-50 rounded-2xl border border-gray-100">
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-gray-700">رقم الفاتورة (آلي)</label>
+                    <input type="text" id="invoiceNumber" readonly class="w-full p-3 bg-gray-200 border-none rounded-xl font-bold text-red-600 text-center" value="جاري التحميل...">
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-gray-700">تاريخ البيان</label>
+                    <input type="date" id="invoiceDate" required class="w-full p-3 border border-gray-300 rounded-xl text-center">
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-gray-700">اسم الموظف المسؤل</label>
+                    <input type="text" id="employeeName" class="w-full p-3 border border-gray-300 rounded-xl" placeholder="اسم الموظف">
+                </div>
+                <div class="md:col-span-1 space-y-2">
+                    <label class="block text-sm font-bold text-gray-700">اسم العميل</label>
+                    <input type="text" id="customerName" required class="w-full p-3 border border-gray-300 rounded-xl" placeholder="أدخل اسم العميل بالكامل">
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-gray-700">طريقة التسليم</label>
+                    <select id="deliveryMethod" class="w-full p-3 border border-gray-300 rounded-xl bg-white">
+                        <option value="نقل خاص">نقل خاص</option>
+                        <option value="شحن سريع">شحن سريع</option>
+                        <option value="تسليم باليد">تسليم باليد</option>
+                    </select>
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-gray-700">طريقة التحصيل</label>
+                    <select id="collectionMethod" class="w-full p-3 border border-gray-300 rounded-xl bg-white">
+                        <option value="تحويل بنكي">تحويل بنكي</option>
+                        <option value="كاش">كاش</option>
+                        <option value="آجل">آجل</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-gray-800">بنود الأصناف</h2>
+                    <button onclick="addItemRow()" class="px-5 py-2 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition shadow-md">+ إضافة صنف</button>
+                </div>
+                
+                <div class="overflow-x-auto rounded-xl border border-gray-200">
+                    <table class="w-full text-right">
+                        <thead class="bg-gray-100 border-b-2 border-accent-gold">
+                            <tr>
+                                <th class="px-4 py-3 text-sm font-bold w-[5%]">م</th>
+                                <th class="px-4 py-3 text-sm font-bold">اسم المنتج</th>
+                                <th class="px-4 py-3 text-sm font-bold w-[12%]">الوحدة</th>
+                                <th class="px-4 py-3 text-sm font-bold w-[12%] text-center">الكمية</th>
+                                <th class="px-4 py-3 text-sm font-bold w-[15%] text-center">السعر</th>
+                                <th class="px-4 py-3 text-sm font-bold w-[15%] text-center">الإجمالي</th>
+                                <th class="px-4 py-3 w-[5%]"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsTableBody" class="bg-white divide-y divide-gray-100"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-10 pt-8 border-t">
+                <div class="md:col-span-2 space-y-2">
+                    <label class="block text-sm font-bold text-gray-700">ملاحظات وشروط البيع</label>
+                    <div id="notesDisplay" class="w-full p-4 rounded-xl border border-gray-300 bg-gray-50 min-h-[120px] text-sm leading-relaxed whitespace-pre-wrap"></div>
+                    <input type="hidden" id="notesBank" value="تحويل بنكي/انستا (126039049001) بنك الاسكندرية.">
+                    <input type="hidden" id="notesShipping" value="الشحن داخل القاهرة من يومين لخمسة أيام / خارج القاهرة حسب المسافة.">
+                </div>
+                
+                <div class="bg-gray-800 p-6 rounded-2xl text-white space-y-4 shadow-xl">
+                    <div class="flex justify-between text-sm opacity-80">
+                        <span>الإجمالي الفرعي:</span>
+                        <span id="subtotalDisplay" class="dir-ltr">0.00 ج.م</span>
                     </div>
-                <input type="hidden" id="notesBank" value="تحويل بنكي/انستا (126039049001) بنك الاسكندرية.">
-                <input type="hidden" id="notesShipping" value="الشحن داخل القاهرة من يومين لخمسة أيام / خارج القاهرة حسب المسافة.">
-            </div>
-            <div class="bg-gray-100 p-4 rounded-lg shadow-inner">
-                <div class="flex justify-between mb-2 border-b pb-2">
-                    <span class="font-medium text-gray-700">الإجمالي الفرعي:</span>
-                    <span id="subtotalDisplay" class="font-semibold text-lg text-gray-800 dir-ltr">0.00 ج.م.</span>
-                </div>
-                
-                <div class="flex items-center justify-between mb-3 border-b pb-2">
-                    <div class="flex items-center gap-2">
-                        <span class="font-medium text-gray-700">ضريبة القيمة المضافة (14%):</span>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="taxToggle" class="sr-only peer" onchange="calculateOverallTotal()">
-                            <div class="w-11 h-6 bg-gray-400 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
-                        </label>
+                    <div class="flex justify-between items-center text-sm">
+                        <div class="flex items-center gap-2">
+                            <span>ضريبة (14%):</span>
+                            <label class="relative inline-flex items-center cursor-pointer scale-90">
+                                <input type="checkbox" id="taxToggle" class="sr-only peer" onchange="calculateOverallTotal()">
+                                <div class="w-10 h-5 bg-gray-600 rounded-full peer peer-checked:bg-green-500 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div>
+                            </label>
+                        </div>
+                        <span id="taxDisplay" class="dir-ltr text-red-400 font-bold">0.00 ج.م</span>
                     </div>
-                    <span id="taxDisplay" class="font-semibold text-lg text-red-600 dir-ltr">0.00 ج.م.</span>
-                </div>
-                
-                <div class="flex justify-between mb-3 border-b pb-2 items-center">
-                    <label for="shippingCost" class="font-medium text-gray-700 block">مصاريف الشحن:</label>
-                    <input type="number" id="shippingCost" value="0.00" min="0" step="0.01" oninput="calculateOverallTotal()" 
-                           class="w-32 rounded-md border-gray-300 shadow-sm p-1 border text-left dir-ltr font-semibold text-gray-800">
-                </div>
-                
-                <div class="flex justify-between">
-                    <span class="font-bold text-xl text-gray-800">الإجمالي الكلي:</span>
-                    <span id="totalDisplay" class="font-bold text-xl text-green-600 dir-ltr">0.00 ج.م.</span>
+                    <div class="flex justify-between items-center text-sm border-b border-gray-600 pb-2">
+                        <span>مصاريف الشحن:</span>
+                        <input type="number" id="shippingCost" value="0.00" min="0" step="0.1" oninput="calculateOverallTotal()" 
+                               class="w-24 p-1 rounded-lg bg-gray-700 border-none text-left dir-ltr font-bold text-white focus:ring-1 focus:ring-accent-gold">
+                    </div>
+                    <div class="flex justify-between items-center pt-2">
+                        <span class="text-lg font-bold">الإجمالي الكلي:</span>
+                        <span id="totalDisplay" class="text-xl font-black text-green-400 dir-ltr">0.00 ج.م</span>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="flex justify-center gap-4 mt-8">
-            <button onclick="window.location.href='index.html'" class="px-6 py-3 bg-gray-600 text-white font-medium rounded-lg hover:bg-gray-700 transition duration-150">
-                العودة للوحة التحكم
-            </button>
-            <button id="previewButton" onclick="previewInvoice()" class="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition duration-150">
-                معاينة الفاتورة
-            </button>
-            <button id="saveButton" onclick="saveInvoice()" class="px-6 py-3 bg-amber-600 text-white font-medium rounded-lg hover:bg-amber-700 transition duration-150">
-                حفظ الفاتورة
-            </button>
+            <div class="flex flex-col md:flex-row justify-center gap-4 mt-12">
+                <button onclick="window.location.href='index.html'" class="px-8 py-4 bg-gray-200 text-gray-700 font-bold rounded-2xl hover:bg-gray-300 transition">العودة للرئيسية</button>
+                <button id="previewButton" onclick="previewInvoice()" class="px-8 py-4 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition shadow-lg">👁️ معاينة الفاتورة</button>
+                <button id="saveButton" onclick="saveInvoice()" class="px-8 py-4 bg-amber-600 text-white font-bold rounded-2xl hover:bg-amber-700 transition shadow-lg">💾 حفظ وترحيل البيانات</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // **ملاحظة هامة: يجب لصق رابط تطبيق الويب هنا**
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwt_OncZ-x42XwM5uHzEOiW6eNSs2vrxaqLgFKsp5f2vDskPOqJuQLaMcEICuWgO58pgQ/exec'; 
-        
         let currentEmployeeName = localStorage.getItem('inventoryEmployeeName') || 'الموظف';
         let itemCounter = 0;
-        const TAX_PERCENTAGE = 0.14; // 14% نسبة الضريبة
+        const TAX_PERCENTAGE = 0.14;
 
-        // العناصر
         const itemsTableBody = document.getElementById('itemsTableBody');
         const invoiceNumberInput = document.getElementById('invoiceNumber');
         const subtotalDisplay = document.getElementById('subtotalDisplay');
@@ -209,12 +202,10 @@
         const loadingOverlay = document.getElementById('loading-overlay');
         const saveButton = document.getElementById('saveButton');
         const previewButton = document.getElementById('previewButton');
-        const notesDisplay = document.getElementById('notesDisplay'); // **جديد: لعرض الملاحظات**
+        const notesDisplay = document.getElementById('notesDisplay');
         const notesBank = document.getElementById('notesBank').value;
         const notesShipping = document.getElementById('notesShipping').value;
-        const shippingCostInput = document.getElementById('shippingCost'); // **جديد: حقل مصاريف الشحن**
-
-        // *************** وظائف مساعدة ***************
+        const shippingCostInput = document.getElementById('shippingCost');
 
         function formatCurrency(value) {
             return (value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -223,288 +214,135 @@
         function toggleLoading(show) {
             loadingOverlay.classList.toggle('hidden', !show);
             saveButton.disabled = show;
-            previewButton.disabled = show;
         }
 
         function showMessage(type, text) {
             messageBox.textContent = text;
-            messageBox.className = `p-3 mb-4 text-center rounded-lg font-medium ${type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`;
+            messageBox.className = `p-4 mb-6 text-center rounded-xl font-bold ${type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`;
             messageBox.classList.remove('hidden');
+            setTimeout(() => messageBox.classList.add('hidden'), 5000);
         }
 
-        // *************** وظائف API ***************
-
         async function fetchInvoiceNumber() {
-            if (WEB_APP_URL.includes('https://script.google.com/macros/s/AKfycbyaVNr7b2AWTPKj8VBHMFgTeF63-fPqE80LVgGdS6qhPjBAjeJxLAda-zhBhoYO7XLIXQ/exec')) {
-                invoiceNumberInput.value = 'الرجاء لصق رابط الويب أولاً!';
-                return;
-            }
             toggleLoading(true);
             try {
-                const response = await fetch(WEB_APP_URL + '?action=getInvoiceNumber', { method: 'GET' });
+                const response = await fetch(WEB_APP_URL + '?action=getInvoiceNumber');
                 const result = await response.json();
-
-                if (result.status === 'success') {
-                    invoiceNumberInput.value = result.invoiceNumber;
-                } else {
-                    invoiceNumberInput.value = 'خطأ في جلب الرقم';
-                    showMessage('error', `خطأ في الاتصال بالخادم: ${result.message}`);
-                }
+                if (result.status === 'success') invoiceNumberInput.value = result.invoiceNumber;
             } catch (error) {
                 invoiceNumberInput.value = 'خطأ في الاتصال';
-                showMessage('error', `حدث خطأ غير متوقع: ${error.message}`);
             } finally {
                 toggleLoading(false);
             }
         }
 
-        // *************** وظائف الحسابات ***************
-        
         function calculateItemTotal(row) {
-            const quantity = parseFloat(row.querySelector('[data-type="quantity"]').value) || 0;
-            const price = parseFloat(row.querySelector('[data-type="price"]').value) || 0;
-            const total = (quantity * price);
-
-            row.querySelector('[data-type="total"]').textContent = formatCurrency(total);
+            const q = parseFloat(row.querySelector('[data-type="quantity"]').value) || 0;
+            const p = parseFloat(row.querySelector('[data-type="price"]').value) || 0;
+            row.querySelector('[data-type="total"]').textContent = formatCurrency(q * p) + " ج.م";
             calculateOverallTotal();
         }
 
-        function generateNotesText(taxApplied) {
-            let taxMessage = taxApplied 
-                             ? 'الأسعار شاملة ضريبة القيمة المضافة (14%).'
-                             : 'الأسعار غير شاملة ضريبة القيمة المضافة.';
-            
-            // دمج جميع الأجزاء في نص واحد لورقة الملاحظات
-            return `${taxMessage}\n${notesShipping}\n${notesBank}`;
-        }
-
-
         function calculateOverallTotal() {
-            let grandSubtotal = 0;
-            const itemRows = itemsTableBody.querySelectorAll('tr');
-
-            itemRows.forEach(row => {
+            let sub = 0;
+            itemsTableBody.querySelectorAll('tr').forEach(row => {
                 const totalCell = row.querySelector('[data-type="total"]');
-                if(totalCell) {
-                    const totalValue = parseFloat(totalCell.textContent.replace(/[^0-9.-]+/g,"")) || 0; 
-                    grandSubtotal += totalValue;
-                }
+                if(totalCell) sub += parseFloat(totalCell.textContent.replace(/[^0-9.-]+/g,"")) || 0;
             });
 
-            const applyTax = taxToggle.checked; 
-            const shippingCost = parseFloat(shippingCostInput.value) || 0; // **جديد: جلب قيمة الشحن**
-            let taxAmount = 0;
-            let finalTotal = grandSubtotal;
-
-            if (applyTax) {
-                taxAmount = grandSubtotal * TAX_PERCENTAGE;
-                finalTotal += taxAmount;
-            }
+            const shipping = parseFloat(shippingCostInput.value) || 0;
+            let tax = taxToggle.checked ? sub * TAX_PERCENTAGE : 0;
             
-            // **الإضافة: إضافة مصاريف الشحن إلى الإجمالي النهائي**
-            finalTotal += shippingCost;
+            subtotalDisplay.textContent = formatCurrency(sub) + ' ج.م';
+            taxDisplay.textContent = formatCurrency(tax) + ' ج.م';
+            totalDisplay.textContent = formatCurrency(sub + tax + shipping) + ' ج.م';
 
-
-            // تحديث شاشات العرض
-            subtotalDisplay.textContent = formatCurrency(grandSubtotal) + ' ج.م.';
-            taxDisplay.textContent = formatCurrency(taxAmount) + ' ج.م.';
-            totalDisplay.textContent = formatCurrency(finalTotal) + ' ج.م.';
-
-            // **التعديل الجوهري: تحديث نص الملاحظات بناءً على الضريبة**
-            notesDisplay.textContent = generateNotesText(applyTax);
+            notesDisplay.textContent = (taxToggle.checked ? '• الأسعار شاملة ضريبة القيمة المضافة (14%).\n' : '• الأسعار غير شاملة ضريبة القيمة المضافة.\n') + `• ${notesShipping}\n• ${notesBank}`;
             
-            // تمكين/تعطيل زر الحفظ
-            saveButton.disabled = grandSubtotal <= 0;
-            previewButton.disabled = grandSubtotal <= 0;
+            saveButton.disabled = sub <= 0;
+            previewButton.disabled = sub <= 0;
         }
 
-        // *************** وظائف الجدول ***************
-        
         function addItemRow(product = '', unit = '', quantity = '', price = '') {
             itemCounter++;
             const row = itemsTableBody.insertRow();
-            row.id = `row-${itemCounter}`;
-            row.className = 'item-row border-b border-gray-100';
-
+            row.className = 'border-b border-gray-50';
             row.innerHTML = `
-                <td class="px-3 py-2 text-center text-gray-500">${itemCounter}</td>
-                <td class="px-3 py-2"><input type="text" data-type="product" value="${product}" placeholder="اسم الصنف" class="item-input"></td>
-                <td class="px-3 py-2"><input type="text" data-type="unit" value="${unit}" placeholder="وحدة" class="item-input"></td>
-                <td class="px-3 py-2"><input type="number" data-type="quantity" value="${quantity}" min="0.01" step="any" class="item-input text-left" required></td>
-                <td class="px-3 py-2"><input type="number" data-type="price" value="${price}" min="0.01" step="0.01" class="item-input text-left" required></td>
-                <td data-type="total" class="px-3 py-2 font-semibold text-left dir-ltr text-gray-800">
-                    ${formatCurrency(0)}
-                </td>
-                <td class="px-3 py-2 text-center">
-                    <button onclick="deleteItemRow(this)" class="text-red-600 hover:text-red-800 transition duration-150">
-                        🗑️
-                    </button>
-                </td>
+                <td class="px-4 py-3 text-center text-gray-400 text-xs">${itemCounter}</td>
+                <td class="px-2 py-3" data-label="المنتج"><input type="text" data-type="product" value="${product}" placeholder="اسم الصنف" class="item-input"></td>
+                <td class="px-2 py-3" data-label="الوحدة"><input type="text" data-type="unit" value="${unit}" placeholder="كجم/قطعة" class="item-input"></td>
+                <td class="px-2 py-3" data-label="الكمية"><input type="number" data-type="quantity" value="${quantity}" step="any" oninput="calculateItemTotal(this.closest('tr'))" class="item-input text-center"></td>
+                <td class="px-2 py-3" data-label="السعر"><input type="number" data-type="price" value="${price}" step="any" oninput="calculateItemTotal(this.closest('tr'))" class="item-input text-center"></td>
+                <td class="px-4 py-3 text-center font-bold dir-ltr" data-type="total" data-label="الإجمالي">0.00 ج.م</td>
+                <td class="px-4 py-3 text-center"><button onclick="this.closest('tr').remove(); calculateOverallTotal();" class="text-red-400 text-xl hover:text-red-600">×</button></td>
             `;
-            // ربط مستمعي الأحداث
-            const newRow = document.getElementById(row.id);
-            newRow.querySelector('[data-type="quantity"]').addEventListener('input', () => calculateItemTotal(newRow));
-            newRow.querySelector('[data-type="price"]').addEventListener('input', () => calculateItemTotal(newRow));
-            
-            // حساب الإجمالي إذا كانت هناك قيم أولية
-            if (quantity && price) calculateItemTotal(newRow);
-        }
-
-        function deleteItemRow(button) {
-            const row = button.closest('tr');
-            if(row) {
-                 row.remove();
-                 calculateOverallTotal();
-            }
+            calculateOverallTotal();
         }
 
         function collectInvoiceData() {
-            const items = [];
-            const rows = itemsTableBody.querySelectorAll('tr');
-            let isValid = true;
+            const items = Array.from(itemsTableBody.querySelectorAll('tr')).map(row => ({
+                product: row.querySelector('[data-type="product"]').value.trim(),
+                unit: row.querySelector('[data-type="unit"]').value.trim(),
+                quantity: parseFloat(row.querySelector('[data-type="quantity"]').value) || 0,
+                price: parseFloat(row.querySelector('[data-type="price"]').value) || 0,
+                total: parseFloat(row.querySelector('[data-type="total"]').textContent.replace(/[^0-9.-]+/g,"")) || 0
+            }));
 
-            rows.forEach(row => {
-                const product = row.querySelector('[data-type="product"]').value.trim();
-                const unit = row.querySelector('[data-type="unit"]').value.trim();
-                const quantityInput = row.querySelector('[data-type="quantity"]');
-                const priceInput = row.querySelector('[data-type="price"]');
-                const totalText = row.querySelector('[data-type="total"]').textContent;
-                
-                const quantity = parseFloat(quantityInput.value);
-                const price = parseFloat(priceInput.value);
-                const total = parseFloat(totalText.replace(/[^0-9.-]+/g,""));
-
-                if (!product || quantity <= 0 || price < 0 || isNaN(quantity) || isNaN(price)) {
-                    isValid = false;
-                    row.classList.add('bg-red-100');
-                } else {
-                    row.classList.remove('bg-red-100');
-                }
-
-                items.push({
-                    product: product,
-                    unit: unit,
-                    quantity: quantity,
-                    price: price,
-                    total: total,
-                });
-            });
-
-            if (!isValid) {
-                 throw new Error("يرجى مراجعة البيانات المدخلة في بنود الأصناف.");
-            }
-            if (items.length === 0) {
-                 throw new Error("يجب إضافة بند واحد على الأقل للفاتورة.");
-            }
-            
-            const subtotal = parseFloat(subtotalDisplay.textContent.replace(/[^0-9.-]+/g,""));
-            const taxAmount = parseFloat(taxDisplay.textContent.replace(/[^0-9.-]+/g,""));
-            const total = parseFloat(totalDisplay.textContent.replace(/[^0-9.-]+/g,""));
-            const shippingCost = parseFloat(shippingCostInput.value) || 0; // **الإضافة: جمع مصاريف الشحن**
-
-            const customerName = document.getElementById('customerName').value.trim();
-            const employeeName = document.getElementById('employeeName').value.trim();
-            const notes = notesDisplay.textContent; 
-            
-            if (!customerName) throw new Error("يرجى إدخال اسم العميل.");
-            if (!employeeName) throw new Error("يرجى إدخال اسم الموظف.");
-
-            const taxToggle = document.getElementById('taxToggle');
-            const taxRateApplied = taxToggle.checked ? '14% شاملة الضريبة' : '0% غير شاملة الضريبة'; 
+            if (items.some(i => !i.product || i.quantity <= 0)) throw new Error("يرجى إكمال بيانات الأصناف بشكل صحيح.");
 
             return {
                 action: 'saveInvoice',
                 invoiceNumber: invoiceNumberInput.value,
                 invoiceDate: document.getElementById('invoiceDate').value,
-                customerName: customerName,
-                employeeName: employeeName, 
+                customerName: document.getElementById('customerName').value.trim(),
+                employeeName: employeeNameInput.value.trim(),
                 deliveryMethod: document.getElementById('deliveryMethod').value,
                 collectionMethod: document.getElementById('collectionMethod').value,
-                notes: notes, 
-                subtotal: subtotal,
-                taxAmount: taxAmount, 
-                shippingCost: shippingCost, // **الإضافة: إرسال مصاريف الشحن إلى الـ Apps Script**
-                taxRateApplied: taxRateApplied, 
-                total: total,
+                notes: notesDisplay.textContent,
+                subtotal: parseFloat(subtotalDisplay.textContent.replace(/[^0-9.-]+/g,"")),
+                taxAmount: parseFloat(taxDisplay.textContent.replace(/[^0-9.-]+/g,"")),
+                shippingCost: parseFloat(shippingCostInput.value) || 0,
+                total: parseFloat(totalDisplay.textContent.replace(/[^0-9.-]+/g,"")),
                 items: items
             };
         }
 
-        // *************** وظائف الحفظ والمعاينة ***************
-
         async function saveInvoice() {
             try {
-                const invoiceData = collectInvoiceData();
-                
+                const data = collectInvoiceData();
                 toggleLoading(true);
-
-                const response = await fetch(WEB_APP_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(invoiceData)
-                });
+                const response = await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(data) });
                 const result = await response.json();
-
                 if (result.status === 'success') {
-                    // تحديث رقم الفاتورة في المعاينة قبل الفتح
-                    invoiceData.invoiceNumber = result.invoiceNumber;
-                    sessionStorage.setItem('tempInvoiceData', JSON.stringify(invoiceData));
-                    
-                    // فتح صفحة المعاينة وإعادة تعيين النموذج
+                    data.invoiceNumber = result.invoiceNumber;
+                    sessionStorage.setItem('tempInvoiceData', JSON.stringify(data));
                     window.open('invoice_preview.html', '_blank');
                     initializeInvoiceForm();
-
-                } else {
-                    showMessage('error', `خطأ في حفظ البيانات: ${result.message}`);
-                }
-
-            } catch (error) {
-                showMessage('error', `خطأ في تجميع البيانات: ${error.message}`);
-            } finally {
-                toggleLoading(false);
-            }
+                } else showMessage('error', result.message);
+            } catch (e) { showMessage('error', e.message); } finally { toggleLoading(false); }
         }
 
         function previewInvoice() {
             try {
-                const invoiceData = collectInvoiceData();
-                sessionStorage.setItem('tempInvoiceData', JSON.stringify(invoiceData));
-                
-                // فتح صفحة المعاينة في نافذة جديدة
+                const data = collectInvoiceData();
+                sessionStorage.setItem('tempInvoiceData', JSON.stringify(data));
                 window.open('invoice_preview.html', '_blank');
-
-            } catch (error) {
-                showMessage('error', `خطأ في المعاينة: ${error.message}`);
-            }
+            } catch (e) { showMessage('error', e.message); }
         }
 
         function initializeInvoiceForm() {
-            // تعيين التاريخ الحالي
-            document.getElementById('invoiceDate').value = new Date().toLocaleDateString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit' });
-            
-            // تعيين اسم الموظف من التخزين المحلي وجعله قابلاً للتعديل
+            document.getElementById('invoiceDate').valueAsDate = new Date();
             employeeNameInput.value = currentEmployeeName;
-            employeeNameInput.removeAttribute('readonly'); 
-            
             document.getElementById('customerName').value = '';
-            shippingCostInput.value = '0.00'; // **جديد: إعادة تعيين مصاريف الشحن**
-            
-            // مسح بنود الجدول وإضافة صف فارغ
+            shippingCostInput.value = '0.00';
             itemsTableBody.innerHTML = '';
-            addItemRow(); 
-
-            calculateOverallTotal();
-            fetchInvoiceNumber(); // جلب رقم الفاتورة الجديد
+            itemCounter = 0;
+            addItemRow();
+            fetchInvoiceNumber();
         }
 
-        // *************** وظائف التحميل ***************
-        document.addEventListener('DOMContentLoaded', function() {
-            // التحقق من تسجيل الدخول قبل أي شيء
-            if (!localStorage.getItem('inventoryEmployeeId')) {
-                window.location.href = 'inventory_login.html';
-                return;
-            }
-            
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!localStorage.getItem('inventoryEmployeeId')) { window.location.href = 'inventory_login.html'; return; }
             initializeInvoiceForm();
         });
     </script>
