@@ -77,16 +77,16 @@
             width: 15%;
         }
 
-        /* جدول الأصناف - تم تعديله لضبط التمدد والمحاذاة */
+        /* جدول الأصناف */
         .table-container {
             margin-bottom: 15px;
-            flex-grow: 1; /* يسمح للجدول بأخذ المساحة المتاحة بشكل متزن */
+            flex-grow: 1;
         }
 
         .items-table {
             width: 100%;
             border-collapse: collapse;
-            table-layout: fixed; /* يضمن ثبات عرض الأعمدة */
+            table-layout: fixed;
         }
 
         .items-table th {
@@ -103,7 +103,7 @@
             border: 1px solid #ccc;
             padding: 5px;
             text-align: center;
-            vertical-align: middle; /* توسيط المحتوى رأسياً */
+            vertical-align: middle;
             font-size: 13px;
             font-weight: 600;
             color: #333;
@@ -121,16 +121,33 @@
         }
 
         .notes-box {
-            border: 1px solid var(--accent);
-            padding: 8px;
+            border: 1.5px solid var(--accent);
+            padding: 10px;
             border-radius: 8px;
-            font-size: 11px;
             background-color: #fffdf9;
             min-height: 90px;
             text-align: right;
         }
 
-        .notes-box b { color: var(--primary); display: block; margin-bottom: 4px; font-size: 13px; border-bottom: 1px solid var(--accent); }
+        .notes-box b { 
+            color: var(--primary); 
+            display: block; 
+            margin-bottom: 6px; 
+            font-size: 14px; 
+            font-weight: 800;
+            border-bottom: 2px solid var(--accent); 
+            padding-bottom: 4px;
+        }
+
+        /* تنسيق النقاط لتكون أسفل بعضها */
+        #previewNotes { 
+            white-space: pre-line; 
+            line-height: 1.7; 
+            color: #000; 
+            font-size: 13px; 
+            font-weight: 700;
+            padding-right: 5px;
+        }
 
         .totals-and-stamp { display: flex; flex-direction: column; gap: 8px; }
 
@@ -230,7 +247,7 @@
 
         <div class="footer-section">
             <div class="notes-box">
-                <b>ملاحظات وشروط البيع:</b>
+                <b>الشروط والأحكام:</b>
                 <div id="previewNotes"></div>
             </div>
 
